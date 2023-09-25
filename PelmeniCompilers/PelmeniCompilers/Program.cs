@@ -8,19 +8,21 @@ namespace PelmeniCompilers;
 internal static class Program
 {
     private static void Main(string[] args) =>
-        Parser.Default.ParseArguments<CommandLineOptions>(args).WithParsedAsync(RunLexerAnalyzer);
+        Parser.Default.ParseArguments<CommandLineOptions>(args).WithParsedAsync(async options =>
+        {
+            using var file = new StreamReader(options.PathToFileToParse);
+            var fileContent = await file.ReadToEndAsync();
+            RunLexerAnalyzer(fileContent);
+        });
 
-    private static async Task RunLexerAnalyzer(CommandLineOptions options)
+    private static void RunLexerAnalyzer(string programContent)
     {
-        using var file = new StreamReader(options.PathToFileToParse);
-        var fileContent = await file.ReadToEndAsync();
-
         var tokens = new List<Token>();
         var buffer = new StringBuilder();
         var lineNumber = 1;
         var positionBegin = 1;
 
-        foreach (var symbol in fileContent)
+        foreach (var symbol in programContent)
         {
             switch (symbol)
             {
