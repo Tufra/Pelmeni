@@ -1,7 +1,8 @@
-namespace PelmeniCompilers.Constants;
+namespace PelmeniCompilers.Values;
 
-public enum TokenTypes
+public enum TokenType
 {
+    Unrecognized,
     Identifier,
     Type,
     KeyWord,

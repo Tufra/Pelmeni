@@ -9,7 +9,7 @@ routine addBinary(a: string; b: string): string is
     lenA := length(a);
     lenB := length(b);
     carry := 0;
-    result := '';
+    result := "";
 
     while (lenA > 0) or (lenB > 0)
     loop
