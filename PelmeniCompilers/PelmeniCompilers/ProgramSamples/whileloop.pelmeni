@@ -1,0 +1,6 @@
+routine Main() is
+	while 5 = 5
+	loop
+		var variable is 5;
+	end
+end

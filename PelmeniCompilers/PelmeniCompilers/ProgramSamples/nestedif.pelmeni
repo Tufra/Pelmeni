@@ -1,0 +1,11 @@
+routine Main() is
+	if 5 = 5 
+	then
+		if 3 != 3
+		then
+			var variable1: integer;
+		else 
+			var variable1: boolean;
+		end
+	end
+end

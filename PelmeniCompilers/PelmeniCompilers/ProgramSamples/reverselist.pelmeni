@@ -1,0 +1,67 @@
+program ReverseLinkedList;
+
+type Node is record
+    Value: Integer;
+    Next: Node;
+  end
+
+routine ReverseList(head: Node): Node is
+  var current, previous, nextNode: Node;
+
+  current := head;
+  previous := nil;
+
+  while current <> nil
+  loop
+    nextNode := current.Next;  // Store the next node
+    current.Next := previous;  // Reverse the link
+
+    previous := current;
+    current := nextNode;
+  end
+
+  return previous;  // New head of the reversed list
+end
+
+routine PrintList(head: Node) is
+  var current: Node;
+
+  current := head;
+  while current <> nil
+  loop
+    write(current.Value, ' ');
+    current := current.Next;
+  end;
+  writeln;
+end
+
+routine Main() is
+	var head, node1, node2, node3, node4, node5: PNode;
+  // Create a sample linked list: 1 -> 2 -> 3 -> 4 -> 5
+
+  node1.Value := 1;
+  node2.Value := 2;
+  node3.Value := 3;
+  node4.Value := 4;
+  node5.Value := 5;
+
+  node1.Next := node2;
+  node2.Next := node3;
+  node3.Next := node4;
+  node4.Next := node5;
+  node5.Next := nil;
+
+  head := node1;
+
+  // Print original list
+  write('Original list: ');
+  PrintList(head);
+
+  // Reverse the list
+  head := ReverseList(head);
+
+  // Print reversed list
+  write('Reversed list: ');
+  PrintList(head);
+
+end

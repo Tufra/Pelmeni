@@ -1,0 +1,43 @@
+program bfs;
+
+type Queue is array[100] integer;
+
+routine BFS(start: integer) is
+  var Q: Queue; 
+  var front, rear, node, i: integer;
+
+  for i in 1..N 
+	loop
+    Visited[i] := false;
+	end 
+  front := 1;
+  rear := 1;
+  Q[rear] := start;
+  Visited[start] := true;
+  while front <= rear 
+	loop
+    node := Q[front];
+    front := front + 1;
+    for i in 1..N 
+		loop
+      if AdjacencyMatrix[node, i] and (not Visited[i]) 
+			then
+        rear := rear + 1;
+        Q[rear] := i;
+        Visited[i] := True;
+      end
+  end
+end
+
+routine Main() is
+  var AdjacencyMatrix: array[100, 100] boolean;
+  var Visited: array[100] boolean;
+  var N: integer;
+  
+  AdjacencyMatrix[1, 2] := true;
+  AdjacencyMatrix[1, 3] := true;
+  AdjacencyMatrix[1, 4] := true;
+  AdjacencyMatrix[2, 5] := true;
+  
+  BFS(1);
+end

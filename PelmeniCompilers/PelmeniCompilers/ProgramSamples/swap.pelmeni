@@ -1,0 +1,16 @@
+routine Swap(var a, b: Integer) is
+    var temp: Integer
+    temp := a;
+    a := b;
+    b := temp;
+end
+
+routine Main() is
+    var numA: Integer;
+    var numB: Integer;
+
+    readln(numA);
+    readln(numB);
+    res := Swap(numA, numB);
+    writeln(res);
+end

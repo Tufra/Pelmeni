@@ -1,0 +1,33 @@
+program IsPalindrome;
+
+routine IsPalindromeNumber(x: integer): boolean is
+	var temp, reverse, digit: integer;
+
+  temp := x;  // Store the original number
+  reverse := 0;
+
+  // Reverse the number
+  while x <> 0
+  loop
+    digit := x mod 10;
+    reverse := reverse * 10 + digit;
+    x := x div 10;
+  end
+
+  // Check if the reversed number is equal to the original number
+  if temp = reverse then
+    return true
+  else
+    return false;
+	end
+
+routine Main() is
+	var num: integer;
+  writeln('Enter a number: ');
+  readln(num);
+
+  if IsPalindromeNumber(num) then
+    writeln(num, ' is a palindrome')
+  else
+    writeln(num, ' is not a palindrome');
+end

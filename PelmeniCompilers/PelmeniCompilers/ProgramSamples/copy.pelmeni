@@ -1,0 +1,27 @@
+type Node is record
+    Value: Integer;
+    Next: Node;
+end
+
+routine CopyNode(original: Node): Node is
+	var copiedNode: Node;
+
+  copiedNode.Value := original.Value;
+  copiedNode.Next := original.Next;
+
+  return copiedNode;
+end
+
+routine Main() is
+	var node1, node2: Node;
+
+  New(node1);
+  New(node2);
+
+  node1.Value := 1;
+  node2.Value := 2;
+  
+  node1.Next := node2;
+
+	Copy(node1);
+end

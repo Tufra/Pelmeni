@@ -1,0 +1,49 @@
+program BinSum;
+
+type string is array[256] char;
+
+routine addBinary(a: string; b: string): string is
+    var lenA, lenB, carry, sum, i: integer;
+		var result: string;
+
+    lenA := length(a);
+    lenB := length(b);
+    carry := 0;
+    result := '';
+
+    while (lenA > 0) or (lenB > 0)
+    loop
+        sum := carry;
+
+        if lenA > 0 
+				then
+            sum := sum + ord(a[lenA]) - ord('0');
+            lenA := lenA - 1;
+        end
+
+        if lenB > 0 
+				then
+            sum := sum + ord(b[lenB]) - ord('0');
+            lenB := lenB - 1;
+        end
+
+        carry := sum div 2;
+        result := char((sum mod 2) + ord('0')) + result;
+    end
+
+    if carry > 0 then
+        result := '1' + result;
+
+    return result;
+end
+
+routine Main() is
+		var strA, strB: string;
+		var res: string;
+	
+		readln(strA);
+		readln(strB);
+
+		res := addBinary(strA, strB);
+		writeln(res);
+end

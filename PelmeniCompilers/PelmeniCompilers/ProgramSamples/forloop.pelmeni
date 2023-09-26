@@ -1,0 +1,11 @@
+routine Main() is
+	for i in 3..5
+	loop
+		var variable is 5; 
+	end
+	
+	for i in reverse 5..8
+	loop
+		var variable is 5; 
+	end
+end

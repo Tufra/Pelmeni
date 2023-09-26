@@ -1,0 +1,5 @@
+routine Main() is
+	var variable1: integer;
+	var variable2: integer is 5;
+	var variable3 is 5;
+end
