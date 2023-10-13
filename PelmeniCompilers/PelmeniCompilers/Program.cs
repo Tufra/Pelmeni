@@ -28,6 +28,8 @@ internal static class Program
         {
             stateMachine.Process(symbol);
         }
+
+        stateMachine.Flush();
         
         Console.WriteLine(string.Join("\n", stateMachine.Tokens));
     }

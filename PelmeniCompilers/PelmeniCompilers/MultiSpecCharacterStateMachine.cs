@@ -35,6 +35,11 @@ public class MultiSpecCharacterStateMachine
 
         _positionBegin++;
     }
+    
+    public void Flush()
+    {
+       UploadToken();
+    }
 
     private State ProcessFreeState(char symbol)
     {
@@ -44,7 +49,7 @@ public class MultiSpecCharacterStateMachine
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.StringLiteral;
-            
+
             case '\'':
                 UploadToken();
                 _buffer.Append(symbol);
@@ -54,12 +59,12 @@ public class MultiSpecCharacterStateMachine
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.Delimiter;
-            
+
             case ';':
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.Free;
-            
+
             case ',':
                 UploadToken();
                 _buffer.Append(symbol);
@@ -105,17 +110,17 @@ public class MultiSpecCharacterStateMachine
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.StringLiteral;
-            
+
             case '\'':
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.CharLiteral;
-            
+
             case ';':
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.Free;
-            
+
             case ',':
                 UploadToken();
                 _buffer.Append(symbol);
@@ -128,7 +133,7 @@ public class MultiSpecCharacterStateMachine
                     _buffer.Append(symbol);
                     return State.Free;
                 }
-                
+
                 if (char.IsDigit(symbol))
                 {
                     UploadToken();
@@ -157,11 +162,6 @@ public class MultiSpecCharacterStateMachine
     {
         switch (symbol)
         {
-            case ';':
-                UploadToken();
-                _buffer.Append(symbol);
-                return State.Free;
-
             case '"':
                 _buffer.Append('"');
                 UploadToken();
@@ -172,16 +172,11 @@ public class MultiSpecCharacterStateMachine
                 return _state;
         }
     }
-    
+
     private State ProcessCharLiteral(char symbol)
     {
         switch (symbol)
         {
-            case ';':
-                UploadToken();
-                _buffer.Append(symbol);
-                return State.Free;
-
             case '\'':
                 _buffer.Append('\'');
                 UploadToken();
@@ -206,12 +201,12 @@ public class MultiSpecCharacterStateMachine
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.StringLiteral;
-            
+
             case '\'':
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.CharLiteral;
-            
+
             case ',':
                 UploadToken();
                 _buffer.Append(symbol);
@@ -258,7 +253,7 @@ public class MultiSpecCharacterStateMachine
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.RealLiteral;
-            
+
             case ',':
                 UploadToken();
                 _buffer.Append(symbol);
@@ -295,7 +290,7 @@ public class MultiSpecCharacterStateMachine
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.Free;
-            
+
             case ',':
                 UploadToken();
                 _buffer.Append(symbol);

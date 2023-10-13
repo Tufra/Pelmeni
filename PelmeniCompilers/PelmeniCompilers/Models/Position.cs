@@ -1,18 +1,6 @@
 ﻿namespace PelmeniCompilers.Models;
 
-public record Position
+public record Position(long LineNumber, int PositionBegin)
 {
-    public long LineNumber { get; protected set; }
-    public int PositionBegin { get; protected set; }
-
-    public Position(long lineNumber, int positionBegin)
-    {
-        LineNumber = lineNumber;
-        PositionBegin = positionBegin;
-    }
-
-    /*public override string ToString()
-    {
-        return $"({LineNumber}:{PositionBegin})";
-    }*/
+    
 }
