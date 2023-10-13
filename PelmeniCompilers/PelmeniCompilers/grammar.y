@@ -1,3 +1,5 @@
+%namespace Parser
+
 %output=Parser.cs
 %partial 
 %sharetokens 
