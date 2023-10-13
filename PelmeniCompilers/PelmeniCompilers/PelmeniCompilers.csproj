@@ -5,7 +5,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <WarningsAsErrors>nullable</WarningsAsErrors>
+        <DefineConstants>EXPORT_GPPG</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,6 +13,10 @@
         <Content Include="ProgramSamples/*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ShiftReduceParser\" />
     </ItemGroup>
 
 </Project>

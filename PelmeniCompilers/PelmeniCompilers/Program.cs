@@ -9,14 +9,10 @@ namespace PelmeniCompilers;
 
 internal static class Program
 {
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
-        var fileContent = "";
-        Parser.Default.ParseArguments<CommandLineOptions>(args).WithParsedAsync(async options =>
-        {
-            using var file = new StreamReader(options.PathToFileToParse);
-            fileContent = await file.ReadToEndAsync();
-        });
+        using var file = new StreamReader(args[0]);
+        var fileContent = await file.ReadToEndAsync();
         RunLexerAnalyzer(fileContent);
     }
 
@@ -30,7 +26,7 @@ internal static class Program
         }
 
         stateMachine.Flush();
-        
+
         Console.WriteLine(string.Join("\n", stateMachine.Tokens));
     }
 }
