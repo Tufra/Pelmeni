@@ -5,6 +5,8 @@
 %sharetokens 
 %start Program
 
+%YYSTYPE Node
+
 /* DEFINITION SEQUENCE */
 
 // Identifier
@@ -36,16 +38,13 @@
 %token THEN // then
 %token ELSE // else
 %token ROUTINE // routine
+%token REF // ref
 
 // Types
 %token INTEGER // integer
 %token REAL // real
 %token CHAR // char
 %token BOOLEAN // boolean
-%token INTEGER_REF // Integer
-%token REAL_REF // Real
-%token CHAR_REF // Char
-%token BOOLEAN_REF // Boolean
 
 // DELIMITERS
 %token DOT // .
@@ -145,6 +144,7 @@ Type
     : PrimitiveType { $$ = $1; }
     | ArrayType     { $$ = $1; }
     | RecordType    { $$ = $1; }
+    | RefType       { $$ = $1; }
     | IDENTIFIER    { $$ = $1; }
     ;
 
@@ -154,10 +154,6 @@ PrimitiveType
     | REAL          { $$ = $1; }
     | BOOLEAN       { $$ = $1; }
     | CHAR          { $$ = $1; }
-    | INTEGER_REF   { $$ = $1; }
-    | REAL_REF      { $$ = $1; }
-    | BOOLEAN_REF   { $$ = $1; }
-    | CHAR_REF      { $$ = $1; }
     ;
 
 // ArrayType : array [ Expression ] Type
@@ -168,6 +164,10 @@ ArrayType
 // RecordType : record RecordVariableDeclarations end
 RecordType
     : RECORD RecordVariableDeclarations END { $$ = MakeRecordType($2); } // Variables
+    ;
+
+RefType
+    : REF PrimitiveType { $$ = MakeRef($2); }
     ;
 
 // RecordVariableDeclarations : { VariableDeclaration }
