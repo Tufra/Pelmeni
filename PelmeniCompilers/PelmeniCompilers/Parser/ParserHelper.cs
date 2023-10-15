@@ -74,196 +74,244 @@ public partial class Parser
 
     private Node MakeRecordType(Node i)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.RecordType, i.Children);
+        return node;
     }
 
     private Node MakeVariableDeclarations()
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.RecordVariableDeclarations, new List<Node>() { });
+        return node;
     }
 
     private Node AddToVariableDeclarations(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        i.Children!.Add(i1);
+        return i;
     }
 
     private Node MakeBody()
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Body, new List<Node>() { });
+        return node;
     }
 
     private Node AddSimpleDeclarationToBody(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        i.Children!.Add(i1);
+        return i;
     }
 
     private Node AddStatementToBody(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        i.Children!.Add(i1);
+        return i;
     }
 
     private Node MakeAssignment(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Assignment, new List<Node>() { i, i1});
+        return node;
     }
 
     private Node MakeIncrement(Node i)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Increment, new List<Node>() { i });
+        return node;
     }
 
     private Node MakeDecrement(Node i)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Decrement, new List<Node>() { i });
+        return node;
     }
 
     private Node MakeRoutineCall(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.RoutineCall, new List<Node>() { i, i1 });
+        return node;
     }
 
     private Node MakeRoutineCallParameters()
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.RoutineCallParameters, new List<Node>() { });
+        return node;
     }
 
     private Node MakeRoutineCallParameters(Node i)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.RoutineCallParameters, i.Children);
+        return node;
     }
 
     private Node MakeExpressions(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Expressions, new List<Node>() { i });
+        node.Children!.AddRange(i1.Children!);
+        return node;
     }
 
     private Node MakeExpressionTail()
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.ExpressionsTail, new List<Node>() { });
+        return node;
     }
 
     private Node AddToExpressionTail(Node p0, Node p1)
     {
-        throw new NotImplementedException();
+        p0.Children!.Add(p1);
+        return p0;
     }
 
     private Node MakeWhileLoop(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.WhileLoop, new List<Node>() { i, i1 });
+        return node;
     }
 
     private Node MakeForLoop(Node i, Node i1, Node i2)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.ForLoop, new List<Node>() { i, i1, i2 });
+        return node;
     }
 
     private Node MakeRange(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Range, new List<Node>() { i, i1 });
+        return node;
     }
 
     private Node MakeRangeExpression(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.RangeExpression, new List<Node>() { i, i1 });
+        return node;
     }
 
     private Node MakeForEachLoop(Node i, Node i1, Node i2)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.ForeachLoop, new List<Node>() { i, i1, i2 });
+        return node;
     }
 
     private Node MakeIfStatement(Node i, Node i1, Node i2)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.IfStatement, new List<Node>() { i, i1, i2 });
+        return node;
     }
 
     private Node MakeExpression(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Expression, new List<Node>() { i });
+        node.Children!.AddRange(i1.Children!);
+        return node;
     }
 
     private Node AddToExpressionTail(Node p0, Node p1, Node i)
     {
-        throw new NotImplementedException();
+        i.Children!.Add(p0);
+        i.Children!.Add(p1);
+        return i;
     }
 
     private Node MakeRelation(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Relation, new List<Node>() { i });
+        node.Children!.AddRange(i1.Children!);
+        return node;
     }
 
     private Node MakeRelationTail()
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.RelationTail, new List<Node>() { });
+        return node;
     }
 
     private Node MakeRelationTail(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.RelationTail, new List<Node>() { i, i1 });
+        return node;
     }
 
     private Node MakeSimple(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Simple, new List<Node>() { i });
+        node.Children!.AddRange(i1.Children!);
+        return node;
     }
 
     private Node MakeSimpleTail()
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.SimpleTail, new List<Node>() { });
+        return node;
     }
 
     private Node AddToSimpleTail(Node p0, Node p1, Node p2)
     {
-        throw new NotImplementedException();
+        p2.Children!.Add(p0);
+        p2.Children!.Add(p1);
+        return p2;
     }
 
     private Node MakeFactor(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Factor, new List<Node>() { i });
+        node.Children!.AddRange(i1.Children!);
+        return node;
     }
 
     private Node MakeFactorTail()
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.FactorTail, new List<Node>() { });
+        return node;
     }
 
     private Node AddToFactorTail(Node p0, Node p1, Node p2)
     {
-        throw new NotImplementedException();
+        p2.Children!.Add(p0);
+        p2.Children!.Add(p1);
+        return p2;
     }
 
     private Node MakeSummand(Node p0)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Summand, new List<Node>() { p0 });
+        return node;
     }
 
     private Node MakeModifiablePrimary(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.ModifiablePrimary, new List<Node>() { i });
+        node.Children!.AddRange(i1.Children!);
+        return node;
     }
 
     private Node MakeModifiablePrimaryTail()
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.ModifiablePrimaryTail, new List<Node>() { });
+        return node;
     }
 
     private Node AddToModifiablePrimaryTail(Node p0, Node p1)
     {
-        throw new NotImplementedException();
+        p1.Children!.Add(p0);
+        return p1;
     }
 
     private Node MakeMemberAccess(Node i)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.MemberAccess, new List<Node>() { i });
+        return node;
     }
 
     private Node MakeArrayAccess(Node i)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.ArrayAccess, new List<Node>() { i });
+        return node;
     }
 
-    private Node MakeRef(Node node)
+    private Node MakeRef(Node type)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.RefType, new List<Node>() { type });
+        return node;
     }
 }

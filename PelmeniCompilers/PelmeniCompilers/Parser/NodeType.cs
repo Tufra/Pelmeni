@@ -18,6 +18,7 @@ public enum NodeType
     PrimitiveType,
     ArrayType,
     RecordType,
+    RefType,
     RecordVariableDeclarations,
     Body,
     Statement,
