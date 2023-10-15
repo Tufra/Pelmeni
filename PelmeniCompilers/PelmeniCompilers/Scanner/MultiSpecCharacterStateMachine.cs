@@ -97,6 +97,8 @@ public class MultiSpecCharacterStateMachine : AbstractScanner<Node, LexLocation>
                 return Parser.Tokens.ELSE;
             case "ROUTINE":
                 return Parser.Tokens.ROUTINE;
+            case "REF":
+                return Parser.Tokens.REF;
             case "INTEGER":
                 return Parser.Tokens.INTEGER;
             case "REAL":
@@ -437,9 +439,9 @@ public class MultiSpecCharacterStateMachine : AbstractScanner<Node, LexLocation>
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.Free;
-
+            
             default:
-                if (Regex.IsMatch(symbol.ToString(), @"[=\+-<>*/%\.]"))
+                if (Regex.IsMatch(symbol.ToString(), @"\=\+\-\<\>\*\/\%"))
                 {
                     UploadToken();
                     _buffer.Append(symbol);
@@ -451,10 +453,26 @@ public class MultiSpecCharacterStateMachine : AbstractScanner<Node, LexLocation>
                     ProcessParenthesis(symbol);
                     return State.Free;
                 }
+                
+                if (_buffer[^1] == '.')
+                {
+                    ProcessDot();
+                    return State.Free;
+                }
 
                 _buffer.Append(symbol);
                 return _state;
         }
+    }
+
+    private void ProcessDot()
+    {
+        _buffer.Remove(_buffer.Length - 1, 1);
+        _positionEnd--;
+        UploadToken();
+        _buffer.Append("..");
+        _positionEnd++;
+        UploadToken();
     }
 
     private void ProcessWhiteSpace(char symbol)
@@ -510,15 +528,15 @@ public class MultiSpecCharacterStateMachine : AbstractScanner<Node, LexLocation>
 
         _buffer.Clear();
     }
-}
 
-public enum State
-{
-    Free,
-    StringLiteral,
-    Delimiter,
-    Operator,
-    IntegerLiteral,
-    RealLiteral,
-    CharLiteral
+    private enum State
+    {
+        Free,
+        StringLiteral,
+        Delimiter,
+        Operator,
+        IntegerLiteral,
+        RealLiteral,
+        CharLiteral
+    }
 }

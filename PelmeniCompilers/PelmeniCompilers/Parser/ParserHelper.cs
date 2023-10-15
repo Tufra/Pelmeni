@@ -10,57 +10,66 @@ public partial class Parser
 
     private Node MakeProgram(Node i)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Program, new List<Node>() { i });
+        return node;
     }
 
-    private Node AddToProgram(Node i, Node i1)
+    private Node AddToProgram(Node program, Node child)
     {
-        throw new NotImplementedException();
+        program.Children!.Add(child);
+        return program;
     }
 
     private Node MakeVariableDeclaration(Node i, Node i1, Node i2)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.VariableDeclaration, new List<Node>() { i, i1, i2 });
+        return node;
     }
 
     private Node MakeTypeDeclaration(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        return new Node(NodeType.TypeDeclaration, new List<Node>() { i, i1 });
     }
 
     private Node MakeRoutineDeclaration(Node i, Node i1, Node i2, Node i3)
     {
-        throw new NotImplementedException();
+        return new Node(NodeType.RoutineDeclaration, new List<Node>() { i, i1, i2, i3 });
     }
 
     private Node MakeParameters()
     {
-        throw new NotImplementedException();
+        return new Node(NodeType.Parameters, new List<Node>() { });
     }
 
     private Node MakeParameters(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.Parameters, new List<Node>() { i });
+        node.Children!.AddRange(i1.Children!);
+        return node;
     }
 
     private Node MakeParametersTail()
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.ParametersTail, new List<Node>() { });
+        return node;
     }
 
     private Node AddToParametersTail(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        i.Children!.Add(i1);
+        return i;
     }
 
     private Node MakeParameterDeclaration(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.ParameterDeclaration, new List<Node>() { i, i1 });
+        return node;
     }
 
     private Node MakeArrayType(Node i, Node i1)
     {
-        throw new NotImplementedException();
+        var node = new Node(NodeType.ArrayType, new List<Node>() { i, i1 });
+        return node;
     }
 
     private Node MakeRecordType(Node i)
@@ -249,6 +258,11 @@ public partial class Parser
     }
 
     private Node MakeArrayAccess(Node i)
+    {
+        throw new NotImplementedException();
+    }
+
+    private Node MakeRef(Node node)
     {
         throw new NotImplementedException();
     }

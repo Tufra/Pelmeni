@@ -29,10 +29,11 @@ internal static class Program
 
         Console.WriteLine(string.Join("\n", stateMachine.Tokens));
 
-        
-        while (stateMachine.yylex() != 3)
+        var code = stateMachine.yylex();
+        while (code != 3)
         {
-            Console.WriteLine(stateMachine.yylval);
+            Console.WriteLine($"{stateMachine.yylval} : {((Parser.Tokens)code).ToString()}");
+            code = stateMachine.yylex();
         } 
     
     }
