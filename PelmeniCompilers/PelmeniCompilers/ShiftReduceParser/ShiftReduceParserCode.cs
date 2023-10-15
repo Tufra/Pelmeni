@@ -606,7 +606,7 @@ namespace QUT.Gppg {
     /// will expect to deal with this type.
     /// </summary>
 #if EXPORT_GPPG
-    public class LexLocation : IMerge<LexLocation>
+    public record LexLocation : IMerge<LexLocation>
 #else
     [SuppressMessage( "Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses" )]
     internal class LexLocation : IMerge<LexLocation>

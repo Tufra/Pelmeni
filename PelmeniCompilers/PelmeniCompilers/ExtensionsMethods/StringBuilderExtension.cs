@@ -3,12 +3,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using PelmeniCompilers.Models;
 using PelmeniCompilers.Values;
+using QUT.Gppg;
 
 namespace PelmeniCompilers.ExtensionsMethods;
 
 public static class StringBuilderExtension
 {
-    public static Token? GetToken(this StringBuilder stringBuilder, Position position)
+    public static Token? GetToken(this StringBuilder stringBuilder, int lineNumber, int positionEnd)
     {
         var tokenString = stringBuilder.ToString();
 
@@ -17,11 +18,11 @@ public static class StringBuilderExtension
 
         var token = new Token()
         {
-            Position = position,
+            Location = new LexLocation(lineNumber, positionEnd - tokenString.Length, lineNumber, positionEnd),
             Value = tokenString,
             TokenType = TokenType.Unrecognized
         };
-        
+
         if (IsIdentifier(tokenString))
         {
             token.TokenType = TokenType.Identifier;
@@ -41,26 +42,26 @@ public static class StringBuilderExtension
         {
             token.TokenType = TokenType.Literal;
         }
-        
+
         if (IsDelimiter(tokenString))
         {
             token.TokenType = TokenType.Delimiter;
         }
-        
+
         if (IsOperator(tokenString))
         {
             token.TokenType = TokenType.Operator;
         }
 
         if (token.TokenType == TokenType.Unrecognized)
-            Console.WriteLine($"Token \"{tokenString}\" with {position} unrecognized");
+            Console.WriteLine($"Token \"{tokenString}\" with {token.Location} unrecognized");
 
         return token;
     }
 
     private static bool IsIdentifier(string tokenString) =>
         Regex.IsMatch(tokenString, @"[_\w][\w\d_]*");
-    
+
     private static bool IsKeyWord(string tokenString) =>
         Constants.KeyWords.Contains(tokenString);
 

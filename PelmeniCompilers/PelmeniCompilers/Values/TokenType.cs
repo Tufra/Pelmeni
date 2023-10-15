@@ -8,6 +8,5 @@ public enum TokenType
     KeyWord,
     Delimiter,
     Operator,
-    WhiteSpace,
     Literal
 }

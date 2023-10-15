@@ -28,5 +28,12 @@ internal static class Program
         stateMachine.Flush();
 
         Console.WriteLine(string.Join("\n", stateMachine.Tokens));
+
+        
+        while (stateMachine.yylex() != 3)
+        {
+            Console.WriteLine(stateMachine.yylval);
+        } 
+    
     }
 }

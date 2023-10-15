@@ -1,23 +1,165 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 using PelmeniCompilers.ExtensionsMethods;
 using PelmeniCompilers.Models;
+using PelmeniCompilers.Parser;
 using PelmeniCompilers.Values;
+using QUT.Gppg;
 
 namespace PelmeniCompilers;
 
-public class MultiSpecCharacterStateMachine
+public class MultiSpecCharacterStateMachine : AbstractScanner<Node, LexLocation>
 {
     private readonly StringBuilder _buffer;
     private int _lineNumber = 1;
-    private int _positionBegin = 1;
+    private int _positionEnd = 1;
     private State _state = State.Free;
+
+    private IEnumerator<Token>? _tokensEnumerator = null;
+
+    public override LexLocation yylloc { get; set; }
+
 
     public List<Token> Tokens { get; private set; } = new();
 
     public MultiSpecCharacterStateMachine()
     {
         _buffer = new StringBuilder();
+    }
+
+    public override int yylex()
+    {
+        if (Tokens.Count == 0)
+            throw new InvalidOperationException();
+
+        _tokensEnumerator ??= Tokens.GetEnumerator();
+
+        if (_tokensEnumerator.MoveNext())
+        {
+            var token = _tokensEnumerator.Current;
+            yylloc = token.Location;
+            yylval = new Node(NodeType.Token, token);
+            return (int)TokenValueToGppgToken(token);
+        }
+
+
+        return (int)Parser.Tokens.EOF;
+    }
+
+    private static Parser.Tokens TokenValueToGppgToken(Token token)
+    {
+        switch (token.Value.ToUpper())
+        {
+            case var intLiteral when Regex.IsMatch(intLiteral, @"^\d+$"):
+                return Parser.Tokens.INTEGER_LITERAL;
+            case var realLiteral when Regex.IsMatch(realLiteral, @"^\d+.\d+$"):
+                return Parser.Tokens.REAL_LITERAL;
+            case var charLiteral when Regex.IsMatch(charLiteral, "@^'.'"):
+                return Parser.Tokens.CHAR_LITERAL;
+            case var stringLiteral when Regex.IsMatch(stringLiteral, "\".*\""):
+                return Parser.Tokens.STRING_LITERAL;
+            case "TRUE":
+                return Parser.Tokens.TRUE;
+            case "FALSE":
+                return Parser.Tokens.FALSE;
+            case "IF":
+                return Parser.Tokens.IF;
+            case "FOREACH":
+                return Parser.Tokens.FOREACH;
+            case "FROM":
+                return Parser.Tokens.FROM;
+            case "END":
+                return Parser.Tokens.END;
+            case "FOR":
+                return Parser.Tokens.FOR;
+            case "LOOP":
+                return Parser.Tokens.LOOP;
+            case "VAR":
+                return Parser.Tokens.VAR;
+            case "IS":
+                return Parser.Tokens.IS;
+            case "TYPE":
+                return Parser.Tokens.TYPE;
+            case "RECORD":
+                return Parser.Tokens.RECORD;
+            case "ARRAY":
+                return Parser.Tokens.ARRAY;
+            case "WHILE":
+                return Parser.Tokens.WHILE;
+            case "IN":
+                return Parser.Tokens.IN;
+            case "REVERSE":
+                return Parser.Tokens.REVERSE;
+            case "THEN":
+                return Parser.Tokens.THEN;
+            case "ELSE":
+                return Parser.Tokens.ELSE;
+            case "ROUTINE":
+                return Parser.Tokens.ROUTINE;
+            case "INTEGER":
+                return Parser.Tokens.INTEGER;
+            case "REAL":
+                return Parser.Tokens.REAL;
+            case "CHAR":
+                return Parser.Tokens.CHAR;
+            case "BOOLEAN":
+                return Parser.Tokens.BOOLEAN;
+            case ".":
+                return Parser.Tokens.DOT;
+            case ",":
+                return Parser.Tokens.COMMA;
+            case ":":
+                return Parser.Tokens.COLON;
+            case ";":
+                return Parser.Tokens.SEMICOLON;
+            case ":=":
+                return Parser.Tokens.ASSIGNMENT_OP;
+            case ")":
+                return Parser.Tokens.CLOSE_PARENTHESIS;
+            case "(":
+                return Parser.Tokens.OPEN_PARENTHESIS;
+            case "]":
+                return Parser.Tokens.CLOSE_BRACKET;
+            case "[":
+                return Parser.Tokens.OPEN_BRACKET;
+            case "=":
+                return Parser.Tokens.EQUAL;
+            case "++":
+                return Parser.Tokens.INCREMENT;
+            case "--":
+                return Parser.Tokens.DECREMENT;
+            case "-":
+                return Parser.Tokens.MINUS;
+            case "+":
+                return Parser.Tokens.PLUS;
+            case "*":
+                return Parser.Tokens.MULTIPLY;
+            case "/":
+                return Parser.Tokens.DIVIDE;
+            case "%":
+                return Parser.Tokens.MOD;
+            case "<=":
+                return Parser.Tokens.LESS_EQUAL;
+            case ">=":
+                return Parser.Tokens.GREATER_EQUAL;
+            case "<":
+                return Parser.Tokens.LESS;
+            case ">":
+                return Parser.Tokens.GREATER;
+            case "<>":
+                return Parser.Tokens.NOT_EQUAL;
+            case "AND":
+                return Parser.Tokens.AND;
+            case "OR":
+                return Parser.Tokens.OR;
+            case "XOR":
+                return Parser.Tokens.XOR;
+            case "..":
+                return Parser.Tokens.RANGE;
+            default:
+                return Parser.Tokens.IDENTIFIER;
+        }
     }
 
     public void Process(char symbol)
@@ -33,12 +175,12 @@ public class MultiSpecCharacterStateMachine
             State.RealLiteral => ProcessRealLiteral(symbol)
         };
 
-        _positionBegin++;
+        _positionEnd++;
     }
-    
+
     public void Flush()
     {
-       UploadToken();
+        UploadToken();
     }
 
     private State ProcessFreeState(char symbol)
@@ -322,19 +464,21 @@ public class MultiSpecCharacterStateMachine
 
         UploadToken();
 
-        Tokens.Add(new()
+        /*Tokens.Add(new()
         {
-            Position = new Position(_lineNumber, _positionBegin),
+            Location = new LexLocation(_lineNumber, _positionEnd - symbol.ToString().Length, _lineNumber, _positionEnd),
             TokenType = TokenType.WhiteSpace,
             Value = symbol.ToString().Replace("\n", "\\n").Replace("\t", "\\t").Replace("\r", "\\r")
-        });
+        });*/
+
 
         if (symbol == '\n')
         {
             _lineNumber++;
-            _positionBegin = 1;
+            _positionEnd = 1;
         }
 
+        _positionEnd--;
         _buffer.Clear();
     }
 
@@ -347,7 +491,7 @@ public class MultiSpecCharacterStateMachine
 
         Tokens.Add(new()
         {
-            Position = new Position(_lineNumber, _positionBegin),
+            Location = new LexLocation(_lineNumber, _positionEnd - symbol.ToString().Length, _lineNumber, _positionEnd),
             TokenType = TokenType.Delimiter,
             Value = symbol.ToString()
         });
@@ -357,9 +501,13 @@ public class MultiSpecCharacterStateMachine
 
     private void UploadToken()
     {
-        var token = _buffer.GetToken(new Position(_lineNumber, _positionBegin));
+        var token = _buffer.GetToken(_lineNumber, _positionEnd);
         if (token is not null)
+        {
+            _positionEnd++;
             Tokens.Add(token);
+        }
+
         _buffer.Clear();
     }
 }
