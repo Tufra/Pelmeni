@@ -35,14 +35,15 @@ public static class StringBuilderExtension
         if (IsOperator(tokenString)) token.TokenType = TokenType.Operator;
 
         if (token.TokenType == TokenType.Unrecognized)
-            Console.WriteLine($"Token \"{tokenString}\" with {token.Location} unrecognized");
+            throw new InvalidOperationException($"Token \"{tokenString}\" with {token.Location} unrecognized");
+            // Console.WriteLine($"Token \"{tokenString}\" with {token.Location} unrecognized");
 
         return token;
     }
 
     private static bool IsIdentifier(string tokenString)
     {
-        return Regex.IsMatch(tokenString, @"[_\w][\w\d_]*");
+        return Regex.IsMatch(tokenString, @"^[_\w][\w\d_]*$");
     }
 
     private static bool IsKeyWord(string tokenString)

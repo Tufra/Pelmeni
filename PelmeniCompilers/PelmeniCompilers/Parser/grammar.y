@@ -39,6 +39,7 @@
 %token ELSE // else
 %token ROUTINE // routine
 %token REF // ref
+%token RETURN // return
 
 // Types
 %token INTEGER // integer
@@ -71,6 +72,7 @@
 %token LESS // <
 %token GREATER // >
 %token NOT_EQUAL // <>
+%token NOT // not
 %token AND // and
 %token OR // or
 %token XOR // xor
@@ -99,7 +101,13 @@ SimpleDeclaration
     ;
 
 VariableDeclaration
-    : VAR IDENTIFIER TypeTail VariableInitializationTail SEMICOLON   { $$ = MakeVariableDeclaration($2, $3, $4) } // Identifier, type, value
+    : VAR IDENTIFIER TypeTail VariableInitializationTail SEMICOLON   { $$ = MakeVariableDeclaration($2, $3, $4); } // Identifier, type, value
+    | VAR IDENTIFIER IdentifiersTail TypeTail SEMICOLON { $$ = MakeVariablesDeclaration($2, $3, $4); }
+    ;
+
+IdentifiersTail
+    : /* empty */ { $$ = MakeIdentifiersTail(); }
+    | COMMA IDENTIFIER IdentifiersTail { $$ = AddToIdentifiersTail($3, $2); }
     ;
 
 // VariableTypeTail : [ ':' Type ]
@@ -110,7 +118,8 @@ TypeTail
 
 // VariableInitializationTail : is Expression
 VariableInitializationTail
-    : IS Expression { $$ = $2; }
+    : /* empty */ { $$ = null; }
+    | IS Expression { $$ = $2; }
     ;
 
 // TypeDeclaration : type Identifier is Type
@@ -132,7 +141,7 @@ Parameters
 // ParametersTail : { , ParameterDeclaration }
 ParametersTail
     : /* empty */                               { $$ = MakeParametersTail(); }
-    | COMMA ParameterDeclaration ParametersTail { $$ = AddToParametersTail($3, $1); } // Tail, Parameter
+    | COMMA ParameterDeclaration ParametersTail { $$ = AddToParametersTail($3, $2); } // Tail, Parameter
     ;
 
 // ParameterDeclaration : Identifier : Type
@@ -159,7 +168,17 @@ PrimitiveType
 
 // ArrayType : array [ Expression ] Type
 ArrayType
-    : ARRAY OPEN_BRACKET Expression CLOSE_BRACKET Type { $$ = MakeArrayType($5, $3); } // Type, size
+    : ARRAY OPEN_BRACKET CompoundSize CLOSE_BRACKET Type { $$ = MakeArrayType($5, $3); } // Type, size
+    | ARRAY OPEN_BRACKET CLOSE_BRACKET Type { $$ = MakeArrayType($4); }
+    ;
+
+CompoundSize
+    : Expression CompoundSizeTail { $$ = MakeCompoundSize($1, $2); }
+    ;
+
+CompoundSizeTail
+    : /* empty */ { $$ = MakeCompoundSizeTail(); }
+    | COMMA Expression CompoundSizeTail { $$ = AddToCompoundSizeTail($3, $2); }
     ;
 
 // RecordType : record RecordVariableDeclarations end
@@ -173,8 +192,8 @@ RefType
 
 // RecordVariableDeclarations : { VariableDeclaration }
 RecordVariableDeclarations
-    : /* empty */                                       { $$ = MakeVariableDeclarations(); }
-    | RecordVariableDeclarations VariableDeclaration    { $$ = AddToVariableDeclarations($1, $2); } // Declarations, Declaration
+    : /* empty */                                       { $$ = MakeRecordVariableDeclarations(); }
+    | RecordVariableDeclarations VariableDeclaration    { $$ = AddToRecordVariableDeclarations($1, $2); } // Declarations, Declaration
     ;
 
 // Body : { SimpleDeclaration | Statement }
@@ -190,6 +209,7 @@ Statement
     | Increment     SEMICOLON   { $$ = $1; }
     | Decrement     SEMICOLON   { $$ = $1; }
     | RoutineCall   SEMICOLON   { $$ = $1; }
+    | Return        SEMICOLON   { $$ = $1; }
     | WhileLoop                 { $$ = $1; }
     | ForLoop                   { $$ = $1; }
     | ForeachLoop               { $$ = $1; }
@@ -214,9 +234,13 @@ RoutineCall
     : IDENTIFIER RoutineCallParameters  { $$ = MakeRoutineCall($1, $2); } // Identifier, Parameters
     ;
 
+Return
+    : RETURN Expression { $$ = MakeReturn($2); }
+    ;
+
 // RoutineCallParameters : [ ( Expressions ) ]
 RoutineCallParameters
-    : /* empty */                                       { $$ = MakeRoutineCallParameters(); }
+    : OPEN_PARENTHESIS             CLOSE_PARENTHESIS    { $$ = MakeRoutineCallParameters(); }
     | OPEN_PARENTHESIS Expressions CLOSE_PARENTHESIS    { $$ = MakeRoutineCallParameters($2); } // Expressions
     ;
 
@@ -287,8 +311,9 @@ ExpressionTail
     ;
 
 // Relation : Simple RelationTail
-Relation 
+Relation
     : Simple RelationTail { $$ = MakeRelation($1, $2); } // Simple, RelationTail
+    | NOT Relation { $$ = MakeRelation($1, $2); }
     ;
     
 // RelationTail : [ ( < | <= | > | >= | = | /= ) Simple ]    
@@ -342,6 +367,7 @@ Primary
     | TRUE              { $$ = $1; }
     | FALSE             { $$ = $1; }
     | ModifiablePrimary { $$ = $1; }
+    | RoutineCall       { $$ = $1; }
     ;
 
 // ModifiablePrimary : Identifier ModifiablePrimaryTail 
@@ -361,7 +387,7 @@ MemberAccess
     ;
 
 ArrayAccess
-    : OPEN_BRACKET Expression CLOSE_BRACKET { $$ = MakeArrayAccess($2); } // Expression
+    : OPEN_BRACKET CompoundSize CLOSE_BRACKET { $$ = MakeArrayAccess($2); } // Expression
     ;
 
 %%

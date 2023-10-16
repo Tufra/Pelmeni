@@ -1,7 +1,7 @@
 type Node is record
-    Value: Integer;
-    Next: Node;
-end
+    var Value: Integer;
+    var Next: Node;
+end;
 
 routine CopyNode(original: Node): Node is
 	var copiedNode: Node;
@@ -14,9 +14,6 @@ end
 
 routine Main() is
 	var node1, node2: Node;
-
-  New(node1);
-  New(node2);
 
   node1.Value := 1;
   node2.Value := 2;

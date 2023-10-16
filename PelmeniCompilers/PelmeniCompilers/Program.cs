@@ -16,20 +16,25 @@ internal static class Program
 
     private static void Run(string programContent)
     {
-        var scanner = new Scanner.Scanner();
-
-        scanner.Scan(programContent);
-
-        /*var code = scanner.yylex();
-        while (code != 3)
-        {
-            Console.WriteLine($"{scanner.yylval} : {((Tokens)code).ToString()}");
-            code = scanner.yylex();
-        }*/
-
-        var parser = new Parser.Parser(scanner);
         try
         {
+            var scanner = new Scanner.Scanner();
+
+            scanner.Scan(programContent);
+
+            // foreach (var i in scanner.Tokens)
+            //     Console.WriteLine(i);
+
+
+            /*var code = scanner.yylex();
+            while (code != 3)
+            {
+                Console.WriteLine($"{scanner.yylval} : {((Tokens)code).ToString()}");
+                code = scanner.yylex();
+            }*/
+
+            var parser = new Parser.Parser(scanner);
+
             parser.Parse();
             
             Tree.Write(
@@ -58,7 +63,7 @@ internal static class Program
                 }, 
                 new DisplaySettings { IndentSize = 2 });
         }
-        catch (SyntaxParserError e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
         }

@@ -1,7 +1,7 @@
 routine Main() is
 	if 5 = 5 
 	then
-		if 3 != 3
+		if 3 <> 3
 		then
 			var variable1: integer;
 		else 

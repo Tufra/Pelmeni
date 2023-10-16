@@ -1,4 +1,4 @@
-routine PrintArray(arr: array[5] char) is
+routine PrintArray(arr: array[] char) is
   for i in 0..arr.length 
   loop
 	  write(arr[i]);

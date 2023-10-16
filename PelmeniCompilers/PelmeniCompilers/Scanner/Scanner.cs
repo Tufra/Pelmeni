@@ -42,7 +42,7 @@ public class Scanner : AbstractScanner<Node, LexLocation>
 
      public override void yyerror(string format, params object[] args)
      {
-         throw new SyntaxParserError(format);
+         throw new SyntaxParserError(format + yylloc);
      }
 
      private static Tokens TokenValueToGppgToken(Token token)
@@ -83,6 +83,8 @@ public class Scanner : AbstractScanner<Node, LexLocation>
                 return Parser.Tokens.RECORD;
             case "ARRAY":
                 return Parser.Tokens.ARRAY;
+            case "RETURN":
+                return Parser.Tokens.RETURN;
             case "WHILE":
                 return Parser.Tokens.WHILE;
             case "IN":
@@ -149,6 +151,8 @@ public class Scanner : AbstractScanner<Node, LexLocation>
                 return Parser.Tokens.GREATER;
             case "<>":
                 return Parser.Tokens.NOT_EQUAL;
+            case "NOT":
+                return Parser.Tokens.NOT;
             case "AND":
                 return Parser.Tokens.AND;
             case "OR":
@@ -214,6 +218,12 @@ public class Scanner : AbstractScanner<Node, LexLocation>
             case ',':
                 UploadToken();
                 _buffer.Append(symbol);
+                return State.Free;
+
+            case '.':
+                UploadToken();
+                _buffer.Append(symbol);
+                UploadToken();
                 return State.Free;
 
             default:

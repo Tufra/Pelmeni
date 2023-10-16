@@ -4,12 +4,11 @@
 
 // GPPG version 1.5.2
 // Machine:  DESKTOP-K87RABG
-// DateTime: 16.10.2023 19:14:09
+// DateTime: 17.10.2023 0:46:26
 // UserName: under
-// Input file <../grammar.y - 16.10.2023 19:13:04>
+// Input file <../grammar.y - 17.10.2023 0:45:59>
 
-// options: lines
-
+// options: conflicts lines conflicts
 
 using System.CodeDom.Compiler;
 using System.Globalization;
@@ -22,27 +21,28 @@ public enum Tokens {error=2,EOF=3,IDENTIFIER=4,INTEGER_LITERAL=5,REAL_LITERAL=6,
     CHAR_LITERAL=7,STRING_LITERAL=8,TRUE=9,FALSE=10,IF=11,FOREACH=12,
     FROM=13,END=14,FOR=15,LOOP=16,VAR=17,IS=18,
     TYPE=19,RECORD=20,ARRAY=21,WHILE=22,IN=23,REVERSE=24,
-    THEN=25,ELSE=26,ROUTINE=27,REF=28,INTEGER=29,REAL=30,
-    CHAR=31,BOOLEAN=32,DOT=33,COMMA=34,COLON=35,SEMICOLON=36,
-    ASSIGNMENT_OP=37,CLOSE_PARENTHESIS=38,OPEN_PARENTHESIS=39,CLOSE_BRACKET=40,OPEN_BRACKET=41,EQUAL=42,
-    INCREMENT=43,DECREMENT=44,MINUS=45,PLUS=46,MULTIPLY=47,DIVIDE=48,
-    MOD=49,LESS_EQUAL=50,GREATER_EQUAL=51,LESS=52,GREATER=53,NOT_EQUAL=54,
-    AND=55,OR=56,XOR=57,RANGE=58};
+    THEN=25,ELSE=26,ROUTINE=27,REF=28,RETURN=29,INTEGER=30,
+    REAL=31,CHAR=32,BOOLEAN=33,DOT=34,COMMA=35,COLON=36,
+    SEMICOLON=37,ASSIGNMENT_OP=38,CLOSE_PARENTHESIS=39,OPEN_PARENTHESIS=40,CLOSE_BRACKET=41,OPEN_BRACKET=42,
+    EQUAL=43,INCREMENT=44,DECREMENT=45,MINUS=46,PLUS=47,MULTIPLY=48,
+    DIVIDE=49,MOD=50,LESS_EQUAL=51,GREATER_EQUAL=52,LESS=53,GREATER=54,
+    NOT_EQUAL=55,NOT=56,AND=57,OR=58,XOR=59,RANGE=60};
 
-[GeneratedCode( "Gardens Point Parser Generator", "1.5.2")]
+[GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
 public partial class Parser: ShiftReduceParser<Node, LexLocation>
 {
 #pragma warning disable 649
   private static Dictionary<int, string> aliases;
 #pragma warning restore 649
-  private static Rule[] rules = new Rule[100];
-  private static State[] states = new State[188];
+  private static Rule[] rules = new Rule[112];
+  private static State[] states = new State[210];
   private static string[] nonTerms = new string[] {
       "Program", "$accept", "Declaration", "SimpleDeclaration", "RoutineDeclaration", 
       "VariableDeclaration", "TypeDeclaration", "TypeTail", "VariableInitializationTail", 
-      "Type", "Expression", "Parameters", "Body", "ParameterDeclaration", "ParametersTail", 
-      "PrimitiveType", "ArrayType", "RecordType", "RefType", "RecordVariableDeclarations", 
-      "Statement", "Assignment", "Increment", "Decrement", "RoutineCall", "WhileLoop", 
+      "IdentifiersTail", "Type", "Expression", "Parameters", "Body", "ParameterDeclaration", 
+      "ParametersTail", "PrimitiveType", "ArrayType", "RecordType", "RefType", 
+      "CompoundSize", "CompoundSizeTail", "RecordVariableDeclarations", "Statement", 
+      "Assignment", "Increment", "Decrement", "RoutineCall", "Return", "WhileLoop", 
       "ForLoop", "ForeachLoop", "IfStatement", "ModifiablePrimary", "RoutineCallParameters", 
       "Expressions", "ExpressionsTail", "Range", "Reverse", "RangeExpression", 
       "ElseTail", "Relation", "ExpressionTail", "Simple", "RelationTail", "Factor", 
@@ -50,194 +50,216 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
       "MemberAccess", "ArrayAccess", };
 
   static Parser() {
-    states[0] = new State(new int[]{17,6,19,102,27,108},new int[]{-1,1,-3,187,-4,4,-6,5,-7,101,-5,107});
-    states[1] = new State(new int[]{3,2,17,6,19,102,27,108},new int[]{-3,3,-4,4,-6,5,-7,101,-5,107});
+    states[0] = new State(new int[]{17,6,19,128,27,134},new int[]{-1,1,-3,209,-4,4,-6,5,-7,127,-5,133});
+    states[1] = new State(new int[]{3,2,17,6,19,128,27,134},new int[]{-3,3,-4,4,-6,5,-7,127,-5,133});
     states[2] = new State(-1);
     states[3] = new State(-3);
     states[4] = new State(-4);
     states[5] = new State(-6);
     states[6] = new State(new int[]{4,7});
-    states[7] = new State(new int[]{35,79,18,-9},new int[]{-8,8});
-    states[8] = new State(new int[]{18,11},new int[]{-9,9});
-    states[9] = new State(new int[]{36,10});
+    states[7] = new State(new int[]{36,100,35,124,18,-12,37,-10},new int[]{-8,8,-10,97});
+    states[8] = new State(new int[]{18,11,37,-14},new int[]{-9,9});
+    states[9] = new State(new int[]{37,10});
     states[10] = new State(-8);
-    states[11] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-11,12,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[12] = new State(-11);
-    states[13] = new State(new int[]{55,15,56,18,57,21,36,-64,40,-64,38,-64,34,-64,16,-64,25,-64,58,-64},new int[]{-39,14});
-    states[14] = new State(-63);
-    states[15] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-38,16,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[16] = new State(new int[]{55,15,56,18,57,21,36,-64,40,-64,38,-64,34,-64,16,-64,25,-64,58,-64},new int[]{-39,17});
-    states[17] = new State(-65);
-    states[18] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-38,19,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[19] = new State(new int[]{55,15,56,18,57,21,36,-64,40,-64,38,-64,34,-64,16,-64,25,-64,58,-64},new int[]{-39,20});
-    states[20] = new State(-66);
-    states[21] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-38,22,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[22] = new State(new int[]{55,15,56,18,57,21,36,-64,40,-64,38,-64,34,-64,16,-64,25,-64,58,-64},new int[]{-39,23});
-    states[23] = new State(-67);
-    states[24] = new State(new int[]{52,26,50,69,53,71,51,73,42,75,54,77,55,-69,56,-69,57,-69,36,-69,40,-69,38,-69,34,-69,16,-69,25,-69,58,-69},new int[]{-41,25});
-    states[25] = new State(-68);
-    states[26] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-40,27,-42,28,-44,39,-46,47,-30,54});
-    states[27] = new State(-70);
-    states[28] = new State(new int[]{47,30,48,33,49,36,52,-77,50,-77,53,-77,51,-77,42,-77,54,-77,55,-77,56,-77,57,-77,36,-77,40,-77,38,-77,34,-77,16,-77,25,-77,58,-77},new int[]{-43,29});
-    states[29] = new State(-76);
-    states[30] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-42,31,-44,39,-46,47,-30,54});
-    states[31] = new State(new int[]{47,30,48,33,49,36,52,-77,50,-77,53,-77,51,-77,42,-77,54,-77,55,-77,56,-77,57,-77,36,-77,40,-77,38,-77,34,-77,16,-77,25,-77,58,-77},new int[]{-43,32});
-    states[32] = new State(-78);
-    states[33] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-42,34,-44,39,-46,47,-30,54});
-    states[34] = new State(new int[]{47,30,48,33,49,36,52,-77,50,-77,53,-77,51,-77,42,-77,54,-77,55,-77,56,-77,57,-77,36,-77,40,-77,38,-77,34,-77,16,-77,25,-77,58,-77},new int[]{-43,35});
-    states[35] = new State(-79);
-    states[36] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-42,37,-44,39,-46,47,-30,54});
-    states[37] = new State(new int[]{47,30,48,33,49,36,52,-77,50,-77,53,-77,51,-77,42,-77,54,-77,55,-77,56,-77,57,-77,36,-77,40,-77,38,-77,34,-77,16,-77,25,-77,58,-77},new int[]{-43,38});
-    states[38] = new State(-80);
-    states[39] = new State(new int[]{46,41,45,44,47,-82,48,-82,49,-82,52,-82,50,-82,53,-82,51,-82,42,-82,54,-82,55,-82,56,-82,57,-82,36,-82,40,-82,38,-82,34,-82,16,-82,25,-82,58,-82},new int[]{-45,40});
-    states[40] = new State(-81);
-    states[41] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-44,42,-46,47,-30,54});
-    states[42] = new State(new int[]{46,41,45,44,47,-82,48,-82,49,-82,52,-82,50,-82,53,-82,51,-82,42,-82,54,-82,55,-82,56,-82,57,-82,36,-82,40,-82,38,-82,34,-82,16,-82,25,-82,58,-82},new int[]{-45,43});
-    states[43] = new State(-83);
-    states[44] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-44,45,-46,47,-30,54});
-    states[45] = new State(new int[]{46,41,45,44,47,-82,48,-82,49,-82,52,-82,50,-82,53,-82,51,-82,42,-82,54,-82,55,-82,56,-82,57,-82,36,-82,40,-82,38,-82,34,-82,16,-82,25,-82,58,-82},new int[]{-45,46});
-    states[46] = new State(-84);
-    states[47] = new State(-85);
-    states[48] = new State(-87);
-    states[49] = new State(-88);
-    states[50] = new State(-89);
-    states[51] = new State(-90);
-    states[52] = new State(-91);
-    states[53] = new State(-92);
-    states[54] = new State(-93);
-    states[55] = new State(new int[]{33,59,41,63,46,-95,45,-95,47,-95,48,-95,49,-95,52,-95,50,-95,53,-95,51,-95,42,-95,54,-95,55,-95,56,-95,57,-95,36,-95,40,-95,38,-95,34,-95,16,-95,25,-95,58,-95},new int[]{-47,56,-48,57,-49,61});
-    states[56] = new State(-94);
-    states[57] = new State(new int[]{33,59,41,63,46,-95,45,-95,47,-95,48,-95,49,-95,52,-95,50,-95,53,-95,51,-95,42,-95,54,-95,55,-95,56,-95,57,-95,36,-95,40,-95,38,-95,34,-95,16,-95,25,-95,58,-95,37,-95},new int[]{-47,58,-48,57,-49,61});
-    states[58] = new State(-96);
-    states[59] = new State(new int[]{4,60});
-    states[60] = new State(-98);
-    states[61] = new State(new int[]{33,59,41,63,46,-95,45,-95,47,-95,48,-95,49,-95,52,-95,50,-95,53,-95,51,-95,42,-95,54,-95,55,-95,56,-95,57,-95,36,-95,40,-95,38,-95,34,-95,16,-95,25,-95,58,-95,37,-95},new int[]{-47,62,-48,57,-49,61});
-    states[62] = new State(-97);
-    states[63] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-11,64,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[64] = new State(new int[]{40,65});
-    states[65] = new State(-99);
-    states[66] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-11,67,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[67] = new State(new int[]{38,68});
-    states[68] = new State(-86);
-    states[69] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-40,70,-42,28,-44,39,-46,47,-30,54});
-    states[70] = new State(-71);
-    states[71] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-40,72,-42,28,-44,39,-46,47,-30,54});
-    states[72] = new State(-72);
-    states[73] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-40,74,-42,28,-44,39,-46,47,-30,54});
-    states[74] = new State(-73);
-    states[75] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-40,76,-42,28,-44,39,-46,47,-30,54});
-    states[76] = new State(-74);
-    states[77] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-40,78,-42,28,-44,39,-46,47,-30,54});
-    states[78] = new State(-75);
-    states[79] = new State(new int[]{29,82,30,83,32,84,31,85,21,87,20,93,28,98,4,100},new int[]{-10,80,-16,81,-17,86,-18,92,-19,97});
-    states[80] = new State(-10);
-    states[81] = new State(-19);
-    states[82] = new State(-24);
-    states[83] = new State(-25);
-    states[84] = new State(-26);
-    states[85] = new State(-27);
-    states[86] = new State(-20);
-    states[87] = new State(new int[]{41,88});
-    states[88] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-11,89,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[89] = new State(new int[]{40,90});
-    states[90] = new State(new int[]{29,82,30,83,32,84,31,85,21,87,20,93,28,98,4,100},new int[]{-10,91,-16,81,-17,86,-18,92,-19,97});
-    states[91] = new State(-28);
-    states[92] = new State(-21);
-    states[93] = new State(-31,new int[]{-20,94});
-    states[94] = new State(new int[]{14,95,17,6},new int[]{-6,96});
-    states[95] = new State(-29);
-    states[96] = new State(-32);
-    states[97] = new State(-22);
-    states[98] = new State(new int[]{29,82,30,83,32,84,31,85},new int[]{-16,99});
-    states[99] = new State(-30);
-    states[100] = new State(-23);
-    states[101] = new State(-7);
-    states[102] = new State(new int[]{4,103});
-    states[103] = new State(new int[]{18,104});
-    states[104] = new State(new int[]{29,82,30,83,32,84,31,85,21,87,20,93,28,98,4,100},new int[]{-10,105,-16,81,-17,86,-18,92,-19,97});
-    states[105] = new State(new int[]{36,106});
-    states[106] = new State(-12);
-    states[107] = new State(-5);
-    states[108] = new State(new int[]{4,109});
-    states[109] = new State(new int[]{39,110});
-    states[110] = new State(new int[]{4,184,38,-14},new int[]{-12,111,-14,179});
-    states[111] = new State(new int[]{38,112});
-    states[112] = new State(new int[]{35,79,18,-9},new int[]{-8,113});
-    states[113] = new State(new int[]{18,114});
-    states[114] = new State(-33,new int[]{-13,115});
-    states[115] = new State(new int[]{14,116,17,6,19,102,4,124,22,143,15,149,12,156,11,164},new int[]{-4,117,-21,118,-6,5,-7,101,-22,119,-30,121,-23,136,-24,138,-25,140,-26,142,-27,148,-28,155,-29,163});
-    states[116] = new State(-13);
-    states[117] = new State(-34);
-    states[118] = new State(-35);
-    states[119] = new State(new int[]{36,120});
-    states[120] = new State(-36);
-    states[121] = new State(new int[]{37,122});
-    states[122] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-11,123,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[123] = new State(-44);
-    states[124] = new State(new int[]{43,125,44,126,33,59,41,63,39,128,37,-95,36,-48},new int[]{-47,56,-31,127,-48,57,-49,61});
-    states[125] = new State(-45);
-    states[126] = new State(-46);
-    states[127] = new State(-47);
-    states[128] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-32,129,-11,131,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[129] = new State(new int[]{38,130});
-    states[130] = new State(-49);
-    states[131] = new State(new int[]{34,133,38,-51},new int[]{-33,132});
-    states[132] = new State(-50);
-    states[133] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-11,134,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[134] = new State(new int[]{34,133,38,-51},new int[]{-33,135});
-    states[135] = new State(-52);
-    states[136] = new State(new int[]{36,137});
-    states[137] = new State(-37);
-    states[138] = new State(new int[]{36,139});
-    states[139] = new State(-38);
-    states[140] = new State(new int[]{36,141});
-    states[141] = new State(-39);
-    states[142] = new State(-40);
-    states[143] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-11,144,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[144] = new State(new int[]{16,145});
-    states[145] = new State(-33,new int[]{-13,146});
-    states[146] = new State(new int[]{14,147,17,6,19,102,4,124,22,143,15,149,12,156,11,164},new int[]{-4,117,-21,118,-6,5,-7,101,-22,119,-30,121,-23,136,-24,138,-25,140,-26,142,-27,148,-28,155,-29,163});
-    states[147] = new State(-53);
-    states[148] = new State(-41);
-    states[149] = new State(new int[]{4,150});
-    states[150] = new State(new int[]{23,172},new int[]{-34,151});
-    states[151] = new State(new int[]{16,152});
-    states[152] = new State(-33,new int[]{-13,153});
-    states[153] = new State(new int[]{14,154,17,6,19,102,4,124,22,143,15,149,12,156,11,164},new int[]{-4,117,-21,118,-6,5,-7,101,-22,119,-30,121,-23,136,-24,138,-25,140,-26,142,-27,148,-28,155,-29,163});
-    states[154] = new State(-54);
-    states[155] = new State(-42);
-    states[156] = new State(new int[]{4,157});
-    states[157] = new State(new int[]{13,158});
-    states[158] = new State(new int[]{4,55},new int[]{-30,159});
-    states[159] = new State(new int[]{16,160});
-    states[160] = new State(-33,new int[]{-13,161});
-    states[161] = new State(new int[]{14,162,17,6,19,102,4,124,22,143,15,149,12,156,11,164},new int[]{-4,117,-21,118,-6,5,-7,101,-22,119,-30,121,-23,136,-24,138,-25,140,-26,142,-27,148,-28,155,-29,163});
-    states[162] = new State(-59);
-    states[163] = new State(-43);
-    states[164] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-11,165,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[165] = new State(new int[]{25,166});
-    states[166] = new State(-33,new int[]{-13,167});
-    states[167] = new State(new int[]{26,170,17,6,19,102,4,124,22,143,15,149,12,156,11,164,14,-61},new int[]{-37,168,-4,117,-21,118,-6,5,-7,101,-22,119,-30,121,-23,136,-24,138,-25,140,-26,142,-27,148,-28,155,-29,163});
-    states[168] = new State(new int[]{14,169});
-    states[169] = new State(-60);
-    states[170] = new State(-33,new int[]{-13,171});
-    states[171] = new State(new int[]{17,6,19,102,4,124,22,143,15,149,12,156,11,164,14,-62},new int[]{-4,117,-21,118,-6,5,-7,101,-22,119,-30,121,-23,136,-24,138,-25,140,-26,142,-27,148,-28,155,-29,163});
-    states[172] = new State(new int[]{24,178,5,-56,6,-56,7,-56,8,-56,9,-56,10,-56,4,-56,39,-56},new int[]{-35,173});
-    states[173] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-36,174,-11,175,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[174] = new State(-55);
-    states[175] = new State(new int[]{58,176});
-    states[176] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,39,66},new int[]{-11,177,-38,13,-40,24,-42,28,-44,39,-46,47,-30,54});
-    states[177] = new State(-58);
-    states[178] = new State(-57);
-    states[179] = new State(new int[]{34,181,38,-16},new int[]{-15,180});
-    states[180] = new State(-15);
-    states[181] = new State(new int[]{4,184},new int[]{-14,182});
-    states[182] = new State(new int[]{34,181,38,-16},new int[]{-15,183});
-    states[183] = new State(-17);
-    states[184] = new State(new int[]{35,185});
-    states[185] = new State(new int[]{29,82,30,83,32,84,31,85,21,87,20,93,28,98,4,100},new int[]{-10,186,-16,81,-17,86,-18,92,-19,97});
-    states[186] = new State(-18);
-    states[187] = new State(-2);
+    states[11] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-12,12,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[12] = new State(-15);
+    states[13] = new State(new int[]{57,15,58,18,59,21,37,-74,35,-74,41,-74,39,-74,16,-74,25,-74,60,-74},new int[]{-43,14});
+    states[14] = new State(-73);
+    states[15] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-42,16,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[16] = new State(new int[]{57,15,58,18,59,21,37,-74,35,-74,41,-74,39,-74,16,-74,25,-74,60,-74},new int[]{-43,17});
+    states[17] = new State(-75);
+    states[18] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-42,19,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[19] = new State(new int[]{57,15,58,18,59,21,37,-74,35,-74,41,-74,39,-74,16,-74,25,-74,60,-74},new int[]{-43,20});
+    states[20] = new State(-76);
+    states[21] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-42,22,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[22] = new State(new int[]{57,15,58,18,59,21,37,-74,35,-74,41,-74,39,-74,16,-74,25,-74,60,-74},new int[]{-43,23});
+    states[23] = new State(-77);
+    states[24] = new State(new int[]{53,26,51,87,54,89,52,91,43,93,55,95,57,-80,58,-80,59,-80,37,-80,35,-80,41,-80,39,-80,16,-80,25,-80,60,-80},new int[]{-45,25});
+    states[25] = new State(-78);
+    states[26] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-44,27,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[27] = new State(-81);
+    states[28] = new State(new int[]{48,30,49,33,50,36,53,-88,51,-88,54,-88,52,-88,43,-88,55,-88,57,-88,58,-88,59,-88,37,-88,35,-88,41,-88,39,-88,16,-88,25,-88,60,-88},new int[]{-47,29});
+    states[29] = new State(-87);
+    states[30] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-46,31,-48,39,-50,47,-34,54,-28,72});
+    states[31] = new State(new int[]{48,30,49,33,50,36,53,-88,51,-88,54,-88,52,-88,43,-88,55,-88,57,-88,58,-88,59,-88,37,-88,35,-88,41,-88,39,-88,16,-88,25,-88,60,-88},new int[]{-47,32});
+    states[32] = new State(-89);
+    states[33] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-46,34,-48,39,-50,47,-34,54,-28,72});
+    states[34] = new State(new int[]{48,30,49,33,50,36,53,-88,51,-88,54,-88,52,-88,43,-88,55,-88,57,-88,58,-88,59,-88,37,-88,35,-88,41,-88,39,-88,16,-88,25,-88,60,-88},new int[]{-47,35});
+    states[35] = new State(-90);
+    states[36] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-46,37,-48,39,-50,47,-34,54,-28,72});
+    states[37] = new State(new int[]{48,30,49,33,50,36,53,-88,51,-88,54,-88,52,-88,43,-88,55,-88,57,-88,58,-88,59,-88,37,-88,35,-88,41,-88,39,-88,16,-88,25,-88,60,-88},new int[]{-47,38});
+    states[38] = new State(-91);
+    states[39] = new State(new int[]{47,41,46,44,48,-93,49,-93,50,-93,53,-93,51,-93,54,-93,52,-93,43,-93,55,-93,57,-93,58,-93,59,-93,37,-93,35,-93,41,-93,39,-93,16,-93,25,-93,60,-93},new int[]{-49,40});
+    states[40] = new State(-92);
+    states[41] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-48,42,-50,47,-34,54,-28,72});
+    states[42] = new State(new int[]{47,41,46,44,48,-93,49,-93,50,-93,53,-93,51,-93,54,-93,52,-93,43,-93,55,-93,57,-93,58,-93,59,-93,37,-93,35,-93,41,-93,39,-93,16,-93,25,-93,60,-93},new int[]{-49,43});
+    states[43] = new State(-94);
+    states[44] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-48,45,-50,47,-34,54,-28,72});
+    states[45] = new State(new int[]{47,41,46,44,48,-93,49,-93,50,-93,53,-93,51,-93,54,-93,52,-93,43,-93,55,-93,57,-93,58,-93,59,-93,37,-93,35,-93,41,-93,39,-93,16,-93,25,-93,60,-93},new int[]{-49,46});
+    states[46] = new State(-95);
+    states[47] = new State(-96);
+    states[48] = new State(-98);
+    states[49] = new State(-99);
+    states[50] = new State(-100);
+    states[51] = new State(-101);
+    states[52] = new State(-102);
+    states[53] = new State(-103);
+    states[54] = new State(-104);
+    states[55] = new State(new int[]{34,60,42,64,40,78,47,-107,46,-107,48,-107,49,-107,50,-107,53,-107,51,-107,54,-107,52,-107,43,-107,55,-107,57,-107,58,-107,59,-107,37,-107,35,-107,41,-107,39,-107,16,-107,25,-107,60,-107},new int[]{-51,56,-35,57,-52,58,-53,62});
+    states[56] = new State(-106);
+    states[57] = new State(-56);
+    states[58] = new State(new int[]{34,60,42,64,47,-107,46,-107,48,-107,49,-107,50,-107,53,-107,51,-107,54,-107,52,-107,43,-107,55,-107,57,-107,58,-107,59,-107,37,-107,35,-107,41,-107,39,-107,16,-107,25,-107,60,-107,38,-107},new int[]{-51,59,-52,58,-53,62});
+    states[59] = new State(-108);
+    states[60] = new State(new int[]{4,61});
+    states[61] = new State(-110);
+    states[62] = new State(new int[]{34,60,42,64,47,-107,46,-107,48,-107,49,-107,50,-107,53,-107,51,-107,54,-107,52,-107,43,-107,55,-107,57,-107,58,-107,59,-107,37,-107,35,-107,41,-107,39,-107,16,-107,25,-107,60,-107,38,-107},new int[]{-51,63,-52,58,-53,62});
+    states[63] = new State(-109);
+    states[64] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-21,65,-12,67,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[65] = new State(new int[]{41,66});
+    states[66] = new State(-111);
+    states[67] = new State(new int[]{35,69,41,-35},new int[]{-22,68});
+    states[68] = new State(-34);
+    states[69] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-12,70,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[70] = new State(new int[]{35,69,41,-35},new int[]{-22,71});
+    states[71] = new State(-36);
+    states[72] = new State(-105);
+    states[73] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-12,74,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[74] = new State(new int[]{39,75});
+    states[75] = new State(-97);
+    states[76] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-42,77,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[77] = new State(-79);
+    states[78] = new State(new int[]{39,79,5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-36,80,-12,82,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[79] = new State(-58);
+    states[80] = new State(new int[]{39,81});
+    states[81] = new State(-59);
+    states[82] = new State(new int[]{35,84,39,-61},new int[]{-37,83});
+    states[83] = new State(-60);
+    states[84] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-12,85,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[85] = new State(new int[]{35,84,39,-61},new int[]{-37,86});
+    states[86] = new State(-62);
+    states[87] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-44,88,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[88] = new State(-82);
+    states[89] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-44,90,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[90] = new State(-83);
+    states[91] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-44,92,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[92] = new State(-84);
+    states[93] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-44,94,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[94] = new State(-85);
+    states[95] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73},new int[]{-44,96,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[96] = new State(-86);
+    states[97] = new State(new int[]{36,100,37,-12},new int[]{-8,98});
+    states[98] = new State(new int[]{37,99});
+    states[99] = new State(-9);
+    states[100] = new State(new int[]{30,103,31,104,33,105,32,106,21,108,20,114,28,119,4,121},new int[]{-11,101,-17,102,-18,107,-19,113,-20,118});
+    states[101] = new State(-13);
+    states[102] = new State(-23);
+    states[103] = new State(-28);
+    states[104] = new State(-29);
+    states[105] = new State(-30);
+    states[106] = new State(-31);
+    states[107] = new State(-24);
+    states[108] = new State(new int[]{42,109});
+    states[109] = new State(new int[]{41,122,5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-21,110,-12,67,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[110] = new State(new int[]{41,111});
+    states[111] = new State(new int[]{30,103,31,104,33,105,32,106,21,108,20,114,28,119,4,121},new int[]{-11,112,-17,102,-18,107,-19,113,-20,118});
+    states[112] = new State(-32);
+    states[113] = new State(-25);
+    states[114] = new State(-39,new int[]{-23,115});
+    states[115] = new State(new int[]{14,116,17,6},new int[]{-6,117});
+    states[116] = new State(-37);
+    states[117] = new State(-40);
+    states[118] = new State(-26);
+    states[119] = new State(new int[]{30,103,31,104,33,105,32,106},new int[]{-17,120});
+    states[120] = new State(-38);
+    states[121] = new State(-27);
+    states[122] = new State(new int[]{30,103,31,104,33,105,32,106,21,108,20,114,28,119,4,121},new int[]{-11,123,-17,102,-18,107,-19,113,-20,118});
+    states[123] = new State(-33);
+    states[124] = new State(new int[]{4,125});
+    states[125] = new State(new int[]{35,124,36,-10,37,-10},new int[]{-10,126});
+    states[126] = new State(-11);
+    states[127] = new State(-7);
+    states[128] = new State(new int[]{4,129});
+    states[129] = new State(new int[]{18,130});
+    states[130] = new State(new int[]{30,103,31,104,33,105,32,106,21,108,20,114,28,119,4,121},new int[]{-11,131,-17,102,-18,107,-19,113,-20,118});
+    states[131] = new State(new int[]{37,132});
+    states[132] = new State(-16);
+    states[133] = new State(-5);
+    states[134] = new State(new int[]{4,135});
+    states[135] = new State(new int[]{40,136});
+    states[136] = new State(new int[]{4,206,39,-18},new int[]{-13,137,-15,201});
+    states[137] = new State(new int[]{39,138});
+    states[138] = new State(new int[]{36,100,18,-12},new int[]{-8,139});
+    states[139] = new State(new int[]{18,140});
+    states[140] = new State(-41,new int[]{-14,141});
+    states[141] = new State(new int[]{14,142,17,6,19,128,4,150,29,161,22,164,15,170,12,177,11,185},new int[]{-4,143,-24,144,-6,5,-7,127,-25,145,-34,147,-26,153,-27,155,-28,157,-29,159,-30,163,-31,169,-32,176,-33,184});
+    states[142] = new State(-17);
+    states[143] = new State(-42);
+    states[144] = new State(-43);
+    states[145] = new State(new int[]{37,146});
+    states[146] = new State(-44);
+    states[147] = new State(new int[]{38,148});
+    states[148] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-12,149,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[149] = new State(-53);
+    states[150] = new State(new int[]{44,151,45,152,34,60,42,64,40,78,38,-107},new int[]{-51,56,-35,57,-52,58,-53,62});
+    states[151] = new State(-54);
+    states[152] = new State(-55);
+    states[153] = new State(new int[]{37,154});
+    states[154] = new State(-45);
+    states[155] = new State(new int[]{37,156});
+    states[156] = new State(-46);
+    states[157] = new State(new int[]{37,158});
+    states[158] = new State(-47);
+    states[159] = new State(new int[]{37,160});
+    states[160] = new State(-48);
+    states[161] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-12,162,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[162] = new State(-57);
+    states[163] = new State(-49);
+    states[164] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-12,165,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[165] = new State(new int[]{16,166});
+    states[166] = new State(-41,new int[]{-14,167});
+    states[167] = new State(new int[]{14,168,17,6,19,128,4,150,29,161,22,164,15,170,12,177,11,185},new int[]{-4,143,-24,144,-6,5,-7,127,-25,145,-34,147,-26,153,-27,155,-28,157,-29,159,-30,163,-31,169,-32,176,-33,184});
+    states[168] = new State(-63);
+    states[169] = new State(-50);
+    states[170] = new State(new int[]{4,171});
+    states[171] = new State(new int[]{23,194},new int[]{-38,172});
+    states[172] = new State(new int[]{16,173});
+    states[173] = new State(-41,new int[]{-14,174});
+    states[174] = new State(new int[]{14,175,17,6,19,128,4,150,29,161,22,164,15,170,12,177,11,185},new int[]{-4,143,-24,144,-6,5,-7,127,-25,145,-34,147,-26,153,-27,155,-28,157,-29,159,-30,163,-31,169,-32,176,-33,184});
+    states[175] = new State(-64);
+    states[176] = new State(-51);
+    states[177] = new State(new int[]{4,178});
+    states[178] = new State(new int[]{13,179});
+    states[179] = new State(new int[]{4,193},new int[]{-34,180});
+    states[180] = new State(new int[]{16,181});
+    states[181] = new State(-41,new int[]{-14,182});
+    states[182] = new State(new int[]{14,183,17,6,19,128,4,150,29,161,22,164,15,170,12,177,11,185},new int[]{-4,143,-24,144,-6,5,-7,127,-25,145,-34,147,-26,153,-27,155,-28,157,-29,159,-30,163,-31,169,-32,176,-33,184});
+    states[183] = new State(-69);
+    states[184] = new State(-52);
+    states[185] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-12,186,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[186] = new State(new int[]{25,187});
+    states[187] = new State(-41,new int[]{-14,188});
+    states[188] = new State(new int[]{26,191,17,6,19,128,4,150,29,161,22,164,15,170,12,177,11,185,14,-71},new int[]{-41,189,-4,143,-24,144,-6,5,-7,127,-25,145,-34,147,-26,153,-27,155,-28,157,-29,159,-30,163,-31,169,-32,176,-33,184});
+    states[189] = new State(new int[]{14,190});
+    states[190] = new State(-70);
+    states[191] = new State(-41,new int[]{-14,192});
+    states[192] = new State(new int[]{17,6,19,128,4,150,29,161,22,164,15,170,12,177,11,185,14,-72},new int[]{-4,143,-24,144,-6,5,-7,127,-25,145,-34,147,-26,153,-27,155,-28,157,-29,159,-30,163,-31,169,-32,176,-33,184});
+    states[193] = new State(new int[]{34,60,42,64,16,-107},new int[]{-51,56,-52,58,-53,62});
+    states[194] = new State(new int[]{24,200,5,-66,6,-66,7,-66,8,-66,9,-66,10,-66,4,-66,40,-66,56,-66},new int[]{-39,195});
+    states[195] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-40,196,-12,197,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[196] = new State(-65);
+    states[197] = new State(new int[]{60,198});
+    states[198] = new State(new int[]{5,48,6,49,7,50,8,51,9,52,10,53,4,55,40,73,56,76},new int[]{-12,199,-42,13,-44,24,-46,28,-48,39,-50,47,-34,54,-28,72});
+    states[199] = new State(-68);
+    states[200] = new State(-67);
+    states[201] = new State(new int[]{35,203,39,-20},new int[]{-16,202});
+    states[202] = new State(-19);
+    states[203] = new State(new int[]{4,206},new int[]{-15,204});
+    states[204] = new State(new int[]{35,203,39,-20},new int[]{-16,205});
+    states[205] = new State(-21);
+    states[206] = new State(new int[]{36,207});
+    states[207] = new State(new int[]{30,103,31,104,33,105,32,106,21,108,20,114,28,119,4,121},new int[]{-11,208,-17,102,-18,107,-19,113,-20,118});
+    states[208] = new State(-22);
+    states[209] = new State(-2);
 
     for (int sNo = 0; sNo < states.Length; sNo++) states[sNo].number = sNo;
 
@@ -248,98 +270,110 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
     rules[5] = new Rule(-3, new int[]{-5});
     rules[6] = new Rule(-4, new int[]{-6});
     rules[7] = new Rule(-4, new int[]{-7});
-    rules[8] = new Rule(-6, new int[]{17,4,-8,-9,36});
-    rules[9] = new Rule(-8, new int[]{});
-    rules[10] = new Rule(-8, new int[]{35,-10});
-    rules[11] = new Rule(-9, new int[]{18,-11});
-    rules[12] = new Rule(-7, new int[]{19,4,18,-10,36});
-    rules[13] = new Rule(-5, new int[]{27,4,39,-12,38,-8,18,-13,14});
-    rules[14] = new Rule(-12, new int[]{});
-    rules[15] = new Rule(-12, new int[]{-14,-15});
-    rules[16] = new Rule(-15, new int[]{});
-    rules[17] = new Rule(-15, new int[]{34,-14,-15});
-    rules[18] = new Rule(-14, new int[]{4,35,-10});
-    rules[19] = new Rule(-10, new int[]{-16});
-    rules[20] = new Rule(-10, new int[]{-17});
-    rules[21] = new Rule(-10, new int[]{-18});
-    rules[22] = new Rule(-10, new int[]{-19});
-    rules[23] = new Rule(-10, new int[]{4});
-    rules[24] = new Rule(-16, new int[]{29});
-    rules[25] = new Rule(-16, new int[]{30});
-    rules[26] = new Rule(-16, new int[]{32});
-    rules[27] = new Rule(-16, new int[]{31});
-    rules[28] = new Rule(-17, new int[]{21,41,-11,40,-10});
-    rules[29] = new Rule(-18, new int[]{20,-20,14});
-    rules[30] = new Rule(-19, new int[]{28,-16});
-    rules[31] = new Rule(-20, new int[]{});
-    rules[32] = new Rule(-20, new int[]{-20,-6});
-    rules[33] = new Rule(-13, new int[]{});
-    rules[34] = new Rule(-13, new int[]{-13,-4});
-    rules[35] = new Rule(-13, new int[]{-13,-21});
-    rules[36] = new Rule(-21, new int[]{-22,36});
-    rules[37] = new Rule(-21, new int[]{-23,36});
-    rules[38] = new Rule(-21, new int[]{-24,36});
-    rules[39] = new Rule(-21, new int[]{-25,36});
-    rules[40] = new Rule(-21, new int[]{-26});
-    rules[41] = new Rule(-21, new int[]{-27});
-    rules[42] = new Rule(-21, new int[]{-28});
-    rules[43] = new Rule(-21, new int[]{-29});
-    rules[44] = new Rule(-22, new int[]{-30,37,-11});
-    rules[45] = new Rule(-23, new int[]{4,43});
-    rules[46] = new Rule(-24, new int[]{4,44});
-    rules[47] = new Rule(-25, new int[]{4,-31});
-    rules[48] = new Rule(-31, new int[]{});
-    rules[49] = new Rule(-31, new int[]{39,-32,38});
-    rules[50] = new Rule(-32, new int[]{-11,-33});
-    rules[51] = new Rule(-33, new int[]{});
-    rules[52] = new Rule(-33, new int[]{34,-11,-33});
-    rules[53] = new Rule(-26, new int[]{22,-11,16,-13,14});
-    rules[54] = new Rule(-27, new int[]{15,4,-34,16,-13,14});
-    rules[55] = new Rule(-34, new int[]{23,-35,-36});
-    rules[56] = new Rule(-35, new int[]{});
-    rules[57] = new Rule(-35, new int[]{24});
-    rules[58] = new Rule(-36, new int[]{-11,58,-11});
-    rules[59] = new Rule(-28, new int[]{12,4,13,-30,16,-13,14});
-    rules[60] = new Rule(-29, new int[]{11,-11,25,-13,-37,14});
+    rules[8] = new Rule(-6, new int[]{17,4,-8,-9,37});
+    rules[9] = new Rule(-6, new int[]{17,4,-10,-8,37});
+    rules[10] = new Rule(-10, new int[]{});
+    rules[11] = new Rule(-10, new int[]{35,4,-10});
+    rules[12] = new Rule(-8, new int[]{});
+    rules[13] = new Rule(-8, new int[]{36,-11});
+    rules[14] = new Rule(-9, new int[]{});
+    rules[15] = new Rule(-9, new int[]{18,-12});
+    rules[16] = new Rule(-7, new int[]{19,4,18,-11,37});
+    rules[17] = new Rule(-5, new int[]{27,4,40,-13,39,-8,18,-14,14});
+    rules[18] = new Rule(-13, new int[]{});
+    rules[19] = new Rule(-13, new int[]{-15,-16});
+    rules[20] = new Rule(-16, new int[]{});
+    rules[21] = new Rule(-16, new int[]{35,-15,-16});
+    rules[22] = new Rule(-15, new int[]{4,36,-11});
+    rules[23] = new Rule(-11, new int[]{-17});
+    rules[24] = new Rule(-11, new int[]{-18});
+    rules[25] = new Rule(-11, new int[]{-19});
+    rules[26] = new Rule(-11, new int[]{-20});
+    rules[27] = new Rule(-11, new int[]{4});
+    rules[28] = new Rule(-17, new int[]{30});
+    rules[29] = new Rule(-17, new int[]{31});
+    rules[30] = new Rule(-17, new int[]{33});
+    rules[31] = new Rule(-17, new int[]{32});
+    rules[32] = new Rule(-18, new int[]{21,42,-21,41,-11});
+    rules[33] = new Rule(-18, new int[]{21,42,41,-11});
+    rules[34] = new Rule(-21, new int[]{-12,-22});
+    rules[35] = new Rule(-22, new int[]{});
+    rules[36] = new Rule(-22, new int[]{35,-12,-22});
+    rules[37] = new Rule(-19, new int[]{20,-23,14});
+    rules[38] = new Rule(-20, new int[]{28,-17});
+    rules[39] = new Rule(-23, new int[]{});
+    rules[40] = new Rule(-23, new int[]{-23,-6});
+    rules[41] = new Rule(-14, new int[]{});
+    rules[42] = new Rule(-14, new int[]{-14,-4});
+    rules[43] = new Rule(-14, new int[]{-14,-24});
+    rules[44] = new Rule(-24, new int[]{-25,37});
+    rules[45] = new Rule(-24, new int[]{-26,37});
+    rules[46] = new Rule(-24, new int[]{-27,37});
+    rules[47] = new Rule(-24, new int[]{-28,37});
+    rules[48] = new Rule(-24, new int[]{-29,37});
+    rules[49] = new Rule(-24, new int[]{-30});
+    rules[50] = new Rule(-24, new int[]{-31});
+    rules[51] = new Rule(-24, new int[]{-32});
+    rules[52] = new Rule(-24, new int[]{-33});
+    rules[53] = new Rule(-25, new int[]{-34,38,-12});
+    rules[54] = new Rule(-26, new int[]{4,44});
+    rules[55] = new Rule(-27, new int[]{4,45});
+    rules[56] = new Rule(-28, new int[]{4,-35});
+    rules[57] = new Rule(-29, new int[]{29,-12});
+    rules[58] = new Rule(-35, new int[]{40,39});
+    rules[59] = new Rule(-35, new int[]{40,-36,39});
+    rules[60] = new Rule(-36, new int[]{-12,-37});
     rules[61] = new Rule(-37, new int[]{});
-    rules[62] = new Rule(-37, new int[]{26,-13});
-    rules[63] = new Rule(-11, new int[]{-38,-39});
-    rules[64] = new Rule(-39, new int[]{});
-    rules[65] = new Rule(-39, new int[]{55,-38,-39});
-    rules[66] = new Rule(-39, new int[]{56,-38,-39});
-    rules[67] = new Rule(-39, new int[]{57,-38,-39});
-    rules[68] = new Rule(-38, new int[]{-40,-41});
-    rules[69] = new Rule(-41, new int[]{});
-    rules[70] = new Rule(-41, new int[]{52,-40});
-    rules[71] = new Rule(-41, new int[]{50,-40});
-    rules[72] = new Rule(-41, new int[]{53,-40});
-    rules[73] = new Rule(-41, new int[]{51,-40});
-    rules[74] = new Rule(-41, new int[]{42,-40});
-    rules[75] = new Rule(-41, new int[]{54,-40});
-    rules[76] = new Rule(-40, new int[]{-42,-43});
-    rules[77] = new Rule(-43, new int[]{});
-    rules[78] = new Rule(-43, new int[]{47,-42,-43});
-    rules[79] = new Rule(-43, new int[]{48,-42,-43});
-    rules[80] = new Rule(-43, new int[]{49,-42,-43});
-    rules[81] = new Rule(-42, new int[]{-44,-45});
-    rules[82] = new Rule(-45, new int[]{});
-    rules[83] = new Rule(-45, new int[]{46,-44,-45});
-    rules[84] = new Rule(-45, new int[]{45,-44,-45});
-    rules[85] = new Rule(-44, new int[]{-46});
-    rules[86] = new Rule(-44, new int[]{39,-11,38});
-    rules[87] = new Rule(-46, new int[]{5});
-    rules[88] = new Rule(-46, new int[]{6});
-    rules[89] = new Rule(-46, new int[]{7});
-    rules[90] = new Rule(-46, new int[]{8});
-    rules[91] = new Rule(-46, new int[]{9});
-    rules[92] = new Rule(-46, new int[]{10});
-    rules[93] = new Rule(-46, new int[]{-30});
-    rules[94] = new Rule(-30, new int[]{4,-47});
-    rules[95] = new Rule(-47, new int[]{});
-    rules[96] = new Rule(-47, new int[]{-48,-47});
-    rules[97] = new Rule(-47, new int[]{-49,-47});
-    rules[98] = new Rule(-48, new int[]{33,4});
-    rules[99] = new Rule(-49, new int[]{41,-11,40});
+    rules[62] = new Rule(-37, new int[]{35,-12,-37});
+    rules[63] = new Rule(-30, new int[]{22,-12,16,-14,14});
+    rules[64] = new Rule(-31, new int[]{15,4,-38,16,-14,14});
+    rules[65] = new Rule(-38, new int[]{23,-39,-40});
+    rules[66] = new Rule(-39, new int[]{});
+    rules[67] = new Rule(-39, new int[]{24});
+    rules[68] = new Rule(-40, new int[]{-12,60,-12});
+    rules[69] = new Rule(-32, new int[]{12,4,13,-34,16,-14,14});
+    rules[70] = new Rule(-33, new int[]{11,-12,25,-14,-41,14});
+    rules[71] = new Rule(-41, new int[]{});
+    rules[72] = new Rule(-41, new int[]{26,-14});
+    rules[73] = new Rule(-12, new int[]{-42,-43});
+    rules[74] = new Rule(-43, new int[]{});
+    rules[75] = new Rule(-43, new int[]{57,-42,-43});
+    rules[76] = new Rule(-43, new int[]{58,-42,-43});
+    rules[77] = new Rule(-43, new int[]{59,-42,-43});
+    rules[78] = new Rule(-42, new int[]{-44,-45});
+    rules[79] = new Rule(-42, new int[]{56,-42});
+    rules[80] = new Rule(-45, new int[]{});
+    rules[81] = new Rule(-45, new int[]{53,-44});
+    rules[82] = new Rule(-45, new int[]{51,-44});
+    rules[83] = new Rule(-45, new int[]{54,-44});
+    rules[84] = new Rule(-45, new int[]{52,-44});
+    rules[85] = new Rule(-45, new int[]{43,-44});
+    rules[86] = new Rule(-45, new int[]{55,-44});
+    rules[87] = new Rule(-44, new int[]{-46,-47});
+    rules[88] = new Rule(-47, new int[]{});
+    rules[89] = new Rule(-47, new int[]{48,-46,-47});
+    rules[90] = new Rule(-47, new int[]{49,-46,-47});
+    rules[91] = new Rule(-47, new int[]{50,-46,-47});
+    rules[92] = new Rule(-46, new int[]{-48,-49});
+    rules[93] = new Rule(-49, new int[]{});
+    rules[94] = new Rule(-49, new int[]{47,-48,-49});
+    rules[95] = new Rule(-49, new int[]{46,-48,-49});
+    rules[96] = new Rule(-48, new int[]{-50});
+    rules[97] = new Rule(-48, new int[]{40,-12,39});
+    rules[98] = new Rule(-50, new int[]{5});
+    rules[99] = new Rule(-50, new int[]{6});
+    rules[100] = new Rule(-50, new int[]{7});
+    rules[101] = new Rule(-50, new int[]{8});
+    rules[102] = new Rule(-50, new int[]{9});
+    rules[103] = new Rule(-50, new int[]{10});
+    rules[104] = new Rule(-50, new int[]{-34});
+    rules[105] = new Rule(-50, new int[]{-28});
+    rules[106] = new Rule(-34, new int[]{4,-51});
+    rules[107] = new Rule(-51, new int[]{});
+    rules[108] = new Rule(-51, new int[]{-52,-51});
+    rules[109] = new Rule(-51, new int[]{-53,-51});
+    rules[110] = new Rule(-52, new int[]{34,4});
+    rules[111] = new Rule(-53, new int[]{42,-21,41});
   }
 
   protected override void Initialize() {
@@ -355,497 +389,555 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
     switch (action)
     {
       case 2: // Program -> Declaration
-#line 86 "../grammar.y"
+#line 88 "../grammar.y"
                           { CurrentSemanticValue = MakeProgram(ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
       case 3: // Program -> Program, Declaration
-#line 87 "../grammar.y"
+#line 89 "../grammar.y"
                           { CurrentSemanticValue = AddToProgram(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
       case 4: // Declaration -> SimpleDeclaration
-#line 92 "../grammar.y"
+#line 94 "../grammar.y"
                             { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
       case 5: // Declaration -> RoutineDeclaration
-#line 93 "../grammar.y"
+#line 95 "../grammar.y"
                             { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
       case 6: // SimpleDeclaration -> VariableDeclaration
-#line 97 "../grammar.y"
+#line 99 "../grammar.y"
                             { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
       case 7: // SimpleDeclaration -> TypeDeclaration
-#line 98 "../grammar.y"
+#line 100 "../grammar.y"
                             { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
       case 8: // VariableDeclaration -> VAR, IDENTIFIER, TypeTail, VariableInitializationTail, 
-          //                        SEMICOLON
-#line 102 "../grammar.y"
-      {
-          CurrentSemanticValue = MakeVariableDeclaration(ValueStack[ValueStack.Depth - 4],
-              ValueStack[ValueStack.Depth - 3], ValueStack[ValueStack.Depth - 2]); }
+              //                        SEMICOLON
+#line 104 "../grammar.y"
+                                                                     { CurrentSemanticValue = MakeVariableDeclaration(ValueStack[ValueStack.Depth-4], ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 9: // TypeTail -> /* empty */
-#line 107 "../grammar.y"
+      case 9: // VariableDeclaration -> VAR, IDENTIFIER, IdentifiersTail, TypeTail, SEMICOLON
+#line 105 "../grammar.y"
+                                                        { CurrentSemanticValue = MakeVariablesDeclaration(ValueStack[ValueStack.Depth-4], ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2]); }
+#line default
+        break;
+      case 10: // IdentifiersTail -> /* empty */
+#line 109 "../grammar.y"
+                  { CurrentSemanticValue = MakeIdentifiersTail(); }
+#line default
+        break;
+      case 11: // IdentifiersTail -> COMMA, IDENTIFIER, IdentifiersTail
+#line 110 "../grammar.y"
+                                       { CurrentSemanticValue = AddToIdentifiersTail(ValueStack[ValueStack.Depth-1], ValueStack[ValueStack.Depth-2]); }
+#line default
+        break;
+      case 12: // TypeTail -> /* empty */
+#line 115 "../grammar.y"
                     { CurrentSemanticValue = null; }
 #line default
         break;
-      case 10: // TypeTail -> COLON, Type
-#line 108 "../grammar.y"
+      case 13: // TypeTail -> COLON, Type
+#line 116 "../grammar.y"
                     { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 11: // VariableInitializationTail -> IS, Expression
-#line 113 "../grammar.y"
+      case 14: // VariableInitializationTail -> /* empty */
+#line 121 "../grammar.y"
+                  { CurrentSemanticValue = null; }
+#line default
+        break;
+      case 15: // VariableInitializationTail -> IS, Expression
+#line 122 "../grammar.y"
                     { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 12: // TypeDeclaration -> TYPE, IDENTIFIER, IS, Type, SEMICOLON
-#line 118 "../grammar.y"
+      case 16: // TypeDeclaration -> TYPE, IDENTIFIER, IS, Type, SEMICOLON
+#line 127 "../grammar.y"
                                          { CurrentSemanticValue = MakeTypeDeclaration(ValueStack[ValueStack.Depth-4], ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 13: // RoutineDeclaration -> ROUTINE, IDENTIFIER, OPEN_PARENTHESIS, Parameters, 
+      case 17: // RoutineDeclaration -> ROUTINE, IDENTIFIER, OPEN_PARENTHESIS, Parameters, 
                //                       CLOSE_PARENTHESIS, TypeTail, IS, Body, END
-#line 123 "../grammar.y"
+#line 132 "../grammar.y"
                                                                                             { CurrentSemanticValue = MakeRoutineDeclaration(ValueStack[ValueStack.Depth-8], ValueStack[ValueStack.Depth-6], ValueStack[ValueStack.Depth-4], ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 14: // Parameters -> /* empty */
-#line 128 "../grammar.y"
+      case 18: // Parameters -> /* empty */
+#line 137 "../grammar.y"
                                             { CurrentSemanticValue = MakeParameters(); }
 #line default
         break;
-      case 15: // Parameters -> ParameterDeclaration, ParametersTail
-#line 129 "../grammar.y"
+      case 19: // Parameters -> ParameterDeclaration, ParametersTail
+#line 138 "../grammar.y"
                                             { CurrentSemanticValue = MakeParameters(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 16: // ParametersTail -> /* empty */
-#line 134 "../grammar.y"
+      case 20: // ParametersTail -> /* empty */
+#line 143 "../grammar.y"
                                                 { CurrentSemanticValue = MakeParametersTail(); }
 #line default
         break;
-      case 17: // ParametersTail -> COMMA, ParameterDeclaration, ParametersTail
-#line 135 "../grammar.y"
-                                                { CurrentSemanticValue = AddToParametersTail(ValueStack[ValueStack.Depth-1], ValueStack[ValueStack.Depth-3]); }
+      case 21: // ParametersTail -> COMMA, ParameterDeclaration, ParametersTail
+#line 144 "../grammar.y"
+                                                { CurrentSemanticValue = AddToParametersTail(ValueStack[ValueStack.Depth-1], ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 18: // ParameterDeclaration -> IDENTIFIER, COLON, Type
-#line 140 "../grammar.y"
+      case 22: // ParameterDeclaration -> IDENTIFIER, COLON, Type
+#line 149 "../grammar.y"
                             { CurrentSemanticValue = MakeParameterDeclaration(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 19: // Type -> PrimitiveType
-#line 145 "../grammar.y"
-                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
-#line default
-        break;
-      case 20: // Type -> ArrayType
-#line 146 "../grammar.y"
-                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
-#line default
-        break;
-      case 21: // Type -> RecordType
-#line 147 "../grammar.y"
-                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
-#line default
-        break;
-      case 22: // Type -> RefType
-#line 148 "../grammar.y"
-                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
-#line default
-        break;
-      case 23: // Type -> IDENTIFIER
-#line 149 "../grammar.y"
-                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
-#line default
-        break;
-      case 24: // PrimitiveType -> INTEGER
+      case 23: // Type -> PrimitiveType
 #line 154 "../grammar.y"
                     { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 25: // PrimitiveType -> REAL
+      case 24: // Type -> ArrayType
 #line 155 "../grammar.y"
                     { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 26: // PrimitiveType -> BOOLEAN
+      case 25: // Type -> RecordType
 #line 156 "../grammar.y"
                     { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 27: // PrimitiveType -> CHAR
+      case 26: // Type -> RefType
 #line 157 "../grammar.y"
                     { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 28: // ArrayType -> ARRAY, OPEN_BRACKET, Expression, CLOSE_BRACKET, Type
-#line 162 "../grammar.y"
-                                                       { CurrentSemanticValue = MakeArrayType(ValueStack[ValueStack.Depth-1], ValueStack[ValueStack.Depth-3]); }
+      case 27: // Type -> IDENTIFIER
+#line 158 "../grammar.y"
+                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 29: // RecordType -> RECORD, RecordVariableDeclarations, END
-#line 167 "../grammar.y"
+      case 28: // PrimitiveType -> INTEGER
+#line 163 "../grammar.y"
+                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
+#line default
+        break;
+      case 29: // PrimitiveType -> REAL
+#line 164 "../grammar.y"
+                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
+#line default
+        break;
+      case 30: // PrimitiveType -> BOOLEAN
+#line 165 "../grammar.y"
+                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
+#line default
+        break;
+      case 31: // PrimitiveType -> CHAR
+#line 166 "../grammar.y"
+                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
+#line default
+        break;
+      case 32: // ArrayType -> ARRAY, OPEN_BRACKET, CompoundSize, CLOSE_BRACKET, Type
+#line 171 "../grammar.y"
+                                                         { CurrentSemanticValue = MakeArrayType(ValueStack[ValueStack.Depth-1], ValueStack[ValueStack.Depth-3]); }
+#line default
+        break;
+      case 33: // ArrayType -> ARRAY, OPEN_BRACKET, CLOSE_BRACKET, Type
+#line 172 "../grammar.y"
+                                            { CurrentSemanticValue = MakeArrayType(ValueStack[ValueStack.Depth-1]); }
+#line default
+        break;
+      case 34: // CompoundSize -> Expression, CompoundSizeTail
+#line 176 "../grammar.y"
+                                  { CurrentSemanticValue = MakeCompoundSize(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
+#line default
+        break;
+      case 35: // CompoundSizeTail -> /* empty */
+#line 180 "../grammar.y"
+                  { CurrentSemanticValue = MakeCompoundSizeTail(); }
+#line default
+        break;
+      case 36: // CompoundSizeTail -> COMMA, Expression, CompoundSizeTail
+#line 181 "../grammar.y"
+                                        { CurrentSemanticValue = AddToCompoundSizeTail(ValueStack[ValueStack.Depth-1], ValueStack[ValueStack.Depth-2]); }
+#line default
+        break;
+      case 37: // RecordType -> RECORD, RecordVariableDeclarations, END
+#line 186 "../grammar.y"
                                             { CurrentSemanticValue = MakeRecordType(ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 30: // RefType -> REF, PrimitiveType
-#line 171 "../grammar.y"
+      case 38: // RefType -> REF, PrimitiveType
+#line 190 "../grammar.y"
                         { CurrentSemanticValue = MakeRef(ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 31: // RecordVariableDeclarations -> /* empty */
-#line 176 "../grammar.y"
-                                                        { CurrentSemanticValue = MakeVariableDeclarations(); }
+      case 39: // RecordVariableDeclarations -> /* empty */
+#line 195 "../grammar.y"
+                                                        { CurrentSemanticValue = MakeRecordVariableDeclarations(); }
 #line default
         break;
-      case 32: // RecordVariableDeclarations -> RecordVariableDeclarations, VariableDeclaration
-#line 177 "../grammar.y"
-                                                        { CurrentSemanticValue = AddToVariableDeclarations(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
+      case 40: // RecordVariableDeclarations -> RecordVariableDeclarations, VariableDeclaration
+#line 196 "../grammar.y"
+                                                        { CurrentSemanticValue = AddToRecordVariableDeclarations(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 33: // Body -> /* empty */
-#line 182 "../grammar.y"
+      case 41: // Body -> /* empty */
+#line 201 "../grammar.y"
                                 { CurrentSemanticValue = MakeBody(); }
 #line default
         break;
-      case 34: // Body -> Body, SimpleDeclaration
-#line 183 "../grammar.y"
+      case 42: // Body -> Body, SimpleDeclaration
+#line 202 "../grammar.y"
                                 { CurrentSemanticValue = AddSimpleDeclarationToBody(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 35: // Body -> Body, Statement
-#line 184 "../grammar.y"
+      case 43: // Body -> Body, Statement
+#line 203 "../grammar.y"
                                 { CurrentSemanticValue = AddStatementToBody(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 36: // Statement -> Assignment, SEMICOLON
-#line 189 "../grammar.y"
+      case 44: // Statement -> Assignment, SEMICOLON
+#line 208 "../grammar.y"
                                 { CurrentSemanticValue = ValueStack[ValueStack.Depth-2]; }
 #line default
         break;
-      case 37: // Statement -> Increment, SEMICOLON
-#line 190 "../grammar.y"
+      case 45: // Statement -> Increment, SEMICOLON
+#line 209 "../grammar.y"
                                 { CurrentSemanticValue = ValueStack[ValueStack.Depth-2]; }
 #line default
         break;
-      case 38: // Statement -> Decrement, SEMICOLON
-#line 191 "../grammar.y"
+      case 46: // Statement -> Decrement, SEMICOLON
+#line 210 "../grammar.y"
                                 { CurrentSemanticValue = ValueStack[ValueStack.Depth-2]; }
 #line default
         break;
-      case 39: // Statement -> RoutineCall, SEMICOLON
-#line 192 "../grammar.y"
+      case 47: // Statement -> RoutineCall, SEMICOLON
+#line 211 "../grammar.y"
                                 { CurrentSemanticValue = ValueStack[ValueStack.Depth-2]; }
 #line default
         break;
-      case 40: // Statement -> WhileLoop
-#line 193 "../grammar.y"
+      case 48: // Statement -> Return, SEMICOLON
+#line 212 "../grammar.y"
+                                { CurrentSemanticValue = ValueStack[ValueStack.Depth-2]; }
+#line default
+        break;
+      case 49: // Statement -> WhileLoop
+#line 213 "../grammar.y"
                                 { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 41: // Statement -> ForLoop
-#line 194 "../grammar.y"
+      case 50: // Statement -> ForLoop
+#line 214 "../grammar.y"
                                 { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 42: // Statement -> ForeachLoop
-#line 195 "../grammar.y"
+      case 51: // Statement -> ForeachLoop
+#line 215 "../grammar.y"
                                 { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 43: // Statement -> IfStatement
-#line 196 "../grammar.y"
+      case 52: // Statement -> IfStatement
+#line 216 "../grammar.y"
                                 { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 44: // Assignment -> ModifiablePrimary, ASSIGNMENT_OP, Expression
-#line 201 "../grammar.y"
+      case 53: // Assignment -> ModifiablePrimary, ASSIGNMENT_OP, Expression
+#line 221 "../grammar.y"
                                                     { CurrentSemanticValue = MakeAssignment(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 45: // Increment -> IDENTIFIER, INCREMENT
-#line 205 "../grammar.y"
+      case 54: // Increment -> IDENTIFIER, INCREMENT
+#line 225 "../grammar.y"
                             { CurrentSemanticValue = MakeIncrement(ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 46: // Decrement -> IDENTIFIER, DECREMENT
-#line 209 "../grammar.y"
+      case 55: // Decrement -> IDENTIFIER, DECREMENT
+#line 229 "../grammar.y"
                             { CurrentSemanticValue = MakeDecrement(ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 47: // RoutineCall -> IDENTIFIER, RoutineCallParameters
-#line 214 "../grammar.y"
+      case 56: // RoutineCall -> IDENTIFIER, RoutineCallParameters
+#line 234 "../grammar.y"
                                         { CurrentSemanticValue = MakeRoutineCall(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 48: // RoutineCallParameters -> /* empty */
-#line 219 "../grammar.y"
+      case 57: // Return -> RETURN, Expression
+#line 238 "../grammar.y"
+                        { CurrentSemanticValue = MakeReturn(ValueStack[ValueStack.Depth-1]); }
+#line default
+        break;
+      case 58: // RoutineCallParameters -> OPEN_PARENTHESIS, CLOSE_PARENTHESIS
+#line 243 "../grammar.y"
                                                         { CurrentSemanticValue = MakeRoutineCallParameters(); }
 #line default
         break;
-      case 49: // RoutineCallParameters -> OPEN_PARENTHESIS, Expressions, CLOSE_PARENTHESIS
-#line 220 "../grammar.y"
+      case 59: // RoutineCallParameters -> OPEN_PARENTHESIS, Expressions, CLOSE_PARENTHESIS
+#line 244 "../grammar.y"
                                                         { CurrentSemanticValue = MakeRoutineCallParameters(ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 50: // Expressions -> Expression, ExpressionsTail
-#line 225 "../grammar.y"
+      case 60: // Expressions -> Expression, ExpressionsTail
+#line 249 "../grammar.y"
                                     { CurrentSemanticValue = MakeExpressions(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 51: // ExpressionsTail -> /* empty */
-#line 230 "../grammar.y"
+      case 61: // ExpressionsTail -> /* empty */
+#line 254 "../grammar.y"
                                         { CurrentSemanticValue = MakeExpressionTail(); }
 #line default
         break;
-      case 52: // ExpressionsTail -> COMMA, Expression, ExpressionsTail
-#line 231 "../grammar.y"
+      case 62: // ExpressionsTail -> COMMA, Expression, ExpressionsTail
+#line 255 "../grammar.y"
                                         { CurrentSemanticValue = AddToExpressionTail(ValueStack[ValueStack.Depth-1], ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 53: // WhileLoop -> WHILE, Expression, LOOP, Body, END
-#line 236 "../grammar.y"
+      case 63: // WhileLoop -> WHILE, Expression, LOOP, Body, END
+#line 260 "../grammar.y"
                                         { CurrentSemanticValue = MakeWhileLoop(ValueStack[ValueStack.Depth-4], ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 54: // ForLoop -> FOR, IDENTIFIER, Range, LOOP, Body, END
-#line 241 "../grammar.y"
+      case 64: // ForLoop -> FOR, IDENTIFIER, Range, LOOP, Body, END
+#line 265 "../grammar.y"
                                             { CurrentSemanticValue = MakeForLoop(ValueStack[ValueStack.Depth-5], ValueStack[ValueStack.Depth-4], ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 55: // Range -> IN, Reverse, RangeExpression
-#line 246 "../grammar.y"
+      case 65: // Range -> IN, Reverse, RangeExpression
+#line 270 "../grammar.y"
                                     { CurrentSemanticValue = MakeRange(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 56: // Reverse -> /* empty */
-#line 251 "../grammar.y"
+      case 66: // Reverse -> /* empty */
+#line 275 "../grammar.y"
                     { CurrentSemanticValue = null; }
 #line default
         break;
-      case 57: // Reverse -> REVERSE
-#line 252 "../grammar.y"
+      case 67: // Reverse -> REVERSE
+#line 276 "../grammar.y"
                     { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 58: // RangeExpression -> Expression, RANGE, Expression
-#line 257 "../grammar.y"
+      case 68: // RangeExpression -> Expression, RANGE, Expression
+#line 281 "../grammar.y"
                                     { CurrentSemanticValue = MakeRangeExpression(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 59: // ForeachLoop -> FOREACH, IDENTIFIER, FROM, ModifiablePrimary, LOOP, Body, END
-#line 262 "../grammar.y"
+      case 69: // ForeachLoop -> FOREACH, IDENTIFIER, FROM, ModifiablePrimary, LOOP, Body, END
+#line 286 "../grammar.y"
                                                                 { CurrentSemanticValue = MakeForEachLoop(ValueStack[ValueStack.Depth-6], ValueStack[ValueStack.Depth-4], ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 60: // IfStatement -> IF, Expression, THEN, Body, ElseTail, END
-#line 267 "../grammar.y"
+      case 70: // IfStatement -> IF, Expression, THEN, Body, ElseTail, END
+#line 291 "../grammar.y"
                                             { CurrentSemanticValue = MakeIfStatement(ValueStack[ValueStack.Depth-5], ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 61: // ElseTail -> /* empty */
-#line 272 "../grammar.y"
+      case 71: // ElseTail -> /* empty */
+#line 296 "../grammar.y"
                     { CurrentSemanticValue = null; }
 #line default
         break;
-      case 62: // ElseTail -> ELSE, Body
-#line 273 "../grammar.y"
+      case 72: // ElseTail -> ELSE, Body
+#line 297 "../grammar.y"
                     { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 63: // Expression -> Relation, ExpressionTail
-#line 278 "../grammar.y"
+      case 73: // Expression -> Relation, ExpressionTail
+#line 302 "../grammar.y"
                                 { CurrentSemanticValue = MakeExpression(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 64: // ExpressionTail -> /* empty */
-#line 283 "../grammar.y"
+      case 74: // ExpressionTail -> /* empty */
+#line 307 "../grammar.y"
                   { CurrentSemanticValue = MakeExpressionTail(); }
 #line default
         break;
-      case 65: // ExpressionTail -> AND, Relation, ExpressionTail
-#line 284 "../grammar.y"
+      case 75: // ExpressionTail -> AND, Relation, ExpressionTail
+#line 308 "../grammar.y"
                                     { CurrentSemanticValue = AddToExpressionTail(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 66: // ExpressionTail -> OR, Relation, ExpressionTail
-#line 285 "../grammar.y"
+      case 76: // ExpressionTail -> OR, Relation, ExpressionTail
+#line 309 "../grammar.y"
                                     { CurrentSemanticValue = AddToExpressionTail(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 67: // ExpressionTail -> XOR, Relation, ExpressionTail
-#line 286 "../grammar.y"
+      case 77: // ExpressionTail -> XOR, Relation, ExpressionTail
+#line 310 "../grammar.y"
                                     { CurrentSemanticValue = AddToExpressionTail(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 68: // Relation -> Simple, RelationTail
-#line 291 "../grammar.y"
+      case 78: // Relation -> Simple, RelationTail
+#line 315 "../grammar.y"
                           { CurrentSemanticValue = MakeRelation(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 69: // RelationTail -> /* empty */
-#line 296 "../grammar.y"
+      case 79: // Relation -> NOT, Relation
+#line 316 "../grammar.y"
+                   { CurrentSemanticValue = MakeRelation(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
+#line default
+        break;
+      case 80: // RelationTail -> /* empty */
+#line 321 "../grammar.y"
                             { CurrentSemanticValue = MakeRelationTail();       }
 #line default
         break;
-      case 70: // RelationTail -> LESS, Simple
-#line 297 "../grammar.y"
+      case 81: // RelationTail -> LESS, Simple
+#line 322 "../grammar.y"
                             { CurrentSemanticValue = MakeRelationTail(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 71: // RelationTail -> LESS_EQUAL, Simple
-#line 298 "../grammar.y"
+      case 82: // RelationTail -> LESS_EQUAL, Simple
+#line 323 "../grammar.y"
                             { CurrentSemanticValue = MakeRelationTail(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 72: // RelationTail -> GREATER, Simple
-#line 299 "../grammar.y"
+      case 83: // RelationTail -> GREATER, Simple
+#line 324 "../grammar.y"
                             { CurrentSemanticValue = MakeRelationTail(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 73: // RelationTail -> GREATER_EQUAL, Simple
-#line 300 "../grammar.y"
+      case 84: // RelationTail -> GREATER_EQUAL, Simple
+#line 325 "../grammar.y"
                             { CurrentSemanticValue = MakeRelationTail(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 74: // RelationTail -> EQUAL, Simple
-#line 301 "../grammar.y"
+      case 85: // RelationTail -> EQUAL, Simple
+#line 326 "../grammar.y"
                             { CurrentSemanticValue = MakeRelationTail(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 75: // RelationTail -> NOT_EQUAL, Simple
-#line 302 "../grammar.y"
+      case 86: // RelationTail -> NOT_EQUAL, Simple
+#line 327 "../grammar.y"
                             { CurrentSemanticValue = MakeRelationTail(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 76: // Simple -> Factor, SimpleTail
-#line 307 "../grammar.y"
+      case 87: // Simple -> Factor, SimpleTail
+#line 332 "../grammar.y"
                         { CurrentSemanticValue = MakeSimple(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 77: // SimpleTail -> /* empty */
-#line 312 "../grammar.y"
+      case 88: // SimpleTail -> /* empty */
+#line 337 "../grammar.y"
                                     { CurrentSemanticValue = MakeSimpleTail();            }
 #line default
         break;
-      case 78: // SimpleTail -> MULTIPLY, Factor, SimpleTail
-#line 313 "../grammar.y"
+      case 89: // SimpleTail -> MULTIPLY, Factor, SimpleTail
+#line 338 "../grammar.y"
                                     { CurrentSemanticValue = AddToSimpleTail(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 79: // SimpleTail -> DIVIDE, Factor, SimpleTail
-#line 314 "../grammar.y"
+      case 90: // SimpleTail -> DIVIDE, Factor, SimpleTail
+#line 339 "../grammar.y"
                                     { CurrentSemanticValue = AddToSimpleTail(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 80: // SimpleTail -> MOD, Factor, SimpleTail
-#line 315 "../grammar.y"
+      case 91: // SimpleTail -> MOD, Factor, SimpleTail
+#line 340 "../grammar.y"
                                     { CurrentSemanticValue = AddToSimpleTail(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 81: // Factor -> Summand, FactorTail
-#line 320 "../grammar.y"
+      case 92: // Factor -> Summand, FactorTail
+#line 345 "../grammar.y"
                             { CurrentSemanticValue = MakeFactor(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 82: // FactorTail -> /* empty */
-#line 325 "../grammar.y"
+      case 93: // FactorTail -> /* empty */
+#line 350 "../grammar.y"
                                 { CurrentSemanticValue = MakeFactorTail(); }
 #line default
         break;
-      case 83: // FactorTail -> PLUS, Summand, FactorTail
-#line 326 "../grammar.y"
+      case 94: // FactorTail -> PLUS, Summand, FactorTail
+#line 351 "../grammar.y"
                                 { CurrentSemanticValue = AddToFactorTail(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 84: // FactorTail -> MINUS, Summand, FactorTail
-#line 327 "../grammar.y"
+      case 95: // FactorTail -> MINUS, Summand, FactorTail
+#line 352 "../grammar.y"
                                 { CurrentSemanticValue = AddToFactorTail(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 85: // Summand -> Primary
-#line 332 "../grammar.y"
+      case 96: // Summand -> Primary
+#line 357 "../grammar.y"
                                                     { CurrentSemanticValue = MakeSummand(ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 86: // Summand -> OPEN_PARENTHESIS, Expression, CLOSE_PARENTHESIS
-#line 333 "../grammar.y"
+      case 97: // Summand -> OPEN_PARENTHESIS, Expression, CLOSE_PARENTHESIS
+#line 358 "../grammar.y"
                                                     { CurrentSemanticValue = MakeSummand(ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 87: // Primary -> INTEGER_LITERAL
-#line 338 "../grammar.y"
+      case 98: // Primary -> INTEGER_LITERAL
+#line 363 "../grammar.y"
                         { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 88: // Primary -> REAL_LITERAL
-#line 339 "../grammar.y"
+      case 99: // Primary -> REAL_LITERAL
+#line 364 "../grammar.y"
                         { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 89: // Primary -> CHAR_LITERAL
-#line 340 "../grammar.y"
+      case 100: // Primary -> CHAR_LITERAL
+#line 365 "../grammar.y"
                         { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 90: // Primary -> STRING_LITERAL
-#line 341 "../grammar.y"
+      case 101: // Primary -> STRING_LITERAL
+#line 366 "../grammar.y"
                         { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 91: // Primary -> TRUE
-#line 342 "../grammar.y"
+      case 102: // Primary -> TRUE
+#line 367 "../grammar.y"
                         { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 92: // Primary -> FALSE
-#line 343 "../grammar.y"
+      case 103: // Primary -> FALSE
+#line 368 "../grammar.y"
                         { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 93: // Primary -> ModifiablePrimary
-#line 344 "../grammar.y"
+      case 104: // Primary -> ModifiablePrimary
+#line 369 "../grammar.y"
                         { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
 #line default
         break;
-      case 94: // ModifiablePrimary -> IDENTIFIER, ModifiablePrimaryTail
-#line 349 "../grammar.y"
+      case 105: // Primary -> RoutineCall
+#line 370 "../grammar.y"
+                        { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
+#line default
+        break;
+      case 106: // ModifiablePrimary -> IDENTIFIER, ModifiablePrimaryTail
+#line 375 "../grammar.y"
                                         { CurrentSemanticValue = MakeModifiablePrimary(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 95: // ModifiablePrimaryTail -> /* empty */
-#line 354 "../grammar.y"
+      case 107: // ModifiablePrimaryTail -> /* empty */
+#line 380 "../grammar.y"
                                             { CurrentSemanticValue = MakeModifiablePrimaryTail(); }
 #line default
         break;
-      case 96: // ModifiablePrimaryTail -> MemberAccess, ModifiablePrimaryTail
-#line 355 "../grammar.y"
+      case 108: // ModifiablePrimaryTail -> MemberAccess, ModifiablePrimaryTail
+#line 381 "../grammar.y"
                                             { CurrentSemanticValue = AddToModifiablePrimaryTail(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 97: // ModifiablePrimaryTail -> ArrayAccess, ModifiablePrimaryTail
-#line 356 "../grammar.y"
+      case 109: // ModifiablePrimaryTail -> ArrayAccess, ModifiablePrimaryTail
+#line 382 "../grammar.y"
                                             { CurrentSemanticValue = AddToModifiablePrimaryTail(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 98: // MemberAccess -> DOT, IDENTIFIER
-#line 360 "../grammar.y"
+      case 110: // MemberAccess -> DOT, IDENTIFIER
+#line 386 "../grammar.y"
                         { CurrentSemanticValue = MakeMemberAccess(ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
-      case 99: // ArrayAccess -> OPEN_BRACKET, Expression, CLOSE_BRACKET
-#line 364 "../grammar.y"
-                                            { CurrentSemanticValue = MakeArrayAccess(ValueStack[ValueStack.Depth-2]); }
+      case 111: // ArrayAccess -> OPEN_BRACKET, CompoundSize, CLOSE_BRACKET
+#line 390 "../grammar.y"
+                                              { CurrentSemanticValue = MakeArrayAccess(ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
     }
@@ -862,7 +954,7 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
         return CharToString((char)terminal);
   }
 
-#line 368 "../grammar.y"
+#line 394 "../grammar.y"
 #line default
 }
 }

@@ -1,5 +1,3 @@
-program bfs;
-
 type Queue is array[100] integer;
 
 routine BFS(start: integer) is
@@ -26,6 +24,7 @@ routine BFS(start: integer) is
         Q[rear] := i;
         Visited[i] := True;
       end
+    end
   end
 end
 

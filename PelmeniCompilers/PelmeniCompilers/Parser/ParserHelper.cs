@@ -84,7 +84,18 @@ public partial class Parser
     private Node MakeArrayType(Node i, Node i1)
     {
         var node = new Node(NodeType.ArrayType, new List<Node> { i, i1 });
-        
+        return node;
+    }
+
+    private Node AddToCompoundSizeTail(Node node1, Node node2)
+    {
+        node1.Children!.Add(node2);
+        return node1;
+    }
+
+    private Node MakeCompoundSizeTail()
+    {
+        var node = new Node(NodeType.CompoundSizeTail, new List<Node> { });
         return node;
     }
 
@@ -95,14 +106,14 @@ public partial class Parser
         return node;
     }
 
-    private Node MakeVariableDeclarations()
+    private Node MakeRecordVariableDeclarations()
     {
         var node = new Node(NodeType.RecordVariableDeclarations, new List<Node>());
         
         return node;
     }
 
-    private Node AddToVariableDeclarations(Node i, Node i1)
+    private Node AddToRecordVariableDeclarations(Node i, Node i1)
     {
         i.Children!.Add(i1);
         return i;
@@ -358,7 +369,45 @@ public partial class Parser
     private Node MakeRef(Node type)
     {
         var node = new Node(NodeType.RefType, new List<Node> { type });
-        
+        return node;
+    }
+
+    private Node MakeReturn(Node i)
+    {
+        var node = new Node(NodeType.Return, new List<Node> { i });
+        return node;
+    }
+
+    private Node MakeCompoundSize(Node node1, Node node2)
+    {
+        var node = new Node(NodeType.CompoundSize, new List<Node> { node1 });
+        node.Children!.AddRange(node2.Children!);
+        return node;
+    }
+
+    private Node MakeArrayType(Node type)
+    {
+        var node = new Node(NodeType.ArrayType, new List<Node> { type });
+        return node;
+    }
+
+    private Node AddToIdentifiersTail(Node node1, Node node2)
+    {
+        node1.Children!.Add(node2);
+        return node1;
+    }
+
+    private Node MakeIdentifiersTail()
+    {
+        var node = new Node(NodeType.IdentifiersTail, new List<Node> { });
+        return node;
+    }
+
+    private Node MakeVariablesDeclaration(Node node1, Node node2, Node node3)
+    {
+        var node = new Node(NodeType.VariablesDeclaration, new List<Node> { node1 });
+        node.Children!.AddRange(node2.Children!);
+        node.Children!.Add(node3);
         return node;
     }
 }

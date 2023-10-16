@@ -1,16 +1,17 @@
-routine Swap(var a, b: Integer) is
-    var temp: Integer
+type Sus is record
+    var a: integer;
+    var c: array[] char;
+end;
+
+routine Swap(a: Sus, b: Sus) is
+    var temp: Integer;
     temp := a;
     a := b;
     b := temp;
 end
 
 routine Main() is
-    var numA: Integer;
-    var numB: Integer;
+    var susA, susB: Sus;
 
-    readln(numA);
-    readln(numB);
-    res := Swap(numA, numB);
-    writeln(res);
+    res := Swap(susA, susB);
 end

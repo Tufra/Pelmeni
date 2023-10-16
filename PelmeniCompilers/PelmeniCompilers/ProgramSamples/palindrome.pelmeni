@@ -1,25 +1,24 @@
-program IsPalindrome;
-
 routine IsPalindromeNumber(x: integer): boolean is
-	var temp, reverse, digit: integer;
+	var temp: integer;
+  var revers: integer;
+  var digit: integer;
 
-  temp := x;  // Store the original number
-  reverse := 0;
+  temp := x;
+  revers := 0;
 
-  // Reverse the number
   while x <> 0
   loop
-    digit := x mod 10;
-    reverse := reverse * 10 + digit;
-    x := x div 10;
+    digit := x % 10;
+    revers := revers * 10 + digit;
+    x := x / 10;
   end
 
-  // Check if the reversed number is equal to the original number
-  if temp = reverse then
-    return true
+  if temp = revers then
+    return true;
   else
     return false;
 	end
+end
 
 routine Main() is
 	var num: integer;
@@ -27,7 +26,8 @@ routine Main() is
   readln(num);
 
   if IsPalindromeNumber(num) then
-    writeln(num, ' is a palindrome')
+    writeln(num, ' is a palindrome');
   else
     writeln(num, ' is not a palindrome');
+  end
 end
