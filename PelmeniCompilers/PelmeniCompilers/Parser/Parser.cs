@@ -4,19 +4,17 @@
 
 // GPPG version 1.5.2
 // Machine:  DESKTOP-K87RABG
-// DateTime: 16.10.2023 19:19:12
+// DateTime: 16.10.2023 19:14:09
 // UserName: under
-// Input file <../grammar.y - 16.10.2023 19:16:00>
+// Input file <../grammar.y - 16.10.2023 19:13:04>
 
 // options: lines
 
-using System;
-using System.Collections.Generic;
+
 using System.CodeDom.Compiler;
 using System.Globalization;
-using System.Text;
 using PelmeniCompilers.Models;
-using QUT.Gppg;
+using PelmeniCompilers.ShiftReduceParser;
 
 namespace PelmeniCompilers.Parser
 {
@@ -31,7 +29,7 @@ public enum Tokens {error=2,EOF=3,IDENTIFIER=4,INTEGER_LITERAL=5,REAL_LITERAL=6,
     MOD=49,LESS_EQUAL=50,GREATER_EQUAL=51,LESS=52,GREATER=53,NOT_EQUAL=54,
     AND=55,OR=56,XOR=57,RANGE=58};
 
-[GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
+[GeneratedCode( "Gardens Point Parser Generator", "1.5.2")]
 public partial class Parser: ShiftReduceParser<Node, LexLocation>
 {
 #pragma warning disable 649
@@ -387,9 +385,11 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
 #line default
         break;
       case 8: // VariableDeclaration -> VAR, IDENTIFIER, TypeTail, VariableInitializationTail, 
-              //                        SEMICOLON
+          //                        SEMICOLON
 #line 102 "../grammar.y"
-                                                                     { CurrentSemanticValue = MakeVariableDeclaration(ValueStack[ValueStack.Depth-4], ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2]); }
+      {
+          CurrentSemanticValue = MakeVariableDeclaration(ValueStack[ValueStack.Depth - 4],
+              ValueStack[ValueStack.Depth - 3], ValueStack[ValueStack.Depth - 2]); }
 #line default
         break;
       case 9: // TypeTail -> /* empty */
