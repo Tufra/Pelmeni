@@ -10,24 +10,18 @@ namespace PelmeniCompilers.Scanner;
 
 public class Scanner : AbstractScanner<Node, LexLocation>
 {
-    private readonly StringBuilder _buffer;
+    public override LexLocation yylloc { get; set; }
+
+    public List<Token> Tokens { get; } = new();
+    
+    private readonly StringBuilder _buffer = new();
     private int _lineNumber = 1;
     private int _positionEnd = 1;
     private State _state = State.Free;
 
     private IEnumerator<Token>? _tokensEnumerator;
 
-    public Scanner()
-    {
-        _buffer = new StringBuilder();
-    }
-
-    public override LexLocation yylloc { get; set; }
-
-
-    public List<Token> Tokens { get; } = new();
-
-    public override int yylex()
+     public override int yylex()
     {
         if (Tokens.Count == 0)
             throw new InvalidOperationException();
@@ -163,7 +157,15 @@ public class Scanner : AbstractScanner<Node, LexLocation>
         }
     }
 
-    public void Process(char symbol)
+    public void Scan(string text)
+    {
+        foreach (var symbol in text)
+            Process(symbol);
+
+        UploadToken();
+    }
+
+    private void Process(char symbol)
     {
         _state = _state switch
         {
@@ -173,15 +175,11 @@ public class Scanner : AbstractScanner<Node, LexLocation>
             State.CharLiteral => ProcessCharLiteral(symbol),
             State.Operator => ProcessOperator(symbol),
             State.IntegerLiteral => ProcessIntegerLiteral(symbol),
-            State.RealLiteral => ProcessRealLiteral(symbol)
+            State.RealLiteral => ProcessRealLiteral(symbol),
+            _ => throw new ArgumentOutOfRangeException()
         };
 
         _positionEnd++;
-    }
-
-    public void Flush()
-    {
-        UploadToken();
     }
 
     private State ProcessFreeState(char symbol)

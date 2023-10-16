@@ -13,6 +13,7 @@
         <Content Include="ProgramSamples/*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+        <PackageReference Include="ConsoleTree" Version="1.0.0" />
     </ItemGroup>
 
     <ItemGroup>

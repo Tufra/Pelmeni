@@ -1,4 +1,5 @@
-﻿using PelmeniCompilers.Parser;
+﻿using ConsoleTree;
+using PelmeniCompilers.Parser;
 
 namespace PelmeniCompilers;
 
@@ -8,24 +9,26 @@ internal static class Program
     {
         using var file = new StreamReader(args[0]);
         var fileContent = await file.ReadToEndAsync();
-        RunLexerAnalyzer(fileContent);
+        Run(fileContent);
     }
 
-    private static void RunLexerAnalyzer(string programContent)
+    private static void Run(string programContent)
     {
-        var stateMachine = new Scanner.Scanner();
+        var scanner = new Scanner.Scanner();
 
-        foreach (var symbol in programContent) stateMachine.Process(symbol);
+        scanner.Scan(programContent);
 
-        stateMachine.Flush();
-
-        Console.WriteLine(string.Join("\n", stateMachine.Tokens));
-
-        var code = stateMachine.yylex();
+        /*var code = scanner.yylex();
         while (code != 3)
         {
-            Console.WriteLine($"{stateMachine.yylval} : {((Tokens)code).ToString()}");
-            code = stateMachine.yylex();
-        }
+            Console.WriteLine($"{scanner.yylval} : {((Tokens)code).ToString()}");
+            code = scanner.yylex();
+        }*/
+
+        var parser = new Parser.Parser(scanner);
+        parser.Parse();
+
+        Tree.Write(parser.MainNode, (node, level) => Console.Write(node.Type.ToString()),
+            (node, level) => node.Children, new DisplaySettings { IndentSize = 2 });
     }
 }

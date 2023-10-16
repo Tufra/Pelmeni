@@ -1,4 +1,5 @@
-﻿using PelmeniCompilers.Values;
+﻿using ConsoleTree;
+using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.Models;
 
@@ -23,5 +24,15 @@ public record Node
     public bool IsTerminal()
     {
         return Children is null;
+    }
+
+    public IEnumerable<ITreeNode> GetNodes()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override string ToString()
+    {
+        return base.ToString();
     }
 }
