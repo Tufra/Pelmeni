@@ -1,5 +1,6 @@
 ﻿using ConsoleTree;
 using PelmeniCompilers.Parser;
+using PelmeniCompilers.ShiftReduceParser;
 
 namespace PelmeniCompilers;
 
@@ -26,9 +27,16 @@ internal static class Program
         }*/
 
         var parser = new Parser.Parser(scanner);
-        parser.Parse();
-
-        Tree.Write(parser.MainNode, (node, level) => Console.Write(node.Type.ToString()),
-            (node, level) => node.Children, new DisplaySettings { IndentSize = 2 });
+        try
+        {
+            parser.Parse();
+            Tree.Write(parser.MainNode, (node, _) => Console.Write(node.Type.ToString()),
+                (node, _) => node.Children, new DisplaySettings { IndentSize = 2 });
+        }
+        catch (SyntaxParserError e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }
