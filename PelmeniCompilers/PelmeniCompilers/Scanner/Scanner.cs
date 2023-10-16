@@ -40,7 +40,12 @@ public class Scanner : AbstractScanner<Node, LexLocation>
         return (int)Parser.Tokens.EOF;
     }
 
-    private static Tokens TokenValueToGppgToken(Token token)
+     public override void yyerror(string format, params object[] args)
+     {
+         throw new SyntaxParserError(format);
+     }
+
+     private static Tokens TokenValueToGppgToken(Token token)
     {
         switch (token.Value.ToUpper())
         {

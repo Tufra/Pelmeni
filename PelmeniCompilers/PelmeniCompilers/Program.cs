@@ -36,7 +36,6 @@ internal static class Program
         catch (SyntaxParserError e)
         {
             Console.WriteLine(e);
-            throw;
         }
     }
 }

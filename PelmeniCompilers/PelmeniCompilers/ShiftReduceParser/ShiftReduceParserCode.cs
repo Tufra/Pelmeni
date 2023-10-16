@@ -810,7 +810,6 @@ public abstract class AbstractScanner<TValue, TSpan>
     // This is a traditional name for YACC-like functionality
     public virtual void yyerror(string format, params object[] args)
     {
-        throw new SyntaxParserError(format);
     }
 }
 
