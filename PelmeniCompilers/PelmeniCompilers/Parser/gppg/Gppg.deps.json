@@ -1,0 +1,43 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.0": {
+      "Gppg/1.0.0": {
+        "dependencies": {
+          "Gplex.Tool": "0.0.1-preview1",
+          "Gppg.Tool": "0.0.1-preview1"
+        },
+        "runtime": {
+          "Gppg.dll": {}
+        }
+      },
+      "Gplex.Tool/0.0.1-preview1": {},
+      "Gppg.Tool/0.0.1-preview1": {}
+    }
+  },
+  "libraries": {
+    "Gppg/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Gplex.Tool/0.0.1-preview1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-xEnV7UMxd1IaCwgzqkyD588PQiLUQ4Fs2mskVpEJQI4azWAswwH1g7wqsMAmt6Yxg79HhxIk1FgRo4RhR4zZEA==",
+      "path": "gplex.tool/0.0.1-preview1",
+      "hashPath": "gplex.tool.0.0.1-preview1.nupkg.sha512"
+    },
+    "Gppg.Tool/0.0.1-preview1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-peMf7OJZ36lMXLItNQwb7kPM0C+G709codHgVN0VNGecM18wNifiCVsRTM4mPlrcGcDVqmiZSxrw1vn0ybjXyg==",
+      "path": "gppg.tool/0.0.1-preview1",
+      "hashPath": "gppg.tool.0.0.1-preview1.nupkg.sha512"
+    }
+  }
+}

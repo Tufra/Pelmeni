@@ -1,4 +1,4 @@
-%namespace Parser
+%namespace PelmeniCompilers.Parser
 
 %output=Parser.cs
 %partial 
@@ -99,12 +99,13 @@ SimpleDeclaration
     ;
 
 VariableDeclaration
-    : VAR IDENTIFIER TypeTail VariableInitializationTail    { $$ = MakeVariableDeclaration($2, $3, $4) } // Identifier, type, value
+    : VAR IDENTIFIER TypeTail VariableInitializationTail SEMICOLON   { $$ = MakeVariableDeclaration($2, $3, $4) } // Identifier, type, value
     ;
 
-// VariableTypeTail : ':' Type
+// VariableTypeTail : [ ':' Type ]
 TypeTail
-    : COLON Type    { $$ = $2; }
+    : /* empty */   { $$ = null; }
+    | COLON Type    { $$ = $2; }
     ;
 
 // VariableInitializationTail : is Expression
@@ -114,7 +115,7 @@ VariableInitializationTail
 
 // TypeDeclaration : type Identifier is Type
 TypeDeclaration
-    : TYPE IDENTIFIER IS Type   { $$ = MakeTypeDeclaration($2, $4); } // Identifier, type
+    : TYPE IDENTIFIER IS Type SEMICOLON  { $$ = MakeTypeDeclaration($2, $4); } // Identifier, type
     ;
 
 // RoutineDeclaration : routine Identifier ( Parameters ) [ : Type ] is Body end
@@ -158,7 +159,7 @@ PrimitiveType
 
 // ArrayType : array [ Expression ] Type
 ArrayType
-    : ARRAY OPEN_BRACKET Expression CLOSE_BRACKET Type  { $$ = MakeArrayType($5, $3); } // Type, size
+    : ARRAY OPEN_BRACKET Expression CLOSE_BRACKET Type { $$ = MakeArrayType($5, $3); } // Type, size
     ;
 
 // RecordType : record RecordVariableDeclarations end
@@ -247,7 +248,7 @@ Range
 
 // Reverse : [ reverse ]
 Reverse
-    : /* empty */   { $$ = NULL; }
+    : /* empty */   { $$ = null; }
     | REVERSE       { $$ = $1; }
     ;
 
@@ -268,7 +269,7 @@ IfStatement
 
 // ElseTail : [ else Body ]
 ElseTail
-    : /* empty */   { $$ = NULL; }
+    : /* empty */   { $$ = null; }
     | ELSE Body     { $$ = $2; }
     ;
 

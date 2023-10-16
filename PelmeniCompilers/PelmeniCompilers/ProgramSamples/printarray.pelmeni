@@ -1,0 +1,11 @@
+routine PrintArray(arr: array[5] char) is
+  for i in 0..arr.length 
+  loop
+	  write(arr[i]);
+  end
+end
+
+routine Main() is
+  var arr: array[5] char is [0, 1, 2, 3, 4]
+  PrintArray(arr);
+end

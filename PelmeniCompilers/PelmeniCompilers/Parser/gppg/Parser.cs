@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  DESKTOP-K87RABG
-// DateTime: 16.10.2023 19:19:12
+// DateTime: 16.10.2023 19:14:09
 // UserName: under
-// Input file <../grammar.y - 16.10.2023 19:16:00>
+// Input file <../grammar.y - 16.10.2023 19:13:04>
 
 // options: lines
 
@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.CodeDom.Compiler;
 using System.Globalization;
 using System.Text;
-using PelmeniCompilers.Models;
 using QUT.Gppg;
 
 namespace PelmeniCompilers.Parser
@@ -389,7 +388,7 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
       case 8: // VariableDeclaration -> VAR, IDENTIFIER, TypeTail, VariableInitializationTail, 
               //                        SEMICOLON
 #line 102 "../grammar.y"
-                                                                     { CurrentSemanticValue = MakeVariableDeclaration(ValueStack[ValueStack.Depth-4], ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2]); }
+                                                                     { CurrentSemanticValue = MakeVariableDeclaration(ValueStack[ValueStack.Depth-4], ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-2]) }
 #line default
         break;
       case 9: // TypeTail -> /* empty */
