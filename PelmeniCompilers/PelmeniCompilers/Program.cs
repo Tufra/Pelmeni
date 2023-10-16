@@ -1,9 +1,4 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
-using CommandLine;
-using PelmeniCompilers.ExtensionsMethods;
-using PelmeniCompilers.Models;
-using PelmeniCompilers.Values;
+﻿using PelmeniCompilers.Parser;
 
 namespace PelmeniCompilers;
 
@@ -18,12 +13,9 @@ internal static class Program
 
     private static void RunLexerAnalyzer(string programContent)
     {
-        var stateMachine = new MultiSpecCharacterStateMachine();
+        var stateMachine = new Scanner.Scanner();
 
-        foreach (var symbol in programContent)
-        {
-            stateMachine.Process(symbol);
-        }
+        foreach (var symbol in programContent) stateMachine.Process(symbol);
 
         stateMachine.Flush();
 
@@ -32,9 +24,8 @@ internal static class Program
         var code = stateMachine.yylex();
         while (code != 3)
         {
-            Console.WriteLine($"{stateMachine.yylval} : {((Parser.Tokens)code).ToString()}");
+            Console.WriteLine($"{stateMachine.yylval} : {((Tokens)code).ToString()}");
             code = stateMachine.yylex();
-        } 
-    
+        }
     }
 }

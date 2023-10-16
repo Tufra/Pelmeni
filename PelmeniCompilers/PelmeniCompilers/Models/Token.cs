@@ -1,5 +1,5 @@
+using PelmeniCompilers.ShiftReduceParser;
 using PelmeniCompilers.Values;
-using QUT.Gppg;
 
 namespace PelmeniCompilers.Models;
 

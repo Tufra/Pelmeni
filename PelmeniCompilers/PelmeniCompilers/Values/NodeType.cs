@@ -1,4 +1,4 @@
-﻿namespace PelmeniCompilers.Parser;
+﻿namespace PelmeniCompilers.Values;
 
 public enum NodeType
 {
@@ -50,5 +50,5 @@ public enum NodeType
     ModifiablePrimary,
     ModifiablePrimaryTail,
     MemberAccess,
-    ArrayAccess,
+    ArrayAccess
 }

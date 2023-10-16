@@ -1,32 +1,31 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using PelmeniCompilers.ExtensionsMethods;
 using PelmeniCompilers.Models;
 using PelmeniCompilers.Parser;
+using PelmeniCompilers.ShiftReduceParser;
 using PelmeniCompilers.Values;
-using QUT.Gppg;
 
-namespace PelmeniCompilers;
+namespace PelmeniCompilers.Scanner;
 
-public class MultiSpecCharacterStateMachine : AbstractScanner<Node, LexLocation>
+public class Scanner : AbstractScanner<Node, LexLocation>
 {
     private readonly StringBuilder _buffer;
     private int _lineNumber = 1;
     private int _positionEnd = 1;
     private State _state = State.Free;
 
-    private IEnumerator<Token>? _tokensEnumerator = null;
+    private IEnumerator<Token>? _tokensEnumerator;
+
+    public Scanner()
+    {
+        _buffer = new StringBuilder();
+    }
 
     public override LexLocation yylloc { get; set; }
 
 
-    public List<Token> Tokens { get; private set; } = new();
-
-    public MultiSpecCharacterStateMachine()
-    {
-        _buffer = new StringBuilder();
-    }
+    public List<Token> Tokens { get; } = new();
 
     public override int yylex()
     {
@@ -47,7 +46,7 @@ public class MultiSpecCharacterStateMachine : AbstractScanner<Node, LexLocation>
         return (int)Parser.Tokens.EOF;
     }
 
-    private static Parser.Tokens TokenValueToGppgToken(Token token)
+    private static Tokens TokenValueToGppgToken(Token token)
     {
         switch (token.Value.ToUpper())
         {
@@ -439,7 +438,7 @@ public class MultiSpecCharacterStateMachine : AbstractScanner<Node, LexLocation>
                 UploadToken();
                 _buffer.Append(symbol);
                 return State.Free;
-            
+
             default:
                 if (Regex.IsMatch(symbol.ToString(), @"\=\+\-\<\>\*\/\%"))
                 {
@@ -453,7 +452,7 @@ public class MultiSpecCharacterStateMachine : AbstractScanner<Node, LexLocation>
                     ProcessParenthesis(symbol);
                     return State.Free;
                 }
-                
+
                 if (_buffer[^1] == '.')
                 {
                     ProcessDot();
@@ -507,7 +506,7 @@ public class MultiSpecCharacterStateMachine : AbstractScanner<Node, LexLocation>
 
         UploadToken();
 
-        Tokens.Add(new()
+        Tokens.Add(new Token
         {
             Location = new LexLocation(_lineNumber, _positionEnd - symbol.ToString().Length, _lineNumber, _positionEnd),
             TokenType = TokenType.Delimiter,
