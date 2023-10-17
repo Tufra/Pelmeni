@@ -410,4 +410,52 @@ public partial class Parser
         node.Children!.Add(node3);
         return node;
     }
+
+    private Node MakeTypeTail(Node i)
+    {
+        var node = new Node(NodeType.TypeTail, new List<Node> { i });
+        return node;
+    }
+
+    private Node MakeTypeTail()
+    {
+        var node = new Node(NodeType.TypeTail, new List<Node> { });
+        return node;
+    }
+
+    private Node? MakeVariableInitializationTail(Node i)
+    {
+        var node = new Node(NodeType.VariableInitializationTail, new List<Node> { i });
+        return node;
+    }
+
+    private Node? MakeVariableInitializationTail()
+    {
+        var node = new Node(NodeType.VariableInitializationTail, new List<Node> { });
+        return node;
+    }
+
+    private Node MakeElse(Node i)
+    {
+        var node = new Node(NodeType.ElseTail, new List<Node> { i });
+        return node;
+    }
+
+    private Node MakeElse()
+    {
+        var node = new Node(NodeType.ElseTail, new List<Node> { });
+        return node;
+    }
+
+    private Node? MakeReverse(Node i)
+    {
+        var node = new Node(NodeType.Reverse, new List<Node> { i });
+        return node;
+    }
+
+    private Node? MakeReverse()
+    {
+        var node = new Node(NodeType.Reverse, new List<Node> { });
+        return node;
+    }
 }

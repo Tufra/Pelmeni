@@ -112,14 +112,14 @@ IdentifiersTail
 
 // VariableTypeTail : [ ':' Type ]
 TypeTail
-    : /* empty */   { $$ = null; }
-    | COLON Type    { $$ = $2; }
+    : /* empty */   { $$ = MakeTypeTail(); }
+    | COLON Type    { $$ = MakeTypeTail($2); }
     ;
 
 // VariableInitializationTail : is Expression
 VariableInitializationTail
-    : /* empty */ { $$ = null; }
-    | IS Expression { $$ = $2; }
+    : /* empty */ { $$ = MakeVariableInitializationTail(); }
+    | IS Expression { $$ = MakeVariableInitializationTail($2); }
     ;
 
 // TypeDeclaration : type Identifier is Type
@@ -272,8 +272,8 @@ Range
 
 // Reverse : [ reverse ]
 Reverse
-    : /* empty */   { $$ = null; }
-    | REVERSE       { $$ = $1; }
+    : /* empty */   { $$ = MakeReverse(); }
+    | REVERSE       { $$ = MakeReverse($1); }
     ;
 
 // RangeExpression : Expression .. Expression
@@ -293,8 +293,8 @@ IfStatement
 
 // ElseTail : [ else Body ]
 ElseTail
-    : /* empty */   { $$ = null; }
-    | ELSE Body     { $$ = $2; }
+    : /* empty */   { $$ = MakeElse(); }
+    | ELSE Body     { $$ = MakeElse($2); }
     ;
 
 // Expression : Relation ExpressionTail

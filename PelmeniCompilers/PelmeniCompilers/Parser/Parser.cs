@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  DESKTOP-K87RABG
-// DateTime: 17.10.2023 0:46:26
+// DateTime: 17.10.2023 12:21:55
 // UserName: under
-// Input file <../grammar.y - 17.10.2023 0:45:59>
+// Input file <../grammar.y - 17.10.2023 12:21:45>
 
 // options: conflicts lines conflicts
 
@@ -441,22 +441,22 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
         break;
       case 12: // TypeTail -> /* empty */
 #line 115 "../grammar.y"
-                    { CurrentSemanticValue = null; }
+                    { CurrentSemanticValue = MakeTypeTail(); }
 #line default
         break;
       case 13: // TypeTail -> COLON, Type
 #line 116 "../grammar.y"
-                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
+                    { CurrentSemanticValue = MakeTypeTail(ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
       case 14: // VariableInitializationTail -> /* empty */
 #line 121 "../grammar.y"
-                  { CurrentSemanticValue = null; }
+                  { CurrentSemanticValue = MakeVariableInitializationTail(); }
 #line default
         break;
       case 15: // VariableInitializationTail -> IS, Expression
 #line 122 "../grammar.y"
-                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
+                    { CurrentSemanticValue = MakeVariableInitializationTail(ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
       case 16: // TypeDeclaration -> TYPE, IDENTIFIER, IS, Type, SEMICOLON
@@ -712,12 +712,12 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
         break;
       case 66: // Reverse -> /* empty */
 #line 275 "../grammar.y"
-                    { CurrentSemanticValue = null; }
+                    { CurrentSemanticValue = MakeReverse(); }
 #line default
         break;
       case 67: // Reverse -> REVERSE
 #line 276 "../grammar.y"
-                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
+                    { CurrentSemanticValue = MakeReverse(ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
       case 68: // RangeExpression -> Expression, RANGE, Expression
@@ -737,12 +737,12 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
         break;
       case 71: // ElseTail -> /* empty */
 #line 296 "../grammar.y"
-                    { CurrentSemanticValue = null; }
+                    { CurrentSemanticValue = MakeElse(); }
 #line default
         break;
       case 72: // ElseTail -> ELSE, Body
 #line 297 "../grammar.y"
-                    { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
+                    { CurrentSemanticValue = MakeElse(ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
       case 73: // Expression -> Relation, ExpressionTail
@@ -944,7 +944,7 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
 #pragma warning restore 162, 1522
   }
 
-  protected override string TerminalToString(int terminal)
+        protected override string TerminalToString(int terminal)
   {
     if (aliases != null && aliases.ContainsKey(terminal))
         return aliases[terminal];
