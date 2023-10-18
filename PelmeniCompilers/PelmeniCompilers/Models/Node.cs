@@ -25,14 +25,4 @@ public record Node
     {
         return Children is null;
     }
-
-    public IEnumerable<ITreeNode> GetNodes()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override string ToString()
-    {
-        return base.ToString();
-    }
 }

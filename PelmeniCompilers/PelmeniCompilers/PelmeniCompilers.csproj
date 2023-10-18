@@ -11,7 +11,7 @@
     <ItemGroup>
         <PackageReference Include="CommandLineParser" Version="2.9.1"/>
         <Content Include="ProgramSamples/*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <PackageReference Include="ConsoleTree" Version="1.0.0" />
     </ItemGroup>
