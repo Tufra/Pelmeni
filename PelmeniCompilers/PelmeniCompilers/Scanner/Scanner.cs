@@ -42,7 +42,7 @@ public class Scanner : AbstractScanner<Node, LexLocation>
 
      public override void yyerror(string format, params object[] args)
      {
-         throw new SyntaxParserError(format + yylloc);
+         throw new SyntaxParserError($"{format} on {yylloc}");
      }
 
      private static Tokens TokenValueToGppgToken(Token token)
