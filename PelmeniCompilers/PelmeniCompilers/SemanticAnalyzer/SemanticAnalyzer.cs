@@ -22,7 +22,7 @@ public class SemanticAnalyzer
 
     public void Analyze()
     {
-        
+        //todo свернуть алиасинг, проверить семантику, оптимизация 
     }
     
     private IReadOnlyCollection<BaseSemanticRule> GetRules()
