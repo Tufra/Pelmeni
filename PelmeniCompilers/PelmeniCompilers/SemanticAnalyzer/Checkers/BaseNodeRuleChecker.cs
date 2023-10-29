@@ -1,10 +1,9 @@
-﻿using PelmeniCompilers.Models;
-using PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
+﻿using PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
 using PelmeniCompilers.Values;
 
-namespace PelmeniCompilers.SemanticAnalyzer.Rules;
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 
-public abstract class BaseSemanticRule
+public abstract class BaseNodeRuleChecker
 {
     public abstract NodeType CheckingNodeType { get; }
 
@@ -17,7 +16,8 @@ public abstract class BaseSemanticRule
     /// <returns></returns>
     protected bool CheckScopeFrame(Stack<HashSet<Unit>> frames)
     {
-        
+        throw new NotImplementedException();
     }
+
     public bool CanCheck(NodeType type) => type == CheckingNodeType;
 }

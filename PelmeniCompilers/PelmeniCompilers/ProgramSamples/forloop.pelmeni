@@ -1,5 +1,9 @@
+module ForLoopProgram
+
+use "printarray.pelmeni";
+
 routine Main() is
-	for i in 3..5
+	for i in 1..10
 	loop
 		var variable is 5; 
 	end

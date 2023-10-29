@@ -1,5 +1,4 @@
 ﻿using PelmeniCompilers.Enum;
-using PelmeniCompilers.SemanticAnalyzer.Rules;
 
 namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
 

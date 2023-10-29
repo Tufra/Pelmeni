@@ -1,6 +1,4 @@
-﻿using PelmeniCompilers.SemanticAnalyzer.Rules;
-
-namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
+﻿namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
 
 public record Record : Unit 
 {

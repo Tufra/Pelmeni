@@ -19,6 +19,8 @@ public class Scanner : AbstractScanner<Node, LexLocation>
     private int _positionEnd = 1;
     private State _state = State.Free;
 
+    private string FilePath { get; set; } = "";
+
     private IEnumerator<Token>? _tokensEnumerator;
 
      public override int yylex()
@@ -42,7 +44,7 @@ public class Scanner : AbstractScanner<Node, LexLocation>
 
      public override void yyerror(string format, params object[] args)
      {
-         throw new SyntaxParserError($"{format} on {yylloc}");
+         throw new SyntaxParserError($"{format} on {yylloc} in {FilePath}");
      }
 
      private static Tokens TokenValueToGppgToken(Token token)
@@ -107,6 +109,10 @@ public class Scanner : AbstractScanner<Node, LexLocation>
                 return Parser.Tokens.CHAR;
             case "BOOLEAN":
                 return Parser.Tokens.BOOLEAN;
+            case "MODULE":
+                return Parser.Tokens.MODULE;
+            case "USE":
+                return Parser.Tokens.USE;
             case ".":
                 return Parser.Tokens.DOT;
             case ",":
@@ -166,8 +172,9 @@ public class Scanner : AbstractScanner<Node, LexLocation>
         }
     }
 
-    public void Scan(string text)
+    public void Scan(string path, string text)
     {
+        FilePath = path;
         foreach (var symbol in text)
             Process(symbol);
 
@@ -531,7 +538,7 @@ public class Scanner : AbstractScanner<Node, LexLocation>
 
     private void UploadToken()
     {
-        var token = _buffer.GetToken(_lineNumber, _positionEnd);
+        var token = _buffer.GetToken(_lineNumber, _positionEnd, FilePath);
         if (token is not null)
         {
             _positionEnd++;

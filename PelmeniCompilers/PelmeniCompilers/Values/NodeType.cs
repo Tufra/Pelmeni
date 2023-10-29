@@ -4,6 +4,8 @@ public enum NodeType
 {
     Token,
     Program,
+    Module,
+    Imports,
     Declaration,
     SimpleDeclaration,
     VariableDeclaration,

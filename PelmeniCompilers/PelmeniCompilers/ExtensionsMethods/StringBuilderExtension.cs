@@ -8,7 +8,7 @@ namespace PelmeniCompilers.ExtensionsMethods;
 
 public static class StringBuilderExtension
 {
-    public static Token? GetToken(this StringBuilder stringBuilder, int lineNumber, int positionEnd)
+    public static Token? GetToken(this StringBuilder stringBuilder, int lineNumber, int positionEnd, string path)
     {
         var tokenString = stringBuilder.ToString();
 
@@ -35,7 +35,7 @@ public static class StringBuilderExtension
         if (IsOperator(tokenString)) token.TokenType = TokenType.Operator;
 
         if (token.TokenType == TokenType.Unrecognized)
-            throw new InvalidOperationException($"Token \"{tokenString}\" with {token.Location} unrecognized");
+            throw new InvalidOperationException($"Token \"{tokenString}\" with {token.Location} at {path} unrecognized");
             // Console.WriteLine($"Token \"{tokenString}\" with {token.Location} unrecognized");
 
         return token;

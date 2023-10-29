@@ -1,3 +1,7 @@
+module Amogus
+
+use "sum.pelmeni";
+
 routine PrintArray(arr: array[] char) is
   for i in 0..arr.length 
   loop
@@ -6,6 +10,6 @@ routine PrintArray(arr: array[] char) is
 end
 
 routine Main() is
-  var arr: array[5] char is [0, 1, 2, 3, 4]
+  var arr: array[5] char;
   PrintArray(arr);
 end
