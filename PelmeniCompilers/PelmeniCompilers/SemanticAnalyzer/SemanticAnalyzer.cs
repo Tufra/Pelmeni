@@ -2,7 +2,7 @@
 using System.Reflection;
 using PelmeniCompilers.ExtensionsMethods;
 using PelmeniCompilers.Models;
-using PelmeniCompilers.SemanticAnalyzer.Rules;
+using PelmeniCompilers.SemanticAnalyzer.Checkers;
 using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.SemanticAnalyzer;
@@ -10,7 +10,7 @@ namespace PelmeniCompilers.SemanticAnalyzer;
 public class SemanticAnalyzer
 {
     private Node _mainNode;
-    public IReadOnlyCollection<BaseSemanticRule> SemanticRules { get; private set; }
+    public IReadOnlyCollection<BaseNodeRuleChecker> SemanticRules { get; private set; }
     
     public SemanticAnalyzer(Node mainNode)
     {
@@ -25,13 +25,13 @@ public class SemanticAnalyzer
         //todo свернуть алиасинг, проверить семантику, оптимизация 
     }
     
-    private IReadOnlyCollection<BaseSemanticRule> GetRules()
+    private IReadOnlyCollection<BaseNodeRuleChecker> GetRules()
     {
         var assembly = Assembly.GetExecutingAssembly();
         var types = assembly.GetTypes();
-        var baseClassType = typeof(BaseSemanticRule);
+        var baseClassType = typeof(BaseNodeRuleChecker);
         var derivedTypes = types.Where(t => baseClassType.IsAssignableFrom(t) && t != baseClassType)
-            .Select(t => (BaseSemanticRule)Activator.CreateInstance(t)!)
+            .Select(t => (BaseNodeRuleChecker)Activator.CreateInstance(t)!)
             .ToHashSet();
         return derivedTypes;
     }
