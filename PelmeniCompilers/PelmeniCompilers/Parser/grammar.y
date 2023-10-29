@@ -87,12 +87,11 @@
 // Program : { Declaration }
 Program
     : Module Imports      { $$ = MakeProgram($1, $2); }
-    | /* empty */         { $$ = MakeProgram(); }
     | Program Declaration { $$ = AddToProgram($1, $2); }
     ;
 
 Module
-    : MODULE IDENTIFIER { $$ = MakeModule($2); }
+    : MODULE IDENTIFIER SEMICOLON { $$ = MakeModule($2); }
     ;
 
 Imports

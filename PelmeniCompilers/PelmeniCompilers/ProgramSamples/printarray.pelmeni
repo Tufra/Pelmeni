@@ -1,4 +1,4 @@
-module Amogus
+module Amogus;
 
 use "sum.pelmeni";
 
