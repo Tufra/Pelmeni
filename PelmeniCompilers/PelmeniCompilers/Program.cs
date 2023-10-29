@@ -22,17 +22,6 @@ internal static class Program
 
             scanner.Scan(path, fileContent);
 
-            // foreach (var i in scanner.Tokens)
-            //     Console.WriteLine(i);
-
-
-            /*var code = scanner.yylex();
-            while (code != 3)
-            {
-                Console.WriteLine($"{scanner.yylval} : {((Tokens)code).ToString()}");
-                code = scanner.yylex();
-            }*/
-
             var parser = new Parser.Parser(scanner);
 
             parser.Parse();
