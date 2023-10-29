@@ -530,15 +530,33 @@ public partial class Parser
         return node;
     }
 
-    private Node? MakeReverse(Node i)
+    private Node MakeReverse(Node i)
     {
         var node = new Node(NodeType.Reverse, new List<Node> { i });
         return node;
     }
 
-    private Node? MakeReverse()
+    private Node MakeReverse()
     {
         var node = new Node(NodeType.Reverse, new List<Node> { });
+        return node;
+    }
+
+    private Node MakeSign(Node i)
+    {
+        var node = new Node(NodeType.Sign, new List<Node> { i });
+        return node;
+    }
+
+    private Node MakeSign()
+    {
+        var node = new Node(NodeType.Sign, new List<Node> { });
+        return node;
+    }
+
+    private Node MakeSummand(Node node1, Node node2)
+    {
+        var node = new Node(NodeType.Summand, new List<Node> { node1, node2 });
         return node;
     }
 }

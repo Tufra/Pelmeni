@@ -233,11 +233,11 @@ Assignment
     ;
 
 Increment
-    : ModifiablePrimary INCREMENT  { $$ = MakeIncrement($1); } // Identifier ..
+    : ModifiablePrimary INCREMENT  { $$ = MakeIncrement($1); } // Identifier 
     ;
 
 Decrement
-    : ModifiablePrimary DECREMENT  { $$ = MakeDecrement($1); } // Identifier юю
+    : ModifiablePrimary DECREMENT  { $$ = MakeDecrement($1); } // Identifier
     ;
 
 // RoutineCall : Identifier RoutineCallParameters
@@ -323,50 +323,55 @@ ExpressionTail
 
 // Relation : Simple RelationTail
 Relation
-    : Simple RelationTail { $$ = MakeRelation($1, $2); } // Simple, RelationTail
+    : Factor RelationTail { $$ = MakeRelation($1, $2); } // Simple, RelationTail
     | NOT Relation { $$ = MakeRelation($1, $2); }
     ;
     
 // RelationTail : [ ( < | <= | > | >= | = | /= ) Simple ]    
 RelationTail
     : /* empty */           { $$ = MakeRelationTail();       }
-    | LESS          Simple  { $$ = MakeRelationTail($1, $2); } // Operator (<), Simple
-    | LESS_EQUAL    Simple  { $$ = MakeRelationTail($1, $2); } // Operator (<=), Simple
-    | GREATER       Simple  { $$ = MakeRelationTail($1, $2); } // Operator (>), Simple
-    | GREATER_EQUAL Simple  { $$ = MakeRelationTail($1, $2); } // Operator (>=), Simple
-    | EQUAL         Simple  { $$ = MakeRelationTail($1, $2); } // Operator (=), Simple
-    | NOT_EQUAL     Simple  { $$ = MakeRelationTail($1, $2); } // Operator (<>), Simple
+    | LESS          Factor  { $$ = MakeRelationTail($1, $2); } // Operator (<), Simple
+    | LESS_EQUAL    Factor  { $$ = MakeRelationTail($1, $2); } // Operator (<=), Simple
+    | GREATER       Factor  { $$ = MakeRelationTail($1, $2); } // Operator (>), Simple
+    | GREATER_EQUAL Factor  { $$ = MakeRelationTail($1, $2); } // Operator (>=), Simple
+    | EQUAL         Factor  { $$ = MakeRelationTail($1, $2); } // Operator (=), Simple
+    | NOT_EQUAL     Factor  { $$ = MakeRelationTail($1, $2); } // Operator (<>), Simple
     ;
 
 // Simple : Factor SimpleTail
 Simple 
-    : Factor SimpleTail { $$ = MakeSimple($1, $2); } // Factor, SimpleTail
+    : Summand SimpleTail { $$ = MakeSimple($1, $2); } // Factor, SimpleTail
     ;
 
 // SimpleTail : { ( * | / | % ) Factor }
 SimpleTail
-    : /* empty */                   { $$ = MakeSimpleTail();            }
-    | MULTIPLY  Factor SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (*), Factor, SimpleTail
-    | DIVIDE    Factor SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (/), Factor, SimpleTail
-    | MOD       Factor SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (%), Factor, SimpleTail
+    : /* empty */                    { $$ = MakeSimpleTail();            }
+    | MULTIPLY  Summand SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (*), Factor, SimpleTail
+    | DIVIDE    Summand SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (/), Factor, SimpleTail
+    | MOD       Summand SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (%), Factor, SimpleTail
     ;
 
 // Factor : Summand FactorTail
 Factor 
-    : Summand FactorTail    { $$ = MakeFactor($1, $2); } // Summand, FactorTail
+    : Simple FactorTail    { $$ = MakeFactor($1, $2); } // Summand, FactorTail
     ;
 
 // FactorTail : { ( + | - ) Summand }
 FactorTail
     : /* empty */               { $$ = MakeFactorTail(); }
-    | PLUS  Summand FactorTail  { $$ = AddToFactorTail($1, $2, $3); } // Operator (+), Summand, FactorTail
-    | MINUS Summand FactorTail  { $$ = AddToFactorTail($1, $2, $3); } // Operator (+), Summand, FactorTail
+    | PLUS  Simple FactorTail  { $$ = AddToFactorTail($1, $2, $3); } // Operator (+), Summand, FactorTail
+    | MINUS Simple FactorTail  { $$ = AddToFactorTail($1, $2, $3); } // Operator (+), Summand, FactorTail
     ;
 
 // Summand : Primary | ( Expression )
 Summand 
-    :                  Primary                      { $$ = MakeSummand($1); } // Primary
+    : Sign             Primary                      { $$ = MakeSummand($1, $2); } // Primary
     | OPEN_PARENTHESIS Expression CLOSE_PARENTHESIS { $$ = MakeSummand($2); } // Expression
+    ;
+
+Sign
+    : /* empty */ { $$ = MakeSign(); }
+    | MINUS       { $$ = MakeSign($1); }
     ;
 
 // Primary : IntegralLiteral | RealLiteral | CharLiteral | StringLiteral | true | false | ModifiablePrimary

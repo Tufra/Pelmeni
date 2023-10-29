@@ -53,6 +53,7 @@ public enum NodeType
     Factor,
     FactorTail,
     Summand,
+    Sign,
     Primary,
     ModifiablePrimary,
     ModifiablePrimaryTail,
