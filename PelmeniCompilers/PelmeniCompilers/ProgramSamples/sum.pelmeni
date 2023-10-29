@@ -1,3 +1,5 @@
+module SumModule;
+
 routine Sum(a: integer, b: Integer): Integer is
   var result: Integer;
   result := a + b;

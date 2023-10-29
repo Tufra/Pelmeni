@@ -76,14 +76,6 @@ public partial class Parser
         }
     }
 
-    private Node MakeProgram()
-    {
-        var node = new Node(NodeType.Program, new List<Node> { });
-        MainNode ??= node;
-        UsedModules = new List<string> { "Main" };
-        return node;
-    }
-
     private Node MakeProgram(Node node1, Node node2)
     {
         var node = new Node(NodeType.Program, new List<Node> { node1, node2 });
