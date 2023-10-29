@@ -8,14 +8,103 @@ public partial class Parser
 {
     public Node? MainNode { get; private set; }
 
+    public record DependencyTreeNode {
+
+        public DependencyTreeNode(string path, Node? program) {
+            Path = path;
+            Program = program;
+        }
+
+        public string Path { get; private set; }
+        public Node? Program {get; private set; }
+        
+    }
+
+    public List<string>? UsedModules { get; private set; }
+
     public Parser(AbstractScanner<Node, LexLocation> scanner) : base(scanner)
     {
     }
 
-    private Node MakeProgram(Node i)
+    public void UnfoldDependencies(string path)
     {
-        var node = new Node(NodeType.Program, new List<Node> { i });
+        Queue<DependencyTreeNode> importsQueue = new();
+        importsQueue.Enqueue(new DependencyTreeNode(path, MainNode));
+        
+
+        while (importsQueue.Count > 0)
+            {
+                var node = importsQueue.Dequeue();
+                if (node.Program!.Children![0].Type == NodeType.Module)
+                {
+                    var imports = node.Program!.Children![1].Children!;
+                    Console.WriteLine(imports.ToString());
+                    for (var i = 0; i < imports.Count; i++)
+                    {
+                        var fileName = imports[i].Token!.Value;
+                        var filePath = Path.Join(Path.GetDirectoryName(node.Path), fileName.Substring(1, fileName.Length - 2));
+                        using var file = new StreamReader(filePath);
+                        var fileContent = file.ReadToEnd();
+
+
+                        var scanner = new Scanner.Scanner();
+                        var parser = new Parser(scanner);
+
+                        scanner.Scan(filePath, fileContent);
+                        parser.Parse();
+
+                        var tree = parser.MainNode;
+                        string name = fileName;
+                        if (tree!.Children![0].Type == NodeType.Module)
+                        {
+                            name = tree!.Children![0].Children![0].Token!.Value;
+                        }
+                        if (UsedModules!.Contains(name)) {
+                            throw new Exception($"Duplicate module: {name} in {filePath}");
+                        }
+                        UsedModules!.Add(name);
+
+                        imports[i] = tree;
+
+                        importsQueue.Enqueue(new DependencyTreeNode(filePath, imports[i]));
+                    }
+                }
+            }
+
+        
+    }
+
+    private Node MakeProgram()
+    {
+        var node = new Node(NodeType.Program, new List<Node> { });
         MainNode ??= node;
+        UsedModules = new List<string> { "Main" };
+        return node;
+    }
+
+    private Node MakeProgram(Node node1, Node node2)
+    {
+        var node = new Node(NodeType.Program, new List<Node> { node1, node2 });
+        MainNode ??= node;
+        UsedModules = new List<string> { node1.Children![0].Token!.Value };
+        return node;
+    }
+
+    private Node MakeImports()
+    {
+        var node = new Node(NodeType.Imports, new List<Node> { });
+        return node;
+    }
+
+    private Node AddToImports(Node to, Node i)
+    {
+        to.Children!.Add(i);
+        return to;
+    }
+
+    private Node MakeModule(Node i)
+    {
+        var node = new Node(NodeType.Module, new List<Node> { i });
         return node;
     }
 
@@ -458,4 +547,5 @@ public partial class Parser
         var node = new Node(NodeType.Reverse, new List<Node> { });
         return node;
     }
+
 }

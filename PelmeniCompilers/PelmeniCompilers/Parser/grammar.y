@@ -40,6 +40,8 @@
 %token ROUTINE // routine
 %token REF // ref
 %token RETURN // return
+%token USE // use
+%token MODULE // module
 
 // Types
 %token INTEGER // integer
@@ -82,11 +84,20 @@
 /* RULES SECTION */
 
 %%
-
 // Program : { Declaration }
 Program
-    :         Declaration { $$ = MakeProgram($1); }
+    : Module Imports      { $$ = MakeProgram($1, $2); }
+    | /* empty */         { $$ = MakeProgram(); }
     | Program Declaration { $$ = AddToProgram($1, $2); }
+    ;
+
+Module
+    : MODULE IDENTIFIER { $$ = MakeModule($2); }
+    ;
+
+Imports
+    : /* empty */ { $$ = MakeImports(); }
+    | USE STRING_LITERAL SEMICOLON Imports { $$ = AddToImports($4, $2); }
     ;
 
 // Declaration : VariableDeclaration | TypeDeclaration | RoutineDeclaration
@@ -100,6 +111,7 @@ SimpleDeclaration
     | TypeDeclaration       { $$ = $1; }
     ;
 
+// VariableDeclaration : var Identifier [ : Type ] [ is Expression ] ;
 VariableDeclaration
     : VAR IDENTIFIER TypeTail VariableInitializationTail SEMICOLON   { $$ = MakeVariableDeclaration($2, $3, $4); } // Identifier, type, value
     | VAR IDENTIFIER IdentifiersTail TypeTail SEMICOLON { $$ = MakeVariablesDeclaration($2, $3, $4); }
@@ -222,11 +234,11 @@ Assignment
     ;
 
 Increment
-    : IDENTIFIER INCREMENT  { $$ = MakeIncrement($1); } // Identifier
+    : ModifiablePrimary INCREMENT  { $$ = MakeIncrement($1); } // Identifier ..
     ;
 
 Decrement
-    : IDENTIFIER DECREMENT  { $$ = MakeDecrement($1); } // Identifier
+    : ModifiablePrimary DECREMENT  { $$ = MakeDecrement($1); } // Identifier юю
     ;
 
 // RoutineCall : Identifier RoutineCallParameters

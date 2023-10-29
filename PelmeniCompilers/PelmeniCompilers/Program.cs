@@ -9,18 +9,18 @@ internal static class Program
 {
     private static async Task Main(string[] args)
     {
-        using var file = new StreamReader(args[0]);
-        var fileContent = await file.ReadToEndAsync();
-        Run(fileContent);
+        await Run(args[0]);
     }
 
-    private static void Run(string programContent)
+    private static async Task Run(string path)
     {
         try
         {
+            using var file = new StreamReader(path);
+            var fileContent = await file.ReadToEndAsync();
             var scanner = new Scanner.Scanner();
 
-            scanner.Scan(programContent);
+            scanner.Scan(path, fileContent);
 
             // foreach (var i in scanner.Tokens)
             //     Console.WriteLine(i);
@@ -36,6 +36,7 @@ internal static class Program
             var parser = new Parser.Parser(scanner);
 
             parser.Parse();
+            parser.UnfoldDependencies(path);
             
             Tree.Write(
                 parser.MainNode, 

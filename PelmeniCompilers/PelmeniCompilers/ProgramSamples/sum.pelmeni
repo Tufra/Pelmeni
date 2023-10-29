@@ -1,4 +1,4 @@
-routine Sum(var a, b: Integer): Integer is
+routine Sum(a: integer, b: Integer): Integer is
   var result: Integer;
   result := a + b;
   return result;
@@ -7,12 +7,12 @@ end
 routine Main() is
   var numA, numB, res: Integer;
 
-  write('Enter first number: ');
+  write("Enter first number: ");
   readln(numA);
-  write('Enter second number: ');
+  write("Enter second number: ");
   readln(numB);
 
   res := Sum(numA, numB);
   
-  writeln('Result is: ', res);
+  writeln("Result is: ", res);
 end
