@@ -6,5 +6,9 @@ namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit
     {
         public TokenType Type { get; set; }
         public string Value { get; set; }
+
+        public Variable(string name) : base(name)
+        {
+        }
     }
 }

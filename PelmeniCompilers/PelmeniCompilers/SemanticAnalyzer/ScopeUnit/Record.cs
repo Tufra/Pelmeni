@@ -6,4 +6,8 @@ public record Record : Unit
     /// Properties
     /// </summary>
     public List<Variable> Members { get; set; }
+
+    public Record(string name) : base(name)
+    {
+    }
 }

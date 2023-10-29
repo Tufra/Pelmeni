@@ -1,4 +1,5 @@
 ﻿using ConsoleTree;
+using PelmeniCompilers.SemanticAnalyzer.Checkers;
 using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.Models;
