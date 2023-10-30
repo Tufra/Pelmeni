@@ -559,4 +559,40 @@ public partial class Parser
         var node = new Node(NodeType.Summand, new List<Node> { node1, node2 });
         return node;
     }
+
+    private Node MakeOperatorDeclaration(Node node1, Node node2, Node node3, Node node4)
+    {
+       var node = new Node(NodeType.OperatorDeclaration, new List<Node> { node1, node2, node3, node4 });
+        return node;
+    }
+
+    private Node MakeBinaryOperator(Node node1)
+    {
+        var node = new Node(NodeType.BinaryOperator, new List<Node> { node1 });
+        return node;
+    }
+
+    private Node MakeUnaryOperator(Node node1)
+    {
+        var node = new Node(NodeType.UnaryOperator, new List<Node> { node1 });
+        return node;
+    }
+
+    private Node MakeArrayAccessOperator()
+    {
+        var node = new Node(NodeType.ArrayAccessOperator, new List<Node> { });
+        return node;
+    }
+
+    private Node MakeCallOperator()
+    {
+        var node = new Node(NodeType.CallOperator, new List<Node> { });
+        return node;
+    }
+
+    private Node MakeMemberCall(Node node1)
+    {
+        var node = new Node(NodeType.MemberCall, new List<Node> { node1 });
+        return node;
+    }
 }
