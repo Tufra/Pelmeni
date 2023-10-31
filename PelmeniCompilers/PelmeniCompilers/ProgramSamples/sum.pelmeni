@@ -13,6 +13,11 @@ routine Main() is
   readln(numA);
   write("Enter second number: ");
   readln(numB);
+  
+  var g: Object;
+
+  g.b().d[0].e := 1;
+  g.c();
 
   res := Sum(numA, numB);
   

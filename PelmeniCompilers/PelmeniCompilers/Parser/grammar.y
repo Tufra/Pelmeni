@@ -42,6 +42,7 @@
 %token RETURN // return
 %token USE // use
 %token MODULE // module
+%token OPERATOR // operator
 
 // Types
 %token INTEGER // integer
@@ -61,24 +62,24 @@
 %token OPEN_BRACKET // [
 
 // Operators
-%token EQUAL // =
-%token INCREMENT // ++
-%token DECREMENT // --
-%token MINUS // SUB? -
-%token PLUS // SUM? +
-%token MULTIPLY // MULT? *
-%token DIVIDE // DIV? /
-%token MOD // MOD? %
-%token LESS_EQUAL // <=
-%token GREATER_EQUAL // >=
-%token LESS // <
-%token GREATER // >
-%token NOT_EQUAL // <>
-%token NOT // not
-%token AND // and
-%token OR // or
-%token XOR // xor
-%token RANGE // ..
+%token EQUAL            // =
+%token INCREMENT        // ++
+%token DECREMENT        // --
+%token MINUS            // SUB? -
+%token PLUS             // SUM? +
+%token MULTIPLY         // MULT? *
+%token DIVIDE           // DIV? /
+%token MOD              // MOD? %
+%token LESS_EQUAL       // <=
+%token GREATER_EQUAL    // >=
+%token LESS             // <
+%token GREATER          // >
+%token NOT_EQUAL        // <>
+%token NOT              // not
+%token AND              // and
+%token OR               // or
+%token XOR              // xor
+%token RANGE            // ..
 
 
 /* RULES SECTION */
@@ -205,6 +206,43 @@ RefType
 RecordVariableDeclarations
     : /* empty */                                       { $$ = MakeRecordVariableDeclarations(); }
     | RecordVariableDeclarations VariableDeclaration    { $$ = AddToRecordVariableDeclarations($1, $2); } // Declarations, Declaration
+    | RecordVariableDeclarations RoutineDeclaration     { $$ = AddToRecordVariableDeclarations($1, $2); }
+    | RecordVariableDeclarations OperatorDeclaration    { $$ = AddToRecordVariableDeclarations($1, $2); }
+    ;
+
+OperatorDeclaration
+    : OPERATOR Operator OPEN_PARENTHESIS Parameters CLOSE_PARENTHESIS TypeTail IS Body END { $$ = MakeOperatorDeclaration($2, $4, $6, $8); }
+    ;
+
+Operator
+    :   EQUAL { $$ = MakeBinaryOperator($1); }
+    |   INCREMENT { $$ = MakeUnaryOperator($1); } 
+    |   DECREMENT { $$ = MakeUnaryOperator($1); }  
+    |   MINUS { $$ = MakeBinaryOperator($1); }   
+    |   PLUS { $$ = MakeBinaryOperator($1); }     
+    |   MULTIPLY  { $$ = MakeBinaryOperator($1); }   
+    |   DIVIDE  { $$ = MakeBinaryOperator($1); }     
+    |   MOD      { $$ = MakeBinaryOperator($1); }    
+    |   LESS_EQUAL  { $$ = MakeBinaryOperator($1); } 
+    |   GREATER_EQUAL{ $$ = MakeBinaryOperator($1); }
+    |   LESS      { $$ = MakeBinaryOperator($1); }   
+    |   GREATER   { $$ = MakeBinaryOperator($1); }   
+    |   NOT_EQUAL { $$ = MakeBinaryOperator($1); }   
+    |   NOT     { $$ = MakeUnaryOperator($1); }     
+    |   AND      { $$ = MakeBinaryOperator($1); }    
+    |   OR      { $$ = MakeBinaryOperator($1); }     
+    |   XOR     { $$ = MakeBinaryOperator($1); }     
+    |   RANGE    { $$ = MakeBinaryOperator($1); }
+    |   CallOperator { $$ = MakeUnaryOperator($1); }
+    |   ArrayAccessOperator { $$ = MakeUnaryOperator($1); }
+    ;
+
+CallOperator
+    :   OPEN_PARENTHESIS CLOSE_PARENTHESIS { $$ = MakeCallOperator(); }
+    ;
+
+ArrayAccessOperator
+    :   OPEN_BRACKET CLOSE_BRACKET { $$ = MakeArrayAccessOperator(); }
     ;
 
 // Body : { SimpleDeclaration | Statement }
@@ -216,15 +254,16 @@ Body
 
 // Statement : Assignment | RoutineCall | WhileLoop | ForLoop | ForeachLoop | IfStatement
 Statement 
-    : Assignment    SEMICOLON   { $$ = $1; } 
-    | Increment     SEMICOLON   { $$ = $1; }
-    | Decrement     SEMICOLON   { $$ = $1; }
-    | RoutineCall   SEMICOLON   { $$ = $1; }
-    | Return        SEMICOLON   { $$ = $1; }
-    | WhileLoop                 { $$ = $1; }
-    | ForLoop                   { $$ = $1; }
-    | ForeachLoop               { $$ = $1; }
-    | IfStatement               { $$ = $1; }
+    : Assignment        SEMICOLON   { $$ = $1; } 
+    | Increment         SEMICOLON   { $$ = $1; }
+    | Decrement         SEMICOLON   { $$ = $1; }
+    | RoutineCall       SEMICOLON   { $$ = $1; }
+    | ModifiablePrimary SEMICOLON   { $$ = $1; }
+    | Return            SEMICOLON   { $$ = $1; }
+    | WhileLoop                     { $$ = $1; }
+    | ForLoop                       { $$ = $1; }
+    | ForeachLoop                   { $$ = $1; }
+    | IfStatement                   { $$ = $1; }
     ;
 
 // Assignment : ModifiablePrimary := Expression
@@ -394,12 +433,17 @@ ModifiablePrimary
 // ModifiablePrimaryTail : { . Identifier | [ Expression ] }
 ModifiablePrimaryTail
     : /* empty */                           { $$ = MakeModifiablePrimaryTail(); }
-    | MemberAccess  ModifiablePrimaryTail   { $$ = AddToModifiablePrimaryTail($1, $2); } // MemberAccess, ModifiablePrimaryTail ??
-    | ArrayAccess   ModifiablePrimaryTail   { $$ = AddToModifiablePrimaryTail($1, $2); } // ArrayAccess, ModifiablePrimaryTail ??
+    | ModifiablePrimaryTail MemberAccess   { $$ = AddToModifiablePrimaryTail($2, $1); } // MemberAccess, ModifiablePrimaryTail ??
+    | ModifiablePrimaryTail ArrayAccess  { $$ = AddToModifiablePrimaryTail($2, $1); } // ArrayAccess, ModifiablePrimaryTail ??
+    | ModifiablePrimaryTail MemberCall  { $$ = AddToModifiablePrimaryTail($2, $1); }
     ;
 
 MemberAccess
     : DOT IDENTIFIER    { $$ = MakeMemberAccess($2); } // Identifier
+    ;
+
+MemberCall
+    : DOT RoutineCall { $$ = MakeMemberCall($2); }
     ;
 
 ArrayAccess

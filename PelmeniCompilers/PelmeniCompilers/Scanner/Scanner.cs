@@ -113,6 +113,8 @@ public class Scanner : AbstractScanner<Node, LexLocation>
                 return Parser.Tokens.MODULE;
             case "USE":
                 return Parser.Tokens.USE;
+            case "OPERATOR":
+                return Parser.Tokens.OPERATOR;
             case ".":
                 return Parser.Tokens.DOT;
             case ",":

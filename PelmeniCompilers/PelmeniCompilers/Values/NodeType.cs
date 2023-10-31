@@ -26,6 +26,11 @@ public enum NodeType
     RecordType,
     RefType,
     RecordVariableDeclarations,
+    OperatorDeclaration,
+    BinaryOperator,
+    UnaryOperator,
+    CallOperator,
+    ArrayAccessOperator,
     Body,
     Statement,
     Assignment,
@@ -58,5 +63,6 @@ public enum NodeType
     ModifiablePrimary,
     ModifiablePrimaryTail,
     MemberAccess,
+    MemberCall,
     ArrayAccess
 }

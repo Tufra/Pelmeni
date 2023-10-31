@@ -397,4 +397,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-PelmeniCompilers/Parser/gppg/*
+PelmeniCompilers/PelmeniCompilers/Parser/gppg/*

@@ -1,8 +1,25 @@
 module ForLoopProgram;
 
-use "printarray.pelmeni";
+type String is record
+	var data: array[] char;
 
-var global: integer is 10;
+	routine Substring(fromIndex: integer, toIndex: integer): String is
+		var buff: String;
+		buff.data := data.subarray(fromIndex, toIndex);
+		return buff;
+	end
+
+	operator [](index: integer): char is
+		return data[index];
+	end
+
+	operator +(str: String): String is
+		var buff: array[] char is data;
+		buff.AppendArray(str.data);
+
+		return buff;
+	end
+end;
 
 routine Main() is
 	for i in 1..10
