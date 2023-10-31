@@ -433,9 +433,9 @@ ModifiablePrimary
 // ModifiablePrimaryTail : { . Identifier | [ Expression ] }
 ModifiablePrimaryTail
     : /* empty */                           { $$ = MakeModifiablePrimaryTail(); }
-    | MemberAccess  ModifiablePrimaryTail   { $$ = AddToModifiablePrimaryTail($1, $2); } // MemberAccess, ModifiablePrimaryTail ??
-    | ArrayAccess   ModifiablePrimaryTail   { $$ = AddToModifiablePrimaryTail($1, $2); } // ArrayAccess, ModifiablePrimaryTail ??
-    | MemberCall    ModifiablePrimaryTail   { $$ = AddToModifiablePrimaryTail($1, $2); }
+    | ModifiablePrimaryTail MemberAccess   { $$ = AddToModifiablePrimaryTail($2, $1); } // MemberAccess, ModifiablePrimaryTail ??
+    | ModifiablePrimaryTail ArrayAccess  { $$ = AddToModifiablePrimaryTail($2, $1); } // ArrayAccess, ModifiablePrimaryTail ??
+    | ModifiablePrimaryTail MemberCall  { $$ = AddToModifiablePrimaryTail($2, $1); }
     ;
 
 MemberAccess
