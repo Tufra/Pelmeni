@@ -3,9 +3,9 @@ using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 
-public class SimpleDeclarationChecker : BaseNodeRuleChecker
+public class ModifiablePrimaryChecker : BaseNodeRuleChecker
 {
-    public override NodeType CheckingNodeType => NodeType.SimpleDeclaration;
+    public override NodeType CheckingNodeType => NodeType.ModifiablePrimary;
     public override void Check(Node node)
     {
         throw new NotImplementedException();

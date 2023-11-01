@@ -8,7 +8,6 @@ namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 public abstract class BaseNodeRuleChecker
 {
     public abstract NodeType CheckingNodeType { get; }
-
     protected static Scope Scope { get; set; }
     protected static Stack<Node> Chain { get; set; }
 

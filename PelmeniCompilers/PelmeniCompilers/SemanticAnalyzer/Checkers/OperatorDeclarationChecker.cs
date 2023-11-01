@@ -1,6 +1,13 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class OperatorDeclarationChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class OperatorDeclarationChecker : BaseNodeRuleChecker
 {
-    
+    public override NodeType CheckingNodeType => NodeType.OperatorDeclaration;
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }

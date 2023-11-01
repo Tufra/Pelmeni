@@ -1,6 +1,13 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class SimpleTailChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class SimpleTailChecker : BaseNodeRuleChecker
 {
-    
+    public override NodeType CheckingNodeType => NodeType.SimpleTail;
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }
