@@ -2,7 +2,7 @@
 
 namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit
 {
-    public record Variable : Unit
+    public record Variable : ScopeUnit
     {
         public TokenType Type { get; set; }
         public string Value { get; set; }

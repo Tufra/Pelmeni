@@ -1,6 +1,14 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class CompoundSizeChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class CompoundSizeChecker : BaseNodeRuleChecker
 {
+    public override NodeType CheckingNodeType => NodeType.CompoundSize;
     
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }

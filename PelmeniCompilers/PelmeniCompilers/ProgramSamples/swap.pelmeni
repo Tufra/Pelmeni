@@ -1,3 +1,5 @@
+module Swap;
+
 type Sus is record
     var a: integer;
     var c: array[] char;
@@ -8,10 +10,4 @@ routine Swap(a: Sus, b: Sus) is
     temp := a;
     a := b;
     b := temp;
-end
-
-routine Main() is
-    var susA, susB: Sus;
-
-    res := Swap(susA, susB);
 end

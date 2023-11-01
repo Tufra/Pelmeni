@@ -1,4 +1,6 @@
-routine Main() is
+module NestedIf;
+
+routine Abcd() is
 	if 5 = 5 
 	then
 		if 3 <> 3

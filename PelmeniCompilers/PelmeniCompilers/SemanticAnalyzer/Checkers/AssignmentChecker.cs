@@ -1,6 +1,13 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class AssignmentChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class AssignmentChecker : BaseNodeRuleChecker
 {
-    
+    public override NodeType CheckingNodeType => NodeType.Assignment;
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }

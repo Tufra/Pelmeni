@@ -26,36 +26,46 @@ internal static class Program
 
             parser.Parse();
             parser.UnfoldDependencies(path);
+
+            var tree = parser.MainNode!;
             
-            Tree.Write(
-                parser.MainNode, 
-                (node, _) => 
-                {
-                    if (node != null) 
-                    { 
-                        Console.Write(node.Type.ToString());
-                        if (node.Type == Values.NodeType.Token)
-                        {
-                            Console.Write(" ({0})", node.Token!.Value);
-                        }
-                    }
-                },
-                (node, _) => 
-                {
-                    if (node != null && node.Children != null)
-                    {
-                        return node.Children;
-                    }
-                    else
-                    {
-                        return new List<Node>() { };
-                    }
-                }, 
-                new DisplaySettings { IndentSize = 2 });
+            PrintTree(tree);
+
+            var semanticAnalyzer = new SemanticAnalyzer.SemanticAnalyzer(tree);
+            semanticAnalyzer.Analyze();
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
         }
+    }
+
+    private static void PrintTree(Node tree)
+    {
+        Tree.Write(
+            tree, 
+            (node, _) => 
+            {
+                if (node != null) 
+                { 
+                    Console.Write(node.Type.ToString());
+                    if (node.Type == Values.NodeType.Token)
+                    {
+                        Console.Write(" ({0})", node.Token!.Value);
+                    }
+                }
+            },
+            (node, _) => 
+            {
+                if (node != null && node.Children != null)
+                {
+                    return node.Children;
+                }
+                else
+                {
+                    return new List<Node>() { };
+                }
+            }, 
+            new DisplaySettings { IndentSize = 2 });
     }
 }

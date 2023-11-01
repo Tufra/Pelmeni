@@ -1,6 +1,14 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class RecordTypeChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class RecordTypeChecker : BaseNodeRuleChecker
 {
-    
+    public override NodeType CheckingNodeType => NodeType.RecordType;
+
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }

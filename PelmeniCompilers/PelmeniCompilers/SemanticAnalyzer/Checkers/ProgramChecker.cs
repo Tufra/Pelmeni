@@ -7,8 +7,9 @@ namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 public class ProgramChecker : BaseNodeRuleChecker
 {
     public override NodeType CheckingNodeType => NodeType.Program;
-    public override void Check(Node node, Stack<HashSet<Unit>> frame)
+    public override void Check(Node node)
     {
-        frame.Push(new HashSet<Unit>());
+        Scope.AddFrame();
+        CheckChildren(node);
     }
 }

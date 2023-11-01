@@ -1,6 +1,13 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class ForLoopChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class ForLoopChecker : BaseNodeRuleChecker
 {
-    
+    public override NodeType CheckingNodeType => NodeType.ForLoop;
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }

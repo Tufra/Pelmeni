@@ -2,7 +2,7 @@
 
 namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
 
-public record Array : Unit
+public record Array : ScopeUnit
 {
     public List<int> Size { get; set; }
     public TokenType Type { get; set; }

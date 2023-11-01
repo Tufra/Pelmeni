@@ -1,10 +1,10 @@
 ﻿namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
 
-public record Unit
+public record ScopeUnit
 {
     public string Name { get; set; }
 
-    public Unit(string name)
+    public ScopeUnit(string name)
     {
         Name = name;
     }

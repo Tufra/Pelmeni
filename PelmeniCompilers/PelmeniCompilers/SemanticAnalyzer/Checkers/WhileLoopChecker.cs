@@ -1,6 +1,14 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class WhileLoopChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class WhileLoopChecker : BaseNodeRuleChecker
 {
-    
+    public override NodeType CheckingNodeType => NodeType.WhileLoop;
+
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }

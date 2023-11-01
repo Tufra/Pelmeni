@@ -1,6 +1,14 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class ParameterDeclarationChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class ParameterDeclarationChecker : BaseNodeRuleChecker
 {
+    public override NodeType CheckingNodeType => NodeType.ParameterDeclaration;
     
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }

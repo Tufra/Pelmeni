@@ -21,7 +21,9 @@ public class SemanticAnalyzer
 
     public void Analyze()
     {
-        //todo свернуть алиасинг, проверить семантику, оптимизация 
+        //todo свернуть алиасин
+        _mainNode.CheckSemantic();
+        // todo оптимизация 
     }
     
    

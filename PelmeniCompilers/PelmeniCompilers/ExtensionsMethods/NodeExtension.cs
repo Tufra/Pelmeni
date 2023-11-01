@@ -1,5 +1,7 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
 using PelmeniCompilers.Models;
+using PelmeniCompilers.SemanticAnalyzer;
 using PelmeniCompilers.SemanticAnalyzer.Checkers;
 using PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
 using PelmeniCompilers.Values;
@@ -26,22 +28,13 @@ public static class NodeExtension
 
         return derivedTypes;
     }
-    
-    public static void CheckSemantic(this Node node, Stack<HashSet<Unit>> frame)
+
+    public static void CheckSemantic(this Node node)
     {
         var rule = GetSemanticRule(node);
-        
-        if (node.Children is not null)
-        {
-            foreach (var child in node.Children)
-            {
-                child.CheckSemantic(frame);
-            }
-        }
-        
-        rule.Check(node, frame);
+        rule.Check(node);
     }
-    
+
     private static BaseNodeRuleChecker GetSemanticRule(Node node)
     {
         return SemanticRules.First(rule => rule.CheckingNodeType == node.Type);

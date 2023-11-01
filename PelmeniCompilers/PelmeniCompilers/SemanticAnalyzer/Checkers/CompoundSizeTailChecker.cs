@@ -1,6 +1,14 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class CompoundSizeTailChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class CompoundSizeTailChecker : BaseNodeRuleChecker
 {
+    public override NodeType CheckingNodeType => NodeType.CompoundSizeTail;
     
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }

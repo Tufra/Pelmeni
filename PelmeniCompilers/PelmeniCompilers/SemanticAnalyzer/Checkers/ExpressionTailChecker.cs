@@ -3,10 +3,9 @@ using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 
-public class BodyChecker : BaseNodeRuleChecker
+public class ExpressionTailChecker : BaseNodeRuleChecker
 {
-    public override NodeType CheckingNodeType => NodeType.Body;
-    
+    public override NodeType CheckingNodeType => NodeType.ExpressionTail;
     public override void Check(Node node)
     {
         throw new NotImplementedException();

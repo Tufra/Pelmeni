@@ -1,4 +1,8 @@
-routine Main() is
+module Vardec;
+
+use "nestedif.pelmeni";
+
+routine Abc() is
 	var variable1: integer;
 	var variable2: integer is 5;
 	var variable3 is 5;

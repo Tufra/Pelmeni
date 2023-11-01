@@ -1,6 +1,14 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class RangeExpressionChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class RangeExpressionChecker : BaseNodeRuleChecker
 {
-    
+    public override NodeType CheckingNodeType => NodeType.RangeExpression;
+
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }

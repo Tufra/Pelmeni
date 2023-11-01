@@ -1,6 +1,6 @@
 ﻿namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
 
-public record Record : Unit 
+public record Record : ScopeUnit 
 {
     /// <summary>
     /// Properties

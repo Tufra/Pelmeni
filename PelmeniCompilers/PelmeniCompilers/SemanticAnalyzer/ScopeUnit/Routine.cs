@@ -1,6 +1,6 @@
 ﻿namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
 
-public record Routine : Unit
+public record Routine : ScopeUnit
 {
     public List<Variable> Parameters { get; set; }
     public Variable? ReturnType { get; set; }

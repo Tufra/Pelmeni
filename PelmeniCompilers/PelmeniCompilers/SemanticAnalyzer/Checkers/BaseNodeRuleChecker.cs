@@ -1,4 +1,5 @@
-﻿using PelmeniCompilers.Models;
+﻿using PelmeniCompilers.ExtensionsMethods;
+using PelmeniCompilers.Models;
 using PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
 using PelmeniCompilers.Values;
 
@@ -6,20 +7,26 @@ namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 
 public abstract class BaseNodeRuleChecker
 {
-    protected static Stack<HashSet<Unit>> StackFrame { get; set; } = null!;
     public abstract NodeType CheckingNodeType { get; }
 
-    public abstract void Check(Node node, Stack<HashSet<Unit>> frame);
+    protected static Scope Scope { get; set; }
+    protected static Stack<Node> Chain { get; set; }
 
-    /// <summary>
-    /// Проверка на наличие в фрайме
-    /// </summary>
-    /// <param name="frames"></param>
-    /// <returns></returns>
-    protected bool CheckScopeFrame()
+    static BaseNodeRuleChecker()
     {
-        throw new NotImplementedException();
+        Scope = new Scope();
+        Chain = new Stack<Node>();
     }
 
-    public bool CanCheck(NodeType type) => type == CheckingNodeType;
+    public abstract void Check(Node node);
+
+    protected static void CheckChildren(Node node)
+    {
+        if (node.Children is null) return;
+
+        foreach (var child in node.Children)
+        {
+            child.CheckSemantic();
+        }
+    }
 }

@@ -1,6 +1,14 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Values;
 
-public class RoutineCallChecker
+namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
+
+public class RoutineCallChecker : BaseNodeRuleChecker
 {
-    
+    public override NodeType CheckingNodeType => NodeType.RoutineCall;
+
+    public override void Check(Node node)
+    {
+        throw new NotImplementedException();
+    }
 }
