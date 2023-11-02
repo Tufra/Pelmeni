@@ -47,7 +47,7 @@ public class Scanner : AbstractScanner<Node, LexLocation>
          throw new SyntaxParserError($"{format} on {yylloc} in {FilePath}");
      }
 
-     private static Tokens TokenValueToGppgToken(Token token)
+     public static Tokens TokenValueToGppgToken(Token token)
     {
         switch (token.Value.ToUpper())
         {

@@ -51,4 +51,34 @@ public abstract class BaseNodeRuleChecker
 
         return identifier;
     }
+
+    protected static RoutineVirtualTableEntry GetRoutineOrThrowIfNotDeclared(Node node)
+    {
+        var identifier = node.Children[0].Token!.Value;
+        var location = node.Children[0].Token!.Location;
+
+        if (!RoutineVirtualTable.ContainsKey(identifier))
+            throw new InvalidOperationException($"Routine {identifier} at {location} was not declared");
+
+        return RoutineVirtualTable[identifier];
+    }
+
+    protected static RecordVirtualTableEntry GetRecordOrThrowIfNotDeclared(string identifier, LexLocation location)
+    {
+        if (!RecordVirtualTable.ContainsKey(identifier))
+            throw new InvalidOperationException($"Record {identifier} at {location} was not declared");
+
+        return RecordVirtualTable[identifier];
+    }
+
+    protected static VariableVirtualTableEntry GetVariableOrThrowIfNotDeclared(Node token)
+    {
+        var identifier = token.Token!.Value;
+        var location = token.Token!.Location;
+
+        if (!Scope.Contains(identifier))
+            throw new InvalidOperationException($"Variable {identifier} at {location} was not declared");
+
+        return Scope.Get(identifier)!;
+    }
 }

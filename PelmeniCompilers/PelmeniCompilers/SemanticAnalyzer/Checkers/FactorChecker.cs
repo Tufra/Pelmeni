@@ -1,10 +1,10 @@
-﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.Models;
 using PelmeniCompilers.ExtensionsMethods;
 using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 
-public class SimpleChecker : BaseNodeRuleChecker
+public class FactorChecker : BaseNodeRuleChecker
 {
     public override NodeType CheckingNodeType => NodeType.Simple;
     public override void Check(Node node)
@@ -13,10 +13,27 @@ public class SimpleChecker : BaseNodeRuleChecker
         {
             var subexpression = node.Children[0];
             subexpression.CheckSemantic();
+            
+            ComputedExpression computedSub;
+            if (subexpression.Children.Count == 1)
+            {
+                computedSub = (ComputedExpression)subexpression.Children[0];
+            }
+            else
+            {
+                computedSub = (ComputedExpression)subexpression.Children[1];
+            }
+            
+            var computed = new ComputedExpression(
+                subexpression.Type, 
+                null, 
+                computedSub.ValueType, 
+                computedSub.Value);
 
-            var type = ((ComputedExpression)subexpression.Children[0]).ValueType;
-            var value = ((ComputedExpression)subexpression.Children[0]).Value;
-            var computed = new ComputedExpression(subexpression.Type, null, type, value);
+            if (computed.Value is null)
+            {
+                computed.Children = new List<Node> { subexpression };
+            }
             node.Children = new List<Node> { computed };
         }
         else
@@ -109,41 +126,43 @@ public class SimpleChecker : BaseNodeRuleChecker
                     );
             }
 
-            switch (Scanner.Scanner.TokenValueToGppgToken(oper))
+            switch (operType)
             {
-                case Parser.Tokens.DIVIDE:
+                case Parser.Tokens.PLUS:
                     {
-                        if (rightComputed.Value == "0")
-                        {
-                            throw new InvalidOperationException($"Division by zero at {oper.Location}");
-                        }
                         if (leftComputed.Value is not null && rightComputed.Value is not null) 
                         {   
-                            var val = double.Parse(leftComputed.Value) / double.Parse(rightComputed.Value);
-                            var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
-
-                            node.Children = new List<Node> { computed };
-                        }
-                        break;
-                    }
-                case Parser.Tokens.MOD:
-                    {
-                        if (rightComputed.Value == "0")
-                        {
-                            throw new InvalidOperationException($"Division by zero at {oper.Location}");
-                        }
-                        if (leftComputed.Value is not null && rightComputed.Value is not null) 
-                        {
                             if (leftType == "real" || rightType == "real")
                             {
-                                var val = double.Parse(leftComputed.Value) % double.Parse(rightComputed.Value);
+                                var val = double.Parse(leftComputed.Value) + double.Parse(rightComputed.Value);
                                 var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
 
                                 node.Children = new List<Node> { computed };
                             }
                             else
                             {
-                                var val = int.Parse(leftComputed.Value) % int.Parse(rightComputed.Value);
+                                var val = int.Parse(leftComputed.Value) + int.Parse(rightComputed.Value);
+                                var computed = new ComputedExpression(NodeType.Summand, null, "integer", val.ToString());
+
+                                node.Children = new List<Node> { computed };
+                            }
+                        }
+                        break;
+                    }
+                case Parser.Tokens.MINUS:
+                    {
+                        if (leftComputed.Value is not null && rightComputed.Value is not null) 
+                        {
+                            if (leftType == "real" || rightType == "real")
+                            {
+                                var val = double.Parse(leftComputed.Value) - double.Parse(rightComputed.Value);
+                                var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
+
+                                node.Children = new List<Node> { computed };
+                            }
+                            else
+                            {
+                                var val = int.Parse(leftComputed.Value) - int.Parse(rightComputed.Value);
                                 var computed = new ComputedExpression(NodeType.Summand, null, "integer", val.ToString());
 
                                 node.Children = new List<Node> { computed };
@@ -152,28 +171,6 @@ public class SimpleChecker : BaseNodeRuleChecker
                         }
                         break;
                     }
-                case Parser.Tokens.MULTIPLY:
-                    {
-                        if (leftComputed.Value is not null && rightComputed.Value is not null) 
-                        {
-                            if (leftType == "real" || rightType == "real")
-                            {
-                                var val = double.Parse(leftComputed.Value) * double.Parse(rightComputed.Value);
-                                var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
-
-                                node.Children = new List<Node> { computed };
-                            }
-                            else
-                            {
-                                var val = int.Parse(leftComputed.Value) * int.Parse(rightComputed.Value);
-                                var computed = new ComputedExpression(NodeType.Summand, null, "integer", val.ToString());
-
-                                node.Children = new List<Node> { computed };
-                            }
-                            
-                        }
-                        break;
-                    } 
                 default:
                     throw new InvalidOperationException($"Undefined operation {operType} at {oper.Location}");
             }

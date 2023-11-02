@@ -354,12 +354,12 @@ Expression
 
 AndExpression
     : Relation { $$ = MakeAndExpression($1); }
-    | Relation AND AndExpression { $$ = MakeAndExpression($1, $3); }
+    | AndExpression AND Relation { $$ = MakeAndExpression($1, $3); }
     ;
 
 OrExpression
     : AndExpression { $$ = MakeOrExpression($1); }
-    | AndExpression OR OrExpression { $$ = MakeOrExpression($1, $3); }
+    | OrExpression OR AndExpression { $$ = MakeOrExpression($1, $3); }
     ;
 
 // ExpressionTail : { ( and | or | xor ) Relation }
@@ -396,9 +396,9 @@ Relation
 // Simple : Factor SimpleTail
 Simple 
     : Summand { $$ = MakeSimple($1); } // Factor, SimpleTail
-    | Summand MULTIPLY Simple { $$ = MakeSimple($1, $3): }
-    | Summand DIVIDE Simple { $$ = MakeSimple($1, $3): }
-    | Summand MOD Simple { $$ = MakeSimple($1, $3): }
+    | Summand MULTIPLY Simple { $$ = MakeSimple($2, $1, $3): }
+    | Summand DIVIDE Simple { $$ = MakeSimple($2, $1, $3): }
+    | Summand MOD Simple { $$ = MakeSimple($2, $1, $3): }
     ;
 
 // SimpleTail : { ( * | / | % ) Factor }
@@ -412,8 +412,8 @@ Simple
 // Factor : Summand FactorTail
 Factor 
     : Simple { $$ = MakeFactor($1); } // Summand, FactorTail
-    | Simple PLUS Factor { $$ = MakeFactor($1, $3); }
-    | Simple MINUS Factor { $$ = MakeFactor($1, $3); }
+    | Simple PLUS Factor { $$ = MakeFactor($2, $1, $3); }
+    | Simple MINUS Factor { $$ = MakeFactor($2, $1, $3); }
     ;
 
 // FactorTail : { ( + | - ) Summand }
