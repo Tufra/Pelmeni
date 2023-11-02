@@ -33,17 +33,23 @@ public class Scope
 
     public bool Contains(string identifier, int depth = 0)
     {
+        return Get(identifier, depth) is not null;
+    }
+
+    public VariableVirtualTableEntry? Get(string identifier, int depth = 0)
+    {
         if (depth <= 0)
             depth = int.MaxValue;
         var currentDepth = 1;
 
         foreach (var frame in _scope.TakeWhile(frame => currentDepth <= depth))
         {
-            if (frame.FirstOrDefault(e => e.Name == identifier) is not null)
-                return true;
+            var variable = frame.FirstOrDefault(e => e.Name == identifier);
+            if (variable is not null)
+                return variable;
             currentDepth++;
         }
 
-        return false;
+        return null;
     }
 }
