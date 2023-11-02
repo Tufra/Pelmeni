@@ -28,11 +28,12 @@ internal static class Program
             parser.UnfoldDependencies(path);
 
             var tree = parser.MainNode!;
-            
-            PrintTree(tree);
 
+            PrintTree(tree);
             var semanticAnalyzer = new SemanticAnalyzer.SemanticAnalyzer(tree);
             semanticAnalyzer.Analyze();
+
+            //PrintTree(tree);
         }
         catch (Exception e)
         {
@@ -43,11 +44,11 @@ internal static class Program
     private static void PrintTree(Node tree)
     {
         Tree.Write(
-            tree, 
-            (node, _) => 
+            tree,
+            (node, _) =>
             {
-                if (node != null) 
-                { 
+                if (node != null)
+                {
                     Console.Write(node.Type.ToString());
                     if (node.Type == Values.NodeType.Token)
                     {
@@ -55,7 +56,7 @@ internal static class Program
                     }
                 }
             },
-            (node, _) => 
+            (node, _) =>
             {
                 if (node != null && node.Children != null)
                 {
@@ -65,7 +66,7 @@ internal static class Program
                 {
                     return new List<Node>() { };
                 }
-            }, 
+            },
             new DisplaySettings { IndentSize = 2 });
     }
 }

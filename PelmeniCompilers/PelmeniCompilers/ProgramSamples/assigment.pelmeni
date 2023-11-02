@@ -1,9 +1,6 @@
 module Assigment;
 
-use "vardec.pelmeni";
-use "swap.pelmeni";
-
-routine Main() is
+routine Main(t: integer, a: real): integer is
 	var int: integer is 3;
 	var dec: real is 1;
 	var b is true;

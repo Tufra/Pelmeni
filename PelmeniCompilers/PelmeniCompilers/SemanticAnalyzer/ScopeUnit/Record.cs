@@ -1,4 +1,6 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
+﻿using PelmeniCompilers.Models;
+
+namespace PelmeniCompilers.SemanticAnalyzer.ScopeUnit;
 
 public record Record : ScopeUnit 
 {
@@ -7,7 +9,8 @@ public record Record : ScopeUnit
     /// </summary>
     public List<Variable> Members { get; set; }
 
-    public Record(string name) : base(name)
+
+    public Record(string name, Token token) : base(name, token)
     {
     }
 }

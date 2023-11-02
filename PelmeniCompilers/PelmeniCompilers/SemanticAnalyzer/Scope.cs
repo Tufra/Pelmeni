@@ -1,26 +1,29 @@
-﻿namespace PelmeniCompilers.SemanticAnalyzer;
+﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.SemanticAnalyzer.VirtualTable;
+using PelmeniCompilers.ShiftReduceParser;
+
+namespace PelmeniCompilers.SemanticAnalyzer;
 
 public class Scope
 {
-    private readonly Stack<HashSet<ScopeUnit.ScopeUnit>> _scope = new();
+    private readonly Stack<HashSet<VariableVirtualTableEntry>> _scope = new();
 
-    public void AddFrame(params ScopeUnit.ScopeUnit[] units)
+    public void AddFrame(params VariableVirtualTableEntry[] variables)
     {
-        var frame = new HashSet<ScopeUnit.ScopeUnit>();
-        foreach (var scopeUnit in units)
+        var frame = new HashSet<VariableVirtualTableEntry>();
+        foreach (var scopeUnit in variables)
         {
             frame.Add(scopeUnit);
         }
+
         _scope.Push(frame);
     }
 
-    public void AddToLastFrame(params ScopeUnit.ScopeUnit[] units)
+
+    public void AddToLastFrame(VariableVirtualTableEntry variable)
     {
         var lastFrame = _scope.Peek();
-        foreach (var scopeUnit in units)
-        {
-            lastFrame.Add(scopeUnit);
-        }
+        lastFrame.Add(variable);
     }
 
     public void RemoveLastFrame()
@@ -28,20 +31,19 @@ public class Scope
         _scope.Pop();
     }
 
-    public bool Contains(ScopeUnit.ScopeUnit unit, int depth = 0)
+    public bool Contains(string identifier, int depth = 0)
     {
-        if(depth <= 0)
+        if (depth <= 0)
             depth = int.MaxValue;
         var currentDepth = 1;
-        
+
         foreach (var frame in _scope.TakeWhile(frame => currentDepth <= depth))
         {
-            
-            
+            if (frame.FirstOrDefault(e => e.Name == identifier) is not null)
+                return true;
             currentDepth++;
         }
 
-        throw new NotImplementedException();
+        return false;
     }
-        
 }

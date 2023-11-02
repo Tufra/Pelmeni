@@ -12,7 +12,7 @@ public record Node
         Token = token;
     }
 
-    public Node(NodeType type, List<Node>? children)
+    public Node(NodeType type, List<Node> children)
     {
         Type = type;
         Children = children;
@@ -20,10 +20,10 @@ public record Node
 
     public NodeType Type { get; private set; }
     public Token? Token { get; private set; }
-    public List<Node>? Children { get; }
+    public List<Node> Children { get; set; }
 
     public bool IsTerminal()
     {
-        return Children is null;
+        return Children.Count == 0;
     }
 }
