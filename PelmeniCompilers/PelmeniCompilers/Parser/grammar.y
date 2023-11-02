@@ -348,59 +348,80 @@ ElseTail
     ;
 
 // Expression : Relation ExpressionTail
-Expression 
-    : Relation ExpressionTail   { $$ = MakeExpression($1, $2); } // Relation, ExpressionTail
+Expression
+    : OrExpression { $$ = MakeExpression($1); }
+    ;
+
+AndExpression
+    : Relation { $$ = MakeAndExpression($1); }
+    | Relation AND AndExpression { $$ = MakeAndExpression($1, $3); }
+    ;
+
+OrExpression
+    : AndExpression { $$ = MakeOrExpression($1); }
+    | AndExpression OR OrExpression { $$ = MakeOrExpression($1, $3); }
     ;
 
 // ExpressionTail : { ( and | or | xor ) Relation }
-ExpressionTail
-    : /* empty */ { $$ = MakeExpressionTail(); }
-    | AND   Relation ExpressionTail { $$ = AddToExpressionTail($1, $2, $3); } // Operation (AND), Relation, ExpressionTail
-    | OR    Relation ExpressionTail { $$ = AddToExpressionTail($1, $2, $3); } // Operation (OR), Relation, ExpressionTail
-    | XOR   Relation ExpressionTail { $$ = AddToExpressionTail($1, $2, $3); } // Operation (XOR), Relation, ExpressionTail
-    ;
+//ExpressionTail
+//    : /* empty */ { $$ = MakeExpressionTail(); }
+//    | AND   Relation ExpressionTail { $$ = AddToExpressionTail($1, $2, $3); } // Operation (AND), Relation, ExpressionTail
+//    | OR    Relation ExpressionTail { $$ = AddToExpressionTail($1, $2, $3); } // Operation (OR), Relation, ExpressionTail
+//   | XOR   Relation ExpressionTail { $$ = AddToExpressionTail($1, $2, $3); } // Operation (XOR), Relation, ExpressionTail
+//    ;
 
 // Relation : Simple RelationTail
 Relation
-    : Factor RelationTail { $$ = MakeRelation($1, $2); } // Simple, RelationTail
+    : Factor { $$ = MakeRelation($1); } // Simple, RelationTail
+    | Factor LESS          Factor  { $$ = MakeRelation($2, $1, $3); } // Operator (<), Simple
+    | Factor LESS_EQUAL    Factor  { $$ = MakeRelation($2, $1, $3); } // Operator (<=), Simple
+    | Factor GREATER       Factor  { $$ = MakeRelation($2, $1, $3); } // Operator (>), Simple
+    | Factor GREATER_EQUAL Factor  { $$ = MakeRelation($2, $1, $3); } // Operator (>=), Simple
+    | Factor EQUAL         Factor  { $$ = MakeRelation($2, $1, $3); } // Operator (=), Simple
+    | Factor NOT_EQUAL     Factor  { $$ = MakeRelation($2, $1, $3); } // Operator (<>), Simple
     | NOT Relation { $$ = MakeRelation($1, $2); }
     ;
     
 // RelationTail : [ ( < | <= | > | >= | = | /= ) Simple ]    
-RelationTail
-    : /* empty */           { $$ = MakeRelationTail();       }
-    | LESS          Factor  { $$ = MakeRelationTail($1, $2); } // Operator (<), Simple
-    | LESS_EQUAL    Factor  { $$ = MakeRelationTail($1, $2); } // Operator (<=), Simple
-    | GREATER       Factor  { $$ = MakeRelationTail($1, $2); } // Operator (>), Simple
-    | GREATER_EQUAL Factor  { $$ = MakeRelationTail($1, $2); } // Operator (>=), Simple
-    | EQUAL         Factor  { $$ = MakeRelationTail($1, $2); } // Operator (=), Simple
-    | NOT_EQUAL     Factor  { $$ = MakeRelationTail($1, $2); } // Operator (<>), Simple
-    ;
+//RelationTail
+//    : /* empty */           { $$ = MakeRelationTail();       }
+//    | LESS          Factor  { $$ = MakeRelationTail($1, $2); } // Operator (<), Simple
+//    | LESS_EQUAL    Factor  { $$ = MakeRelationTail($1, $2); } // Operator (<=), Simple
+//    | GREATER       Factor  { $$ = MakeRelationTail($1, $2); } // Operator (>), Simple
+//    | GREATER_EQUAL Factor  { $$ = MakeRelationTail($1, $2); } // Operator (>=), Simple
+//    | EQUAL         Factor  { $$ = MakeRelationTail($1, $2); } // Operator (=), Simple
+//    | NOT_EQUAL     Factor  { $$ = MakeRelationTail($1, $2); } // Operator (<>), Simple
+//   ;
 
 // Simple : Factor SimpleTail
 Simple 
-    : Summand SimpleTail { $$ = MakeSimple($1, $2); } // Factor, SimpleTail
+    : Summand { $$ = MakeSimple($1); } // Factor, SimpleTail
+    | Summand MULTIPLY Simple { $$ = MakeSimple($1, $3): }
+    | Summand DIVIDE Simple { $$ = MakeSimple($1, $3): }
+    | Summand MOD Simple { $$ = MakeSimple($1, $3): }
     ;
 
 // SimpleTail : { ( * | / | % ) Factor }
-SimpleTail
-    : /* empty */                    { $$ = MakeSimpleTail();            }
-    | MULTIPLY  Summand SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (*), Factor, SimpleTail
-    | DIVIDE    Summand SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (/), Factor, SimpleTail
-    | MOD       Summand SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (%), Factor, SimpleTail
-    ;
+//SimpleTail
+//    : /* empty */                    { $$ = MakeSimpleTail();            }
+//    | MULTIPLY  Summand SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (*), Factor, SimpleTail
+//    | DIVIDE    Summand SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (/), Factor, SimpleTail
+//    | MOD       Summand SimpleTail   { $$ = AddToSimpleTail($1, $2, $3); } // Operator (%), Factor, SimpleTail
+//    ;
 
 // Factor : Summand FactorTail
 Factor 
-    : Simple FactorTail    { $$ = MakeFactor($1, $2); } // Summand, FactorTail
+    : Simple { $$ = MakeFactor($1); } // Summand, FactorTail
+    | Simple PLUS Factor { $$ = MakeFactor($1, $3); }
+    | Simple MINUS Factor { $$ = MakeFactor($1, $3); }
     ;
 
 // FactorTail : { ( + | - ) Summand }
-FactorTail
-    : /* empty */               { $$ = MakeFactorTail(); }
-    | PLUS  Simple FactorTail  { $$ = AddToFactorTail($1, $2, $3); } // Operator (+), Summand, FactorTail
-    | MINUS Simple FactorTail  { $$ = AddToFactorTail($1, $2, $3); } // Operator (+), Summand, FactorTail
-    ;
+//FactorTail
+//    : /* empty */               { $$ = MakeFactorTail(); }
+//    | PLUS  Simple FactorTail  { $$ = AddToFactorTail($1, $2, $3); } // Operator (+), Summand, FactorTail
+//    | MINUS Simple FactorTail  { $$ = AddToFactorTail($1, $2, $3); } // Operator (+), Summand, FactorTail
+//    ;
 
 // Summand : Primary | ( Expression )
 Summand 

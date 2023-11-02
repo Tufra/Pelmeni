@@ -326,11 +326,9 @@ public partial class Parser
         return node;
     }
 
-    private Node MakeExpression(Node i, Node i1)
+    private Node MakeExpression(Node i)
     {
         var node = new Node(NodeType.Expression, new List<Node> { i });
-        node.Children!.AddRange(i1.Children!);
-
         return node;
     }
 
@@ -341,10 +339,20 @@ public partial class Parser
         return i;
     }
 
-    private Node MakeRelation(Node i, Node i1)
+    private Node MakeRelation(Node i)
     {
         var node = new Node(NodeType.Relation, new List<Node> { i });
-        node.Children!.AddRange(i1.Children!);
+        return node;
+    }
+
+    private Node MakeRelation(Node i, Node i1)
+    {
+        var node = new Node(NodeType.Relation, new List<Node> { i, i1 });
+        return node;
+    }
+    private Node MakeRelation(Node node1, Node node2, Node node3)
+    {
+        var node = new Node(NodeType.Relation, new List<Node> { node1, node2, node3 });
 
         return node;
     }
@@ -352,7 +360,6 @@ public partial class Parser
     private Node MakeRelationTail()
     {
         var node = new Node(NodeType.RelationTail, new List<Node>());
-
         return node;
     }
 
@@ -360,6 +367,12 @@ public partial class Parser
     {
         var node = new Node(NodeType.RelationTail, new List<Node> { i, i1 });
 
+        return node;
+    }
+
+    private Node? MakeSimple(Node i)
+    {
+        var node = new Node(NodeType.Simple, new List<Node> { i });
         return node;
     }
 
@@ -383,6 +396,12 @@ public partial class Parser
         p2.Children!.Add(p0);
         p2.Children!.Add(p1);
         return p2;
+    }
+
+    private Node? MakeFactor(Node i)
+    {
+        var node = new Node(NodeType.Factor, new List<Node> { i });
+        return node;
     }
 
     private Node MakeFactor(Node i, Node i1)
@@ -593,6 +612,30 @@ public partial class Parser
     private Node MakeMemberCall(Node node1)
     {
         var node = new Node(NodeType.MemberCall, new List<Node> { node1 });
+        return node;
+    }
+
+    private Node MakeOrExpression(Node node1, Node node2)
+    {
+        var node = new Node(NodeType.OrExpression, new List<Node> { node1, node2 });
+        return node;
+    }
+
+    private Node? MakeAndExpression(Node node1, Node node2)
+    {
+        var node = new Node(NodeType.AndExpression, new List<Node> { node1, node2 });
+        return node;
+    }
+
+    private Node? MakeOrExpression(Node node1)
+    {
+        var node = new Node(NodeType.OrExpression, new List<Node> { node1 });
+        return node;
+    }
+
+    private Node? MakeAndExpression(Node node1)
+    {
+        var node = new Node(NodeType.AndExpression, new List<Node> { node1 });
         return node;
     }
 }
