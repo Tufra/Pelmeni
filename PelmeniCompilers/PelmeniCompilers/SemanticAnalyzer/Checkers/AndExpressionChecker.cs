@@ -7,7 +7,7 @@ namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 
 public class AndExpressionChecker : BaseNodeRuleChecker
 {
-    public override NodeType CheckingNodeType => NodeType.RoutineDeclaration;
+    public override NodeType CheckingNodeType => NodeType.AndExpression;
 
     public override void Check(Node node)
     {

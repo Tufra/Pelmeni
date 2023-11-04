@@ -3,7 +3,6 @@ using PelmeniCompilers.Models;
 using PelmeniCompilers.Values;
 using PelmeniCompilers.Scanner;
 using PelmeniCompilers.SemanticAnalyzer.VirtualTable;
-
 namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 
 public class SummandChecker : BaseNodeRuleChecker
@@ -21,7 +20,7 @@ public class SummandChecker : BaseNodeRuleChecker
             if (subexpression.Type == NodeType.ModifiablePrimary)
             {
                 var computedSub = subexpression.BuildComputedExpression();
-                var computed = new ComputedExpression(NodeType.Summand, computedSub.Token, computedSub.ValueType, computedSub.Value)
+                var computed = new ComputedExpression(computedSub.Type, computedSub.Token, computedSub.ValueType, computedSub.Value)
                 {
                     Children = computedSub.Children
                 };
@@ -51,18 +50,18 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             token.Value = (-val).ToString();
                         }
-                        var computed = new ComputedExpression(node.Type, token, "integer", token.Value);
+                        var computed = new ComputedExpression(NodeType.Token, token, "integer", token.Value);
                         node.Children = new List<Node> { computed };
                         break;
                     }
                 case Parser.Tokens.REAL_LITERAL:
                     {
-                        var val = double.Parse(token.Value);
+                        var val = double.Parse(token.Value, System.Globalization.CultureInfo.InvariantCulture);
                         if (!sign.IsTerminal()) 
                         {
                             token.Value = (-val).ToString();
                         }
-                        var computed = new ComputedExpression(node.Type, token, "real", token.Value);
+                        var computed = new ComputedExpression(NodeType.Token, token, "real", token.Value);
                         node.Children = new List<Node> { computed };
                         break;
                     }
@@ -72,7 +71,7 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             throw new InvalidOperationException($"Char cannot be negative at {token.Location}");
                         }
-                        var computed = new ComputedExpression(node.Type, token, "char", token.Value);
+                        var computed = new ComputedExpression(NodeType.Token, token, "char", token.Value);
                         node.Children = new List<Node> { computed };
                         break;
                     }
@@ -82,7 +81,7 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             throw new InvalidOperationException($"String cannot be negative at {token.Location}");
                         }
-                        var computed = new ComputedExpression(node.Type, token, "string", token.Value);
+                        var computed = new ComputedExpression(NodeType.Token, token, "string", token.Value);
                         node.Children = new List<Node> { computed };
                         break;
                     }
@@ -92,7 +91,7 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             throw new InvalidOperationException($"Boolean cannot be negative at {token.Location}");
                         }
-                        var computed = new ComputedExpression(node.Type, token, "boolean", token.Value);
+                        var computed = new ComputedExpression(NodeType.Token, token, "boolean", "True");
                         node.Children = new List<Node> { computed };
                         break;
                     }
@@ -102,7 +101,7 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             throw new InvalidOperationException($"Boolean cannot be negative at {token.Location}");
                         }
-                        var computed = new ComputedExpression(node.Type, token, "boolean", token.Value);
+                        var computed = new ComputedExpression(NodeType.Token, token, "boolean", "False");
                         node.Children = new List<Node> { computed };
                         break;
                     }
@@ -115,7 +114,7 @@ public class SummandChecker : BaseNodeRuleChecker
         {
             var subexpression = node.Children[0];
             subexpression.CheckSemantic();
-            var computed = node.BuildComputedExpression();
+            var computed = subexpression.BuildComputedExpression();
             
             node.Children = new List<Node> { computed };
 
@@ -139,6 +138,5 @@ public class SummandChecker : BaseNodeRuleChecker
             Children = node.Children
         };
         return computed;
-        
     }
 }

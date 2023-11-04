@@ -22,6 +22,11 @@ internal static class Program
 
             scanner.Scan(path, fileContent);
 
+            foreach (var item in scanner.Tokens)
+            {
+                Console.WriteLine(item);
+            }
+
             var parser = new Parser.Parser(scanner);
 
             parser.Parse();
@@ -33,7 +38,8 @@ internal static class Program
             var semanticAnalyzer = new SemanticAnalyzer.SemanticAnalyzer(tree);
             semanticAnalyzer.Analyze();
 
-            //PrintTree(tree);
+            Console.WriteLine("\n--------------------------------\n");
+            PrintTree(tree);
         }
         catch (Exception e)
         {
@@ -53,6 +59,11 @@ internal static class Program
                     if (node.Type == Values.NodeType.Token)
                     {
                         Console.Write(" ({0})", node.Token!.Value);
+                    }
+                    else if (node is ComputedExpression)
+                    {
+                        var a = (ComputedExpression)node;
+                        Console.Write(" ({0}: {1})", a.Value, a.ValueType);
                     }
                 }
             },

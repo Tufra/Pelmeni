@@ -6,7 +6,7 @@ namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 
 public class RelationChecker : BaseNodeRuleChecker
 {
-    public override NodeType CheckingNodeType => NodeType.Simple;
+    public override NodeType CheckingNodeType => NodeType.Relation;
     public override void Check(Node node)
     {
         if (node.Children.Count == 1) 

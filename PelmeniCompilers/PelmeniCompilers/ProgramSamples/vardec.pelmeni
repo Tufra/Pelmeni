@@ -1,9 +1,5 @@
 module Vardec;
 
-use "nestedif.pelmeni";
-
-routine Abc() is
-	var variable1: integer;
-	var variable2: integer is 5;
-	var variable3 is 5;
+routine Abc(): boolean is
+	return 123 + val < (123 + 5.0);
 end

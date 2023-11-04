@@ -7,7 +7,7 @@ namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 
 public class OrExpressionChecker : BaseNodeRuleChecker
 {
-    public override NodeType CheckingNodeType => NodeType.RoutineDeclaration;
+    public override NodeType CheckingNodeType => NodeType.OrExpression;
 
     public override void Check(Node node)
     {

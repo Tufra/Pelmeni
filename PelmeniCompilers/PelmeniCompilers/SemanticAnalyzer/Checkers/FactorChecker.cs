@@ -6,7 +6,7 @@ namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 
 public class FactorChecker : BaseNodeRuleChecker
 {
-    public override NodeType CheckingNodeType => NodeType.Simple;
+    public override NodeType CheckingNodeType => NodeType.Factor;
     public override void Check(Node node)
     {
         if (node.Children.Count == 1)
@@ -58,7 +58,9 @@ public class FactorChecker : BaseNodeRuleChecker
                         {   
                             if (leftType == "real" || rightType == "real")
                             {
-                                var val = double.Parse(leftComputed.Value) + double.Parse(rightComputed.Value);
+                                var val = 
+                                    double.Parse(leftComputed.Value, System.Globalization.CultureInfo.InvariantCulture) + 
+                                    double.Parse(rightComputed.Value, System.Globalization.CultureInfo.InvariantCulture);
                                 var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
 
                                 node.Children = new List<Node> { computed };
@@ -79,7 +81,9 @@ public class FactorChecker : BaseNodeRuleChecker
                         {
                             if (leftType == "real" || rightType == "real")
                             {
-                                var val = double.Parse(leftComputed.Value) - double.Parse(rightComputed.Value);
+                                var val = 
+                                    double.Parse(leftComputed.Value, System.Globalization.CultureInfo.InvariantCulture) - 
+                                    double.Parse(rightComputed.Value, System.Globalization.CultureInfo.InvariantCulture);
                                 var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
 
                                 node.Children = new List<Node> { computed };

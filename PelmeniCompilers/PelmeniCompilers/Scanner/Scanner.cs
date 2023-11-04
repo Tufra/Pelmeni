@@ -415,7 +415,7 @@ public class Scanner : AbstractScanner<Node, LexLocation>
                 return State.Free;
 
             case '.':
-                UploadToken();
+                // UploadToken();
                 _buffer.Append(symbol);
                 return State.RealLiteral;
 
@@ -475,7 +475,7 @@ public class Scanner : AbstractScanner<Node, LexLocation>
                     return State.Free;
                 }
 
-                if (_buffer[^1] == '.')
+                if (symbol == '.')
                 {
                     ProcessDot();
                     return State.Free;

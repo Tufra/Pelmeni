@@ -180,18 +180,18 @@ PrimitiveType
 
 // ArrayType : array [ Expression ] Type
 ArrayType
-    : ARRAY OPEN_BRACKET CompoundSize CLOSE_BRACKET Type { $$ = MakeArrayType($5, $3); } // Type, size
+    : ARRAY OPEN_BRACKET Expression CLOSE_BRACKET Type { $$ = MakeArrayType($5, $3); } // Type, size
     | ARRAY OPEN_BRACKET CLOSE_BRACKET Type { $$ = MakeArrayType($4); }
     ;
 
-CompoundSize
-    : Expression CompoundSizeTail { $$ = MakeCompoundSize($1, $2); }
-    ;
+//CompoundSize
+//    : Expression { $$ = MakeCompoundSize($1); }
+//    ;
 
-CompoundSizeTail
-    : /* empty */ { $$ = MakeCompoundSizeTail(); }
-    | COMMA Expression CompoundSizeTail { $$ = AddToCompoundSizeTail($3, $2); }
-    ;
+//CompoundSizeTail
+//    : /* empty */ { $$ = MakeCompoundSizeTail(); }
+//    | COMMA Expression CompoundSizeTail { $$ = AddToCompoundSizeTail($3, $2); }
+//    ;
 
 // RecordType : record RecordVariableDeclarations end
 RecordType
@@ -206,44 +206,44 @@ RefType
 RecordVariableDeclarations
     : /* empty */                                       { $$ = MakeRecordVariableDeclarations(); }
     | RecordVariableDeclarations VariableDeclaration    { $$ = AddToRecordVariableDeclarations($1, $2); } // Declarations, Declaration
-    | RecordVariableDeclarations RoutineDeclaration     { $$ = AddToRecordVariableDeclarations($1, $2); }
-    | RecordVariableDeclarations OperatorDeclaration    { $$ = AddToRecordVariableDeclarations($1, $2); }
+//    | RecordVariableDeclarations RoutineDeclaration     { $$ = AddToRecordVariableDeclarations($1, $2); }
+//    | RecordVariableDeclarations OperatorDeclaration    { $$ = AddToRecordVariableDeclarations($1, $2); }
     ;
 
-OperatorDeclaration
-    : OPERATOR Operator OPEN_PARENTHESIS Parameters CLOSE_PARENTHESIS TypeTail IS Body END { $$ = MakeOperatorDeclaration($2, $4, $6, $8); }
-    ;
+//OperatorDeclaration
+//    : OPERATOR Operator OPEN_PARENTHESIS Parameters CLOSE_PARENTHESIS TypeTail IS Body END { $$ = MakeOperatorDeclaration($2, $4, $6, $8); }
+//    ;
 
-Operator
-    :   EQUAL { $$ = MakeBinaryOperator($1); }
-    |   INCREMENT { $$ = MakeUnaryOperator($1); } 
-    |   DECREMENT { $$ = MakeUnaryOperator($1); }  
-    |   MINUS { $$ = MakeBinaryOperator($1); }   
-    |   PLUS { $$ = MakeBinaryOperator($1); }     
-    |   MULTIPLY  { $$ = MakeBinaryOperator($1); }   
-    |   DIVIDE  { $$ = MakeBinaryOperator($1); }     
-    |   MOD      { $$ = MakeBinaryOperator($1); }    
-    |   LESS_EQUAL  { $$ = MakeBinaryOperator($1); } 
-    |   GREATER_EQUAL{ $$ = MakeBinaryOperator($1); }
-    |   LESS      { $$ = MakeBinaryOperator($1); }   
-    |   GREATER   { $$ = MakeBinaryOperator($1); }   
-    |   NOT_EQUAL { $$ = MakeBinaryOperator($1); }   
-    |   NOT     { $$ = MakeUnaryOperator($1); }     
-    |   AND      { $$ = MakeBinaryOperator($1); }    
-    |   OR      { $$ = MakeBinaryOperator($1); }     
-    |   XOR     { $$ = MakeBinaryOperator($1); }     
-    |   RANGE    { $$ = MakeBinaryOperator($1); }
-    |   CallOperator { $$ = MakeUnaryOperator($1); }
-    |   ArrayAccessOperator { $$ = MakeUnaryOperator($1); }
-    ;
+//Operator
+//    :   EQUAL { $$ = MakeBinaryOperator($1); }
+//    |   INCREMENT { $$ = MakeUnaryOperator($1); } 
+//    |   DECREMENT { $$ = MakeUnaryOperator($1); }  
+//    |   MINUS { $$ = MakeBinaryOperator($1); }   
+//    |   PLUS { $$ = MakeBinaryOperator($1); }     
+//    |   MULTIPLY  { $$ = MakeBinaryOperator($1); }   
+//    |   DIVIDE  { $$ = MakeBinaryOperator($1); }     
+//    |   MOD      { $$ = MakeBinaryOperator($1); }    
+//    |   LESS_EQUAL  { $$ = MakeBinaryOperator($1); } 
+//    |   GREATER_EQUAL{ $$ = MakeBinaryOperator($1); }
+//    |   LESS      { $$ = MakeBinaryOperator($1); }   
+//    |   GREATER   { $$ = MakeBinaryOperator($1); }   
+//    |   NOT_EQUAL { $$ = MakeBinaryOperator($1); }   
+//    |   NOT     { $$ = MakeUnaryOperator($1); }     
+//    |   AND      { $$ = MakeBinaryOperator($1); }    
+//    |   OR      { $$ = MakeBinaryOperator($1); }     
+//    |   XOR     { $$ = MakeBinaryOperator($1); }     
+//    |   RANGE    { $$ = MakeBinaryOperator($1); }
+//    |   CallOperator { $$ = MakeUnaryOperator($1); }
+//    |   ArrayAccessOperator { $$ = MakeUnaryOperator($1); }
+//    ;
 
-CallOperator
-    :   OPEN_PARENTHESIS CLOSE_PARENTHESIS { $$ = MakeCallOperator(); }
-    ;
+//CallOperator
+//    :   OPEN_PARENTHESIS CLOSE_PARENTHESIS { $$ = MakeCallOperator(); }
+//    ;
 
-ArrayAccessOperator
-    :   OPEN_BRACKET CLOSE_BRACKET { $$ = MakeArrayAccessOperator(); }
-    ;
+//ArrayAccessOperator
+//    :   OPEN_BRACKET CLOSE_BRACKET { $$ = MakeArrayAccessOperator(); }
+//    ;
 
 // Body : { SimpleDeclaration | Statement }
 Body
@@ -258,7 +258,6 @@ Statement
     | Increment         SEMICOLON   { $$ = $1; }
     | Decrement         SEMICOLON   { $$ = $1; }
     | RoutineCall       SEMICOLON   { $$ = $1; }
-    | ModifiablePrimary SEMICOLON   { $$ = $1; }
     | Return            SEMICOLON   { $$ = $1; }
     | WhileLoop                     { $$ = $1; }
     | ForLoop                       { $$ = $1; }
@@ -456,19 +455,18 @@ ModifiablePrimaryTail
     : /* empty */                           { $$ = MakeModifiablePrimaryTail(); }
     | ModifiablePrimaryTail MemberAccess   { $$ = AddToModifiablePrimaryTail($2, $1); } // MemberAccess, ModifiablePrimaryTail ??
     | ModifiablePrimaryTail ArrayAccess  { $$ = AddToModifiablePrimaryTail($2, $1); } // ArrayAccess, ModifiablePrimaryTail ??
-    | ModifiablePrimaryTail MemberCall  { $$ = AddToModifiablePrimaryTail($2, $1); }
     ;
 
 MemberAccess
     : DOT IDENTIFIER    { $$ = MakeMemberAccess($2); } // Identifier
     ;
 
-MemberCall
-    : DOT RoutineCall { $$ = MakeMemberCall($2); }
-    ;
+// MemberCall
+//    : DOT RoutineCall { $$ = MakeMemberCall($2); }
+//    ;
 
 ArrayAccess
-    : OPEN_BRACKET CompoundSize CLOSE_BRACKET { $$ = MakeArrayAccess($2); } // Expression
+    : OPEN_BRACKET Expression CLOSE_BRACKET { $$ = MakeArrayAccess($2); } // Expression
     ;
 
 %%

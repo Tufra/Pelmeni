@@ -28,6 +28,21 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
 
         var body = node.Children[3];
         body.CheckSemantic();
+        var computedBody = body.BuildComputedExpression();
+
+        var type = node.Children[2];
+        type.CheckSemantic();
+
+        if (type.Children.Count > 0 && computedBody.ValueType != type.Children[0].Token!.Value)
+        {
+            throw new InvalidOperationException(
+                $"Routine {identifier} is supposed to return {type.Children[0].Token!.Value}, but {computedBody.ValueType} encountered");
+        }
+        else if (type.Children.Count == 0 && computedBody.ValueType != "None")
+        {
+            throw new InvalidOperationException(
+                $"Routine {identifier} is not supposed to return values, but {computedBody.ValueType} encountered");
+        }
         
         Scope.RemoveLastFrame();
         Chain.Pop();
