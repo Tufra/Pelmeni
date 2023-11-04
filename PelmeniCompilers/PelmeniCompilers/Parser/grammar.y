@@ -354,12 +354,12 @@ Expression
 
 AndExpression
     : Relation { $$ = MakeAndExpression($1); }
-    | AndExpression AND Relation { $$ = MakeAndExpression($1, $3); }
+    | AndExpression AND Relation { $$ = MakeAndExpression($2, $1, $3); }
     ;
 
 OrExpression
     : AndExpression { $$ = MakeOrExpression($1); }
-    | OrExpression OR AndExpression { $$ = MakeOrExpression($1, $3); }
+    | OrExpression OR AndExpression { $$ = MakeOrExpression($2, $1, $3); }
     ;
 
 // ExpressionTail : { ( and | or | xor ) Relation }

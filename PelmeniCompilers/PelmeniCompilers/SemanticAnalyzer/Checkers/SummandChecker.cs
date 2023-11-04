@@ -9,6 +9,7 @@ namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
 public class SummandChecker : BaseNodeRuleChecker
 {
     public override NodeType CheckingNodeType => NodeType.Summand;
+
     public override void Check(Node node)
     {
         if (node.Children[0].Type == NodeType.Sign) 
@@ -19,15 +20,23 @@ public class SummandChecker : BaseNodeRuleChecker
 
             if (subexpression.Type == NodeType.ModifiablePrimary)
             {
-                var type = ((ComputedExpression) subexpression.Children.Last()).ValueType;
-                var computed = new ComputedExpression(NodeType.Summand, null, type, null);
+                var computedSub = subexpression.BuildComputedExpression();
+                var computed = new ComputedExpression(NodeType.Summand, computedSub.Token, computedSub.ValueType, computedSub.Value)
+                {
+                    Children = computedSub.Children
+                };
                 node.Children[1] = computed;
+
+                return;
             }
             else if (subexpression.Type == NodeType.RoutineCall)
             {
                 var routine = GetRoutineOrThrowIfNotDeclared(subexpression);
 
-                var computed = new ComputedExpression(subexpression.Type, null, routine.ReturnType, null);
+                var computed = new ComputedExpression(subexpression.Type, null, routine.ReturnType, null)
+                {
+                    Children = subexpression.Children
+                };
                 node.Children[1] = computed;
                 return;
             }
@@ -106,11 +115,30 @@ public class SummandChecker : BaseNodeRuleChecker
         {
             var subexpression = node.Children[0];
             subexpression.CheckSemantic();
-            var type = ((ComputedExpression)subexpression.Children[0]).ValueType;
-            var value = ((ComputedExpression)subexpression.Children[0]).Value;
-            var computed = new ComputedExpression(subexpression.Type, null, type, value);
+            var computed = node.BuildComputedExpression();
+            
             node.Children = new List<Node> { computed };
 
         }
+    }
+
+    public override ComputedExpression BuildComputedExpression(Node node)
+    {
+        ComputedExpression child;
+        if (node.Children.Count == 1) // Expression
+        {
+            child = (ComputedExpression)node.Children[0];
+        }
+        else // Sign Primary
+        {
+            child = (ComputedExpression)node.Children[1];
+        }
+
+        var computed = new ComputedExpression(node.Type, child.Token, child.ValueType, child.Value)
+        {
+            Children = node.Children
+        };
+        return computed;
+        
     }
 }

@@ -35,6 +35,12 @@ public static class NodeExtension
         rule.Check(node);
     }
 
+    public static ComputedExpression BuildComputedExpression(this Node node)
+    {
+        var rule = GetSemanticRule(node);
+        return rule.BuildComputedExpression(node);
+    }
+
     private static BaseNodeRuleChecker GetSemanticRule(Node node)
     {
         return SemanticRules.First(rule => rule.CheckingNodeType == node.Type);

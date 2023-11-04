@@ -49,13 +49,25 @@ public class ModifiablePrimaryChecker : BaseNodeRuleChecker
             else if (chain[i].Type == NodeType.ArrayAccess)
             {
                 // TODO: if array
-                
+                throw new NotImplementedException();
             }
             
         }
 
-        var computed = new ComputedExpression(node.Type, null, type, null);
-        node.Children[1] = computed;
+        // var computed = new ComputedExpression(node.Type, null, type, null);
+        // node.Children[1] = new List<Node> { computed };
         return;
+    }
+
+    public override ComputedExpression BuildComputedExpression(Node node)
+    {
+        var children = node.Children;
+        var last = (ComputedExpression)children.Last();
+        var computed = new ComputedExpression(node.Type, null, last.ValueType, last.Value)
+        {
+            Children = children
+        };
+
+        return computed;
     }
 }

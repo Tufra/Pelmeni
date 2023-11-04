@@ -53,6 +53,11 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
 
     private string GetReturnType(Node tail)
     {
-        return tail.Children[0].Token!.Value;
+        if (tail.Children.Count > 0)
+        {
+            return tail.Children[0].Token!.Value;
+        }
+        return "";
+        
     }
 }

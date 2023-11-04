@@ -13,27 +13,15 @@ public class FactorChecker : BaseNodeRuleChecker
         {
             var subexpression = node.Children[0];
             subexpression.CheckSemantic();
-            
-            ComputedExpression computedSub;
-            if (subexpression.Children.Count == 1)
-            {
-                computedSub = (ComputedExpression)subexpression.Children[0];
-            }
-            else
-            {
-                computedSub = (ComputedExpression)subexpression.Children[1];
-            }
-            
-            var computed = new ComputedExpression(
-                subexpression.Type, 
-                null, 
-                computedSub.ValueType, 
-                computedSub.Value);
 
-            if (computed.Value is null)
+            var computedSub = subexpression.BuildComputedExpression();
+
+            var type = computedSub.ValueType;
+            var value = computedSub.Value;
+            var computed = new ComputedExpression(subexpression.Type, null, type, value)
             {
-                computed.Children = new List<Node> { subexpression };
-            }
+                Children = computedSub.Children
+            };
             node.Children = new List<Node> { computed };
         }
         else
@@ -45,74 +33,10 @@ public class FactorChecker : BaseNodeRuleChecker
             leftOperand.CheckSemantic();
             rightOperand.CheckSemantic();
             
-            ComputedExpression leftComputed;
-            if (leftOperand.Children.Count == 1)
-            {
-                var subexpression = (ComputedExpression)leftOperand.Children[0];
-                var computed = new ComputedExpression(
-                    leftOperand.Type, 
-                    null, 
-                    subexpression.ValueType, 
-                    subexpression.Value);
-
-                if (computed.Value is null)
-                {
-                    computed.Children = leftOperand.Children;
-                }
-                
-                leftComputed = computed;
-            }
-            else
-            {
-                var subexpression = (ComputedExpression)leftOperand.Children[1];
-                var computed = new ComputedExpression(
-                    leftOperand.Type, 
-                    null, 
-                    subexpression.ValueType, 
-                    subexpression.Value);
-
-                if (computed.Value is null)
-                {
-                    computed.Children = leftOperand.Children;
-                }
-                
-                leftComputed = computed;
-            }
+            ComputedExpression leftComputed = leftOperand.BuildComputedExpression();
             node.Children[1] = leftComputed;
 
-            ComputedExpression rightComputed;
-            if (rightOperand.Children.Count == 1)
-            {
-                var subexpression = (ComputedExpression)rightOperand.Children[0];
-                var computed = new ComputedExpression(
-                    rightOperand.Type, 
-                    null, 
-                    subexpression.ValueType, 
-                    subexpression.Value);
-
-                if (computed.Value is null)
-                {
-                    computed.Children = rightOperand.Children;
-                }
-                
-                rightComputed = computed;
-            }
-            else
-            {
-                var subexpression = (ComputedExpression)leftOperand.Children[1];
-                var computed = new ComputedExpression(
-                    rightOperand.Type, 
-                    null, 
-                    subexpression.ValueType, 
-                    subexpression.Value);
-
-                if (computed.Value is null)
-                {
-                    computed.Children = rightOperand.Children;
-                }
-                
-                rightComputed = computed;
-            }
+            ComputedExpression rightComputed = rightOperand.BuildComputedExpression();
             node.Children[2] = rightComputed;
 
             var leftType = leftComputed.ValueType;
@@ -128,7 +52,7 @@ public class FactorChecker : BaseNodeRuleChecker
 
             switch (operType)
             {
-                case Parser.Tokens.PLUS:
+                case Parser.Tokens.PLUS: // real if any operand is real
                     {
                         if (leftComputed.Value is not null && rightComputed.Value is not null) 
                         {   
@@ -173,6 +97,42 @@ public class FactorChecker : BaseNodeRuleChecker
                     }
                 default:
                     throw new InvalidOperationException($"Undefined operation {operType} at {oper.Location}");
+            }
+        }
+    }
+
+    public override ComputedExpression BuildComputedExpression(Node node)
+    {
+        if (node.Children.Count == 1) // Expression
+        {
+            var child = (ComputedExpression)node.Children[0];
+            var computed = new ComputedExpression(node.Type, child.Token, child.ValueType, child.Value)
+            {
+                Children = node.Children
+            };
+            return computed;
+        }
+        else // Summand OPERATOR Simple
+        {
+            var left = (ComputedExpression)node.Children[1];
+            var right = (ComputedExpression)node.Children[2];
+            var operToken = Scanner.Scanner.TokenValueToGppgToken(node.Children[0].Token!);
+
+            if (left.ValueType == "real" || right.ValueType == "real")
+            {
+                var computed = new ComputedExpression(node.Type, null, "real", null)
+                {
+                    Children = node.Children
+                };
+                return computed;        
+            }
+            else
+            {
+                var computed = new ComputedExpression(node.Type, null, "integer", null)
+                {
+                    Children = node.Children
+                };
+                return computed;
             }
         }
     }

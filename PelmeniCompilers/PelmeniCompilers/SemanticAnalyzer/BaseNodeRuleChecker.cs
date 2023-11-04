@@ -26,6 +26,10 @@ public abstract class BaseNodeRuleChecker
     }
 
     public abstract void Check(Node node);
+    public virtual ComputedExpression BuildComputedExpression(Node node)
+    {
+        throw new InvalidOperationException("Not available for this node");
+    }
 
     protected static void CheckChildren(Node node)
     {

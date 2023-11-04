@@ -14,9 +14,14 @@ public class SimpleChecker : BaseNodeRuleChecker
             var subexpression = node.Children[0];
             subexpression.CheckSemantic();
 
-            var type = ((ComputedExpression)subexpression.Children[0]).ValueType;
-            var value = ((ComputedExpression)subexpression.Children[0]).Value;
-            var computed = new ComputedExpression(subexpression.Type, null, type, value);
+            var computedSub = subexpression.BuildComputedExpression();
+
+            var type = computedSub.ValueType;
+            var value = computedSub.Value;
+            var computed = new ComputedExpression(subexpression.Type, null, type, value)
+            {
+                Children = computedSub.Children
+            };
             node.Children = new List<Node> { computed };
         }
         else
@@ -28,74 +33,10 @@ public class SimpleChecker : BaseNodeRuleChecker
             leftOperand.CheckSemantic();
             rightOperand.CheckSemantic();
             
-            ComputedExpression leftComputed;
-            if (leftOperand.Children.Count == 1)
-            {
-                var subexpression = (ComputedExpression)leftOperand.Children[0];
-                var computed = new ComputedExpression(
-                    leftOperand.Type, 
-                    null, 
-                    subexpression.ValueType, 
-                    subexpression.Value);
-
-                if (computed.Value is null)
-                {
-                    computed.Children = leftOperand.Children;
-                }
-                
-                leftComputed = computed;
-            }
-            else
-            {
-                var subexpression = (ComputedExpression)leftOperand.Children[1];
-                var computed = new ComputedExpression(
-                    leftOperand.Type, 
-                    null, 
-                    subexpression.ValueType, 
-                    subexpression.Value);
-
-                if (computed.Value is null)
-                {
-                    computed.Children = leftOperand.Children;
-                }
-                
-                leftComputed = computed;
-            }
+            ComputedExpression leftComputed = leftOperand.BuildComputedExpression();
             node.Children[1] = leftComputed;
 
-            ComputedExpression rightComputed;
-            if (rightOperand.Children.Count == 1)
-            {
-                var subexpression = (ComputedExpression)rightOperand.Children[0];
-                var computed = new ComputedExpression(
-                    rightOperand.Type, 
-                    null, 
-                    subexpression.ValueType, 
-                    subexpression.Value);
-
-                if (computed.Value is null)
-                {
-                    computed.Children = rightOperand.Children;
-                }
-                
-                rightComputed = computed;
-            }
-            else
-            {
-                var subexpression = (ComputedExpression)leftOperand.Children[1];
-                var computed = new ComputedExpression(
-                    rightOperand.Type, 
-                    null, 
-                    subexpression.ValueType, 
-                    subexpression.Value);
-
-                if (computed.Value is null)
-                {
-                    computed.Children = rightOperand.Children;
-                }
-                
-                rightComputed = computed;
-            }
+            ComputedExpression rightComputed = rightOperand.BuildComputedExpression();
             node.Children[2] = rightComputed;
 
             var leftType = leftComputed.ValueType;
@@ -113,12 +54,13 @@ public class SimpleChecker : BaseNodeRuleChecker
             {
                 case Parser.Tokens.DIVIDE:
                     {
-                        if (rightComputed.Value == "0")
-                        {
-                            throw new InvalidOperationException($"Division by zero at {oper.Location}");
-                        }
                         if (leftComputed.Value is not null && rightComputed.Value is not null) 
                         {   
+                            if (rightComputed.Value.StartsWith("0"))
+                            {
+                                throw new InvalidOperationException($"Division by zero at {oper.Location}");
+                            }
+
                             var val = double.Parse(leftComputed.Value) / double.Parse(rightComputed.Value);
                             var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
 
@@ -176,6 +118,66 @@ public class SimpleChecker : BaseNodeRuleChecker
                     } 
                 default:
                     throw new InvalidOperationException($"Undefined operation {operType} at {oper.Location}");
+            }
+        }
+    }
+
+    public override ComputedExpression BuildComputedExpression(Node node)
+    {
+        if (node.Children.Count == 1) // Expression
+        {
+            var child = (ComputedExpression)node.Children[0];
+            var computed = new ComputedExpression(node.Type, child.Token, child.ValueType, child.Value)
+            {
+                Children = node.Children
+            };
+            return computed;
+        }
+        else // Summand OPERATOR Simple
+        {
+            var left = (ComputedExpression)node.Children[1];
+            var right = (ComputedExpression)node.Children[2];
+            var operToken = Scanner.Scanner.TokenValueToGppgToken(node.Children[0].Token!);
+
+            switch (operToken)
+            {
+                case Parser.Tokens.DIVIDE: // division always returns real
+                    {
+                        var computed = new ComputedExpression(node.Type, null, "real", null)
+                        {
+                            Children = node.Children
+                        };
+                        return computed;
+                    }
+                case Parser.Tokens.MOD: // mod is like division
+                    {
+                        var computed = new ComputedExpression(node.Type, null, "real", null)
+                        {
+                            Children = node.Children
+                        };
+                        return computed;
+                    }
+                case Parser.Tokens.MULTIPLY: // returns real if any of operands is real
+                    {
+                        if (left.ValueType == "real" || right.ValueType == "real")
+                        {
+                            var computed = new ComputedExpression(node.Type, null, "real", null)
+                            {
+                                Children = node.Children
+                            };
+                            return computed;        
+                        }
+                        else
+                        {
+                            var computed = new ComputedExpression(node.Type, null, "integer", null)
+                            {
+                                Children = node.Children
+                            };
+                            return computed;
+                        }
+                    } 
+                default:
+                    throw new InvalidOperationException($"Undefined operation {operToken}");
             }
         }
     }
