@@ -1,4 +1,5 @@
-﻿using PelmeniCompilers.Models;
+﻿using PelmeniCompilers.ExtensionsMethods;
+using PelmeniCompilers.Models;
 using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
@@ -9,6 +10,20 @@ public class WhileLoopChecker : BaseNodeRuleChecker
 
     public override void Check(Node node)
     {
-        throw new NotImplementedException();
+        var condition = node.Children[0]!;
+        var body = node.Children[1]!;
+
+        condition.CheckSemantic();
+        body.CheckSemantic();
+
+        var computedCondition = condition.BuildComputedExpression();
+
+        if (computedCondition.ValueType != "boolean")
+        {
+            throw new InvalidOperationException(
+                $"Only booleans allowed as condition");
+        }
+
+        node.Children[0] = computedCondition;
     }
 }

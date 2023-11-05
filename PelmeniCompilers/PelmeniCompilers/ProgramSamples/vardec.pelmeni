@@ -1,6 +1,17 @@
 module Vardec;
 
-routine Abc(): real is
+routine Abc(a: integer, b: integer): real is
 	var sus: real is 10.3 + 20 * (0.5 + 5) * 0.1;
+	sus := 1.9;
+
+	for i in 1..10 loop
+		sus := i + 0.0;
+	end
+
+	if (sus = 2.0) then
+		sus++;
+	else
+		sus--;
+	end
 	return sus;
 end

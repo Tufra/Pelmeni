@@ -50,17 +50,15 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
 
     private List<VariableVirtualTableEntry> GetParameters(Node parameters)
     {
+        parameters.CheckSemantic();
+
         var result = new List<VariableVirtualTableEntry>();
         foreach (var parameterDeclaration in parameters.Children)
         {
             var identifier = GetIdentifierOrThrowIfOccupied(parameterDeclaration);
-            var type = parameterDeclaration.Children[1].Token!.Value;
-
-            result.Add(new VariableVirtualTableEntry()
-            {
-                Name = identifier,
-                Type = type
-            });
+            var type = parameterDeclaration.Children[1];
+            
+            result.Add(ParameterDeclarationChecker.BuildVirtualTableEntry(identifier, type));
         }
 
         return result;
@@ -72,7 +70,7 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
         {
             return tail.Children[0].Token!.Value;
         }
-        return "";
+        return "None";
         
     }
 }

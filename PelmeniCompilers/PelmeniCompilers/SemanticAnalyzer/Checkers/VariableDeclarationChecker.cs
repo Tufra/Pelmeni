@@ -32,12 +32,13 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
         if (type.Children.Count == 0) // no type, init
         {
             var computedInit = init.BuildComputedExpression();
+            node.Children[2] = computedInit;
             
             variableSignature.Type = computedInit.ValueType;
         }
         else if (init.Children.Count == 0) // type, no init
         {
-            variableSignature.Type = type.Children[0].Token!.Value;
+            variableSignature.Type = BuildTypeString(type.Children[0]);
         }
         else // type, init
         {
@@ -49,8 +50,27 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
                 throw new InvalidOperationException(
                     $"Variable and value should have the same type, {type.Children[0].Token!.Value} and {computedInit.ValueType} encountered at {node.Children[0].Token!.Location}");
             }
+            
+            node.Children[2] = computedInit;
         }
 
         Scope.AddToLastFrame(variableSignature);
+    }
+
+    private static string BuildTypeString(Node node)
+    {
+        if (node.Type == NodeType.Token)
+        {
+            return node.Token!.Value;
+        }
+        else if (node.Type == NodeType.ArrayType)
+        {
+            return ArrayTypeChecker.BuildString(node);
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                    $"Illegal type {node.Type}");
+        }
     }
 }

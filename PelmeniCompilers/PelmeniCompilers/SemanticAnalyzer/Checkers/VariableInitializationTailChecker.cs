@@ -14,6 +14,9 @@ public class VariableInitializationTailChecker : BaseNodeRuleChecker
         {
             var expr = node.Children[0];
             expr.CheckSemantic();
+
+            var computed = expr.BuildComputedExpression();
+            node.Children[0] = computed;
         }
     }
 

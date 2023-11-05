@@ -3,12 +3,12 @@
 // (see accompanying GPPGcopyright.rtf)
 
 // GPPG version 1.5.2
-// Machine:  DESKTOP-A08TJLK
-// DateTime: 04.11.2023 19:06:40
+// Machine:  DESKTOP-K87RABG
+// DateTime: 05.11.2023 22:23:47
 // UserName: under
-// Input file <../grammar.y - 04.11.2023 19:06:39>
+// Input file <../grammar.y - 05.11.2023 22:23:15>
 
-// options: lines
+// options: conflicts lines conflicts
 
 using System.CodeDom.Compiler;
 using System.Globalization;
@@ -36,7 +36,7 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
   private static Dictionary<int, string> aliases;
 #pragma warning restore 649
   private static Rule[] rules = new Rule[111];
-  private static State[] states = new State[200];
+  private static State[] states = new State[199];
   private static string[] nonTerms = new string[] {
       "Program", "$accept", "Module", "Imports", "Declaration", "SimpleDeclaration", 
       "RoutineDeclaration", "VariableDeclaration", "TypeDeclaration", "TypeTail", 
@@ -51,7 +51,7 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
       "ArrayAccess", };
 
   static Parser() {
-    states[0] = new State(new int[]{31,197},new int[]{-1,1,-3,191});
+    states[0] = new State(new int[]{31,196},new int[]{-1,1,-3,190});
     states[1] = new State(new int[]{3,2,17,6,19,111,27,117},new int[]{-5,3,-6,4,-8,5,-9,110,-7,116});
     states[2] = new State(-1);
     states[3] = new State(-3);
@@ -239,18 +239,17 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
     states[185] = new State(new int[]{4,188},new int[]{-17,186});
     states[186] = new State(new int[]{38,185,42,-23},new int[]{-18,187});
     states[187] = new State(-24);
-    states[188] = new State(new int[]{39,189});
-    states[189] = new State(new int[]{33,86,34,87,36,88,35,89,21,91,20,97,28,102,4,104},new int[]{-13,190,-19,85,-20,90,-21,96,-22,101});
-    states[190] = new State(-25);
-    states[191] = new State(new int[]{30,193,3,-5,17,-5,19,-5,27,-5},new int[]{-4,192});
-    states[192] = new State(-2);
-    states[193] = new State(new int[]{8,194});
-    states[194] = new State(new int[]{40,195});
-    states[195] = new State(new int[]{30,193,3,-5,17,-5,19,-5,27,-5},new int[]{-4,196});
-    states[196] = new State(-6);
-    states[197] = new State(new int[]{4,198});
-    states[198] = new State(new int[]{40,199});
-    states[199] = new State(-4);
+    states[188] = new State(new int[]{39,83,38,-15,42,-15},new int[]{-10,189});
+    states[189] = new State(-25);
+    states[190] = new State(new int[]{30,192,3,-5,17,-5,19,-5,27,-5},new int[]{-4,191});
+    states[191] = new State(-2);
+    states[192] = new State(new int[]{8,193});
+    states[193] = new State(new int[]{40,194});
+    states[194] = new State(new int[]{30,192,3,-5,17,-5,19,-5,27,-5},new int[]{-4,195});
+    states[195] = new State(-6);
+    states[196] = new State(new int[]{4,197});
+    states[197] = new State(new int[]{40,198});
+    states[198] = new State(-4);
 
     for (int sNo = 0; sNo < states.Length; sNo++) states[sNo].number = sNo;
 
@@ -278,7 +277,7 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
     rules[22] = new Rule(-15, new int[]{-17,-18});
     rules[23] = new Rule(-18, new int[]{});
     rules[24] = new Rule(-18, new int[]{38,-17,-18});
-    rules[25] = new Rule(-17, new int[]{4,39,-13});
+    rules[25] = new Rule(-17, new int[]{4,-10});
     rules[26] = new Rule(-13, new int[]{-19});
     rules[27] = new Rule(-13, new int[]{-20});
     rules[28] = new Rule(-13, new int[]{-21});
@@ -495,9 +494,9 @@ public partial class Parser: ShiftReduceParser<Node, LexLocation>
                                                 { CurrentSemanticValue = AddToParametersTail(ValueStack[ValueStack.Depth-1], ValueStack[ValueStack.Depth-2]); }
 #line default
         break;
-      case 25: // ParameterDeclaration -> IDENTIFIER, COLON, Type
+      case 25: // ParameterDeclaration -> IDENTIFIER, TypeTail
 #line 161 "../grammar.y"
-                            { CurrentSemanticValue = MakeParameterDeclaration(ValueStack[ValueStack.Depth-3], ValueStack[ValueStack.Depth-1]); }
+                          { CurrentSemanticValue = MakeParameterDeclaration(ValueStack[ValueStack.Depth-2], ValueStack[ValueStack.Depth-1]); }
 #line default
         break;
       case 26: // Type -> PrimitiveType

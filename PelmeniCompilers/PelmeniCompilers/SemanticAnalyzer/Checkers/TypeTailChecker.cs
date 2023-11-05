@@ -1,4 +1,5 @@
-﻿using PelmeniCompilers.Models;
+﻿using PelmeniCompilers.ExtensionsMethods;
+using PelmeniCompilers.Models;
 using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.SemanticAnalyzer.Checkers;
@@ -11,19 +12,27 @@ public class TypeTailChecker : BaseNodeRuleChecker
     {
         if (node.Children.Count == 1)
         {
-            var type = node.Children[0].Token!.Value;
-
-            // if primitive type
-            if (type == "integer" || type == "real" || type == "boolean" || type == "char")
+            
+            var type = node.Children[0];
+            if (type.Type == NodeType.Token)
             {
-                return;
+                var typeStr = type.Token!.Value;
+                if (TypeDeclarationChecker.IsPrimitiveType(typeStr))
+                {
+                    return;
+                }
+                GetRecordOrThrowIfNotDeclared(typeStr, node.Children[0].Token!.Location);
+
             }
-
-            // if array
-            // TODO
-
-            // if record
-            GetRecordOrThrowIfNotDeclared(type, node.Children[0].Token!.Location);
+            else if (type.Type == NodeType.ArrayType)
+            {
+                type.CheckSemantic();
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"Illegal type {type.Type}");
+            }
         }
     }
 }

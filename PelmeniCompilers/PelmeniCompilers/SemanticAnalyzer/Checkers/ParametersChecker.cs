@@ -9,11 +9,6 @@ public class ParametersChecker : BaseNodeRuleChecker
     
     public override void Check(Node node)
     {
-        var children = node.Children;
-
-        if (children.Count > 0)
-        {
-            throw new NotImplementedException();
-        }
+        CheckChildren(node);
     }
 }

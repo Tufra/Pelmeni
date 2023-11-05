@@ -158,7 +158,7 @@ ParametersTail
 
 // ParameterDeclaration : Identifier : Type
 ParameterDeclaration
-    : IDENTIFIER COLON Type { $$ = MakeParameterDeclaration($1, $3); } // Identifier, type
+    : IDENTIFIER TypeTail { $$ = MakeParameterDeclaration($1, $2); } // Identifier, type
     ;
 
 // Type : PrimitiveType | ArrayType | RecordType | Identifier
@@ -395,9 +395,9 @@ Relation
 // Simple : Factor SimpleTail
 Simple 
     : Summand { $$ = MakeSimple($1); } // Factor, SimpleTail
-    | Summand MULTIPLY Simple { $$ = MakeSimple($2, $1, $3): }
-    | Summand DIVIDE Simple { $$ = MakeSimple($2, $1, $3): }
-    | Summand MOD Simple { $$ = MakeSimple($2, $1, $3): }
+    | Summand MULTIPLY Simple { $$ = MakeSimple($2, $1, $3); }
+    | Summand DIVIDE Simple { $$ = MakeSimple($2, $1, $3); }
+    | Summand MOD Simple { $$ = MakeSimple($2, $1, $3); }
     ;
 
 // SimpleTail : { ( * | / | % ) Factor }
