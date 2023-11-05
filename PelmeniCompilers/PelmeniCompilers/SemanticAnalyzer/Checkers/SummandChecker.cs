@@ -56,7 +56,7 @@ public class SummandChecker : BaseNodeRuleChecker
                     }
                 case Parser.Tokens.REAL_LITERAL:
                     {
-                        var val = double.Parse(token.Value, System.Globalization.CultureInfo.InvariantCulture);
+                        var val = double.Parse(token.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                         if (!sign.IsTerminal()) 
                         {
                             token.Value = (-val).ToString();

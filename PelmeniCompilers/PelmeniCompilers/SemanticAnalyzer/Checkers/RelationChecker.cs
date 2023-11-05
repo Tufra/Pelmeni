@@ -16,10 +16,6 @@ public class RelationChecker : BaseNodeRuleChecker
             
             var computedSub = subexpression.BuildComputedExpression();
 
-            if (computedSub.Value is null)
-            {
-                computedSub.Children = new List<Node> { subexpression };
-            }
             node.Children = new List<Node> { computedSub };
         }
         else if (node.Children.Count == 2) // Not Relation

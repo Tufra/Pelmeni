@@ -11,6 +11,7 @@ public class ModifiablePrimaryChecker : BaseNodeRuleChecker
         var chain = node.Children!;
                 
         string type = GetVariableOrThrowIfNotDeclared(chain[0]).Type;
+        chain[0] = new ComputedExpression(chain[0].Type, chain[0].Token, type, null);
         for (var i = 1; i < chain.Count; i++)
         {
             if (chain[i].Type == NodeType.MemberAccess)

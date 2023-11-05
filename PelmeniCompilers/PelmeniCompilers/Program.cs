@@ -22,10 +22,10 @@ internal static class Program
 
             scanner.Scan(path, fileContent);
 
-            foreach (var item in scanner.Tokens)
-            {
-                Console.WriteLine(item);
-            }
+            // foreach (var item in scanner.Tokens)
+            // {
+            //     Console.WriteLine(item);
+            // }
 
             var parser = new Parser.Parser(scanner);
 

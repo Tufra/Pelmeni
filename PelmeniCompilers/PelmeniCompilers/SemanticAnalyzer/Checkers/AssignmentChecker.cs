@@ -8,6 +8,6 @@ public class AssignmentChecker : BaseNodeRuleChecker
     public override NodeType CheckingNodeType => NodeType.Assignment;
     public override void Check(Node node)
     {
-        throw new NotImplementedException();
+        
     }
 }

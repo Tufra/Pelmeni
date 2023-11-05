@@ -16,13 +16,7 @@ public class FactorChecker : BaseNodeRuleChecker
 
             var computedSub = subexpression.BuildComputedExpression();
 
-            var type = computedSub.ValueType;
-            var value = computedSub.Value;
-            var computed = new ComputedExpression(subexpression.Type, null, type, value)
-            {
-                Children = computedSub.Children
-            };
-            node.Children = new List<Node> { computed };
+            node.Children = new List<Node> { computedSub };
         }
         else
         {
@@ -59,8 +53,8 @@ public class FactorChecker : BaseNodeRuleChecker
                             if (leftType == "real" || rightType == "real")
                             {
                                 var val = 
-                                    double.Parse(leftComputed.Value, System.Globalization.CultureInfo.InvariantCulture) + 
-                                    double.Parse(rightComputed.Value, System.Globalization.CultureInfo.InvariantCulture);
+                                    double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) + 
+                                    double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                                 var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
 
                                 node.Children = new List<Node> { computed };
@@ -82,8 +76,8 @@ public class FactorChecker : BaseNodeRuleChecker
                             if (leftType == "real" || rightType == "real")
                             {
                                 var val = 
-                                    double.Parse(leftComputed.Value, System.Globalization.CultureInfo.InvariantCulture) - 
-                                    double.Parse(rightComputed.Value, System.Globalization.CultureInfo.InvariantCulture);
+                                    double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) - 
+                                    double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                                 var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
 
                                 node.Children = new List<Node> { computed };
@@ -120,7 +114,6 @@ public class FactorChecker : BaseNodeRuleChecker
         {
             var left = (ComputedExpression)node.Children[1];
             var right = (ComputedExpression)node.Children[2];
-            var operToken = Scanner.Scanner.TokenValueToGppgToken(node.Children[0].Token!);
 
             if (left.ValueType == "real" || right.ValueType == "real")
             {

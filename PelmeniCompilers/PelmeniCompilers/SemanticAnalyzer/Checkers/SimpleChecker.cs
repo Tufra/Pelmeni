@@ -56,12 +56,14 @@ public class SimpleChecker : BaseNodeRuleChecker
                     {
                         if (leftComputed.Value is not null && rightComputed.Value is not null) 
                         {   
-                            if (rightComputed.Value.StartsWith("0"))
+                            if (double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) == 0.0)
                             {
                                 throw new InvalidOperationException($"Division by zero at {oper.Location}");
                             }
 
-                            var val = double.Parse(leftComputed.Value) / double.Parse(rightComputed.Value);
+                            var val = 
+                                double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) / 
+                                double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                             var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
 
                             node.Children = new List<Node> { computed };
@@ -70,15 +72,17 @@ public class SimpleChecker : BaseNodeRuleChecker
                     }
                 case Parser.Tokens.MOD:
                     {
-                        if (rightComputed.Value == "0")
-                        {
-                            throw new InvalidOperationException($"Division by zero at {oper.Location}");
-                        }
                         if (leftComputed.Value is not null && rightComputed.Value is not null) 
                         {
                             if (leftType == "real" || rightType == "real")
                             {
-                                var val = double.Parse(leftComputed.Value) % double.Parse(rightComputed.Value);
+                                if (double.Parse(rightComputed.Value, System.Globalization.CultureInfo.InvariantCulture) == 0.0)
+                                {
+                                    throw new InvalidOperationException($"Division by zero at {oper.Location}");
+                                }
+                                var val = 
+                                    double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) % 
+                                    double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                                 var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
 
                                 node.Children = new List<Node> { computed };
@@ -100,7 +104,9 @@ public class SimpleChecker : BaseNodeRuleChecker
                         {
                             if (leftType == "real" || rightType == "real")
                             {
-                                var val = double.Parse(leftComputed.Value) * double.Parse(rightComputed.Value);
+                                var val = 
+                                    double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) * 
+                                    double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                                 var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
 
                                 node.Children = new List<Node> { computed };
