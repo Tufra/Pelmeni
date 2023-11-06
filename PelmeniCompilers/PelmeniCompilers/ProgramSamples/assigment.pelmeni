@@ -1,10 +1,11 @@
 module Assigment;
 
-routine Main(t: integer, a: real): integer is
-	var int: integer is 3;
-	var dec: real is 1;
+type integ is integer;
+
+routine Main(t: integer, a: real): integ is
+	var int: integ is 3;
+	var dec: real is 1.0;
 	var b is true;
-	int := 5;
-	int := dec;
-	b := int;
+	
+	return int;
 end

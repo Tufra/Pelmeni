@@ -12,9 +12,12 @@ public static class NodeExtension
 {
     private static readonly IReadOnlyCollection<BaseNodeRuleChecker> SemanticRules;
 
+    private static readonly Dictionary<string, Node> Aliasing;
+
     static NodeExtension()
     {
         SemanticRules = GetSemanticRules();
+        Aliasing = new Dictionary<string, Node>();
     }
 
     private static IReadOnlyCollection<BaseNodeRuleChecker> GetSemanticRules()
@@ -50,5 +53,45 @@ public static class NodeExtension
     {
         if (node.Type != type)
             throw new InvalidOperationException($"{node} is expected to be {type}");
+    }
+
+    public static void RemoveAliasing(this Node node)
+    {
+        if (!node.TryDeclareAlias())
+        {
+            node.TryReplaceAlias();
+        }
+
+        foreach (var child in (node.Children ?? new List<Node>()))
+        {
+            child.RemoveAliasing();
+        }
+    }
+
+    private static bool TryDeclareAlias(this Node node)
+    {
+        if (node.Type != NodeType.TypeDeclaration) return false;
+
+        var alias = node.Children[0].Token!.Value;
+        var type = node.Children[1];
+
+        if (type.Type is NodeType.RecordType or NodeType.ArrayType or NodeType.Token)
+        {
+            Aliasing[alias] = type;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void TryReplaceAlias(this Node node)
+    {
+        if (node.Type != NodeType.TypeTail) return;
+        if(node.Children.Count == 0) return;
+
+        var type = node.Children[0].Type is NodeType.ArrayType ? node.Children[0].Children[0].Token!.Value : node.Children[0].Token!.Value;
+
+        if (Aliasing.TryGetValue(type, out var value))
+            node.Children = new List<Node>() { value };
     }
 }

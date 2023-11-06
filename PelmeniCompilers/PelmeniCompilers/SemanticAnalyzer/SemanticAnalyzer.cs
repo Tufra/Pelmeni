@@ -10,7 +10,7 @@ namespace PelmeniCompilers.SemanticAnalyzer;
 
 public class SemanticAnalyzer
 {
-    private Node _mainNode;
+    private readonly Node _mainNode;
     
     public SemanticAnalyzer(Node mainNode)
     {
@@ -21,7 +21,7 @@ public class SemanticAnalyzer
 
     public void Analyze()
     {
-        //todo свернуть алиасин
+        _mainNode.RemoveAliasing();
         _mainNode.CheckSemantic();
         // todo оптимизация 
     }
