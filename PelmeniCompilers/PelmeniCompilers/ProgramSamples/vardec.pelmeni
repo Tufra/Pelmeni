@@ -1,14 +1,29 @@
 module Vardec;
 
+routine Print(a: char) is
+end
+
+type Booba is record
+	var c: integer;
+	var b: array[256] char;
+end;
+
 routine Abc(a: integer, b: integer): real is
 	var sus: real is 10.3 + 20 * (0.5 + 5) * 0.1;
+	var amogus: array[20] integer;
 	sus := 1.9;
+
+	var cum: Booba;
 
 	for i in 1..10 loop
 		sus := i + 0.0;
 	end
 
-	if (sus = 2.0) then
+	foreach i from cum.b loop
+		Print(cum.b[1000]);
+	end
+
+	if sus = 2.0 then
 		sus++;
 	else
 		sus--;

@@ -1,4 +1,5 @@
-﻿using PelmeniCompilers.ExtensionsMethods;
+﻿using System.Text.RegularExpressions;
+using PelmeniCompilers.ExtensionsMethods;
 using PelmeniCompilers.Models;
 using PelmeniCompilers.Values;
 
@@ -8,6 +9,8 @@ public class ArrayTypeChecker : BaseNodeRuleChecker
 {
     public override NodeType CheckingNodeType => NodeType.ArrayType;
     
+    private static Regex arrayTypeRegex = new Regex(@"array \[(?<size>\d*)\] (?<type>.+)");
+
     public override void Check(Node node)
     {
 
@@ -72,5 +75,42 @@ public class ArrayTypeChecker : BaseNodeRuleChecker
         }
 
         return $"array [{size}] {typeStr}";
+    }
+
+    public static int GetArraySizeFromString(string typeStr)
+    {
+        var match = arrayTypeRegex.Match(typeStr);
+        if(match.Success)
+        {
+            var sizeResult = match.Result("${size}");
+            if (sizeResult.Length == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return int.Parse(sizeResult);
+            }
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                $"String \"{typeStr}\" is not a valid array type string");
+        }
+    }
+
+    public static string GetElementTypeFromString(string typeStr)
+    {
+        var match = arrayTypeRegex.Match(typeStr);
+        if(match.Success)
+        {
+            var sizeResult = match.Result("${type}");
+            return sizeResult;
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                $"String \"{typeStr}\" is not a valid array type string");
+        }
     }
 }

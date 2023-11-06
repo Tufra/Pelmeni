@@ -15,9 +15,6 @@ public class IfStatementChecker : BaseNodeRuleChecker
         var elseBody = node.Children[2]!;
 
         condition.CheckSemantic();
-        body.CheckSemantic();
-        elseBody.CheckSemantic();
-
         var computedCondition = condition.BuildComputedExpression();
 
         if (computedCondition.ValueType != "boolean")
@@ -27,5 +24,25 @@ public class IfStatementChecker : BaseNodeRuleChecker
         }
 
         node.Children[0] = computedCondition;
+
+        Scope.AddFrame();
+        Chain.Push(node);
+
+        body.CheckSemantic();
+        var computedBody = body.BuildComputedExpression();
+        node.Children[1] = computedBody;
+
+        Scope.RemoveLastFrame();
+        Chain.Pop();
+
+        Scope.AddFrame();
+        Chain.Push(node);
+
+        elseBody.CheckSemantic();
+        var computedElse = elseBody.BuildComputedExpression();
+        node.Children[2] = computedElse;
+
+        Scope.RemoveLastFrame();
+        Chain.Pop();        
     }
 }

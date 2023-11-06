@@ -24,6 +24,49 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
                 $"Variable {identifier} must have type or value specified at {node.Children[0].Token!.Location}");
         }
 
+        Scope.AddToLastFrame(BuildVirtualTableEntry(node));
+    }
+
+    // это оч кривая хуйня но мне надо чтоб он не добавлял в скоп ее
+    public static void _Check(Node node)
+    {
+        var identifier = node.Children[0].Token!.Value;
+        var type = node.Children[1]!;
+        var init = node.Children[2]!;
+
+        type.CheckSemantic();
+        init.CheckSemantic();
+
+        if (type.Children.Count == 0 && init.Children.Count == 0) // no type, no init
+        {
+            throw new InvalidOperationException(
+                $"Variable {identifier} must have type or value specified at {node.Children[0].Token!.Location}");
+        }
+    }
+
+    private static string BuildTypeString(Node node)
+    {
+        if (node.Type == NodeType.Token)
+        {
+            return node.Token!.Value;
+        }
+        else if (node.Type == NodeType.ArrayType)
+        {
+            return ArrayTypeChecker.BuildString(node);
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                    $"Illegal type {node.Type}");
+        }
+    }
+
+    public static VariableVirtualTableEntry BuildVirtualTableEntry(Node node)
+    {
+        var identifier = GetIdentifierOrThrowIfOccupied(node);
+        var type = node.Children[1]!;
+        var init = node.Children[2]!;
+
         var variableSignature = new VariableVirtualTableEntry
         {
             Name = identifier
@@ -54,23 +97,6 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
             node.Children[2] = computedInit;
         }
 
-        Scope.AddToLastFrame(variableSignature);
-    }
-
-    private static string BuildTypeString(Node node)
-    {
-        if (node.Type == NodeType.Token)
-        {
-            return node.Token!.Value;
-        }
-        else if (node.Type == NodeType.ArrayType)
-        {
-            return ArrayTypeChecker.BuildString(node);
-        }
-        else
-        {
-            throw new InvalidOperationException(
-                    $"Illegal type {node.Type}");
-        }
+        return variableSignature;
     }
 }

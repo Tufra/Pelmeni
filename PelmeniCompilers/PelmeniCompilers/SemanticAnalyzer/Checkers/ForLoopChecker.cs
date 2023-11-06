@@ -28,6 +28,8 @@ public class ForLoopChecker : BaseNodeRuleChecker
         node.Children[1] = computedRange;
 
         body.CheckSemantic();
+        var computedBody = body.BuildComputedExpression();
+        node.Children[2] = computedBody;
 
         Scope.RemoveLastFrame();
         Chain.Pop();

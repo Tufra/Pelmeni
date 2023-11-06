@@ -14,7 +14,9 @@ public class WhileLoopChecker : BaseNodeRuleChecker
         var body = node.Children[1]!;
 
         condition.CheckSemantic();
-        body.CheckSemantic();
+
+        Scope.AddFrame();
+        Chain.Push(node);
 
         var computedCondition = condition.BuildComputedExpression();
 
@@ -25,5 +27,12 @@ public class WhileLoopChecker : BaseNodeRuleChecker
         }
 
         node.Children[0] = computedCondition;
+
+        body.CheckSemantic();
+        var computedBody = body.BuildComputedExpression();
+        node.Children[1] = computedBody;
+
+        Scope.RemoveLastFrame();
+        Chain.Pop();
     }
 }

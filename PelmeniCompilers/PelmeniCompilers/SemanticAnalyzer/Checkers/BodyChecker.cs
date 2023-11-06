@@ -21,14 +21,20 @@ public class BodyChecker : BaseNodeRuleChecker
             if (child.Type == NodeType.Return)
             {
                 var computedReturn = child.BuildComputedExpression();
-                var computed = new ComputedExpression(node.Type, null, computedReturn.ValueType, computedReturn.Value);
+                var computed = new ComputedExpression(node.Type, null, computedReturn.ValueType, computedReturn.Value)
+                {
+                    Children = node.Children
+                };
                 return computed;
             }
 
             // TODO if return in loop or condition
         }
-
-        return new ComputedExpression(node.Type, null, "None", null);
+        var _computed = new ComputedExpression(node.Type, null, "None", null)
+        {
+            Children = node.Children
+        };
+        return _computed;
     }
     
 }
