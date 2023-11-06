@@ -9,7 +9,7 @@ type Booba is record
 end;
 
 routine Abc(a: integer, b: integer): real is
-	var sus: real is 10.3 + 20 * (0.5 + 5) * 0.1;
+	var sus: real is 10.3 + 20 * 2;
 	var amogus: array[20] integer;
 	sus := 1.9;
 
@@ -20,7 +20,7 @@ routine Abc(a: integer, b: integer): real is
 	end
 
 	foreach i from cum.b loop
-		Print(cum.b[1000]);
+		Print(cum.b[100]);
 	end
 
 	if sus = 2.0 then

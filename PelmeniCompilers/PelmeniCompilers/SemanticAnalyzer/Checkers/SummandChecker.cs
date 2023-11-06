@@ -50,7 +50,10 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             token.Value = (-val).ToString();
                         }
-                        var computed = new ComputedExpression(NodeType.Token, token, "integer", token.Value);
+                        var computed = new ComputedExpression(NodeType.Token, token, "integer", token.Value)
+                        {
+                            Children = node.Children
+                        };
                         node.Children = new List<Node> { computed };
                         break;
                     }

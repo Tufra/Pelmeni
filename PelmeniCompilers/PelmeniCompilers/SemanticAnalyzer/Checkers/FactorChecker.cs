@@ -55,14 +55,20 @@ public class FactorChecker : BaseNodeRuleChecker
                                 var val = 
                                     double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) + 
                                     double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
-                                var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
+                                var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString())
+                                {
+                                    Children = node.Children
+                                };
 
                                 node.Children = new List<Node> { computed };
                             }
                             else
                             {
                                 var val = int.Parse(leftComputed.Value) + int.Parse(rightComputed.Value);
-                                var computed = new ComputedExpression(NodeType.Summand, null, "integer", val.ToString());
+                                var computed = new ComputedExpression(NodeType.Summand, null, "integer", val.ToString())
+                                {
+                                    Children = node.Children
+                                };
 
                                 node.Children = new List<Node> { computed };
                             }
@@ -78,14 +84,20 @@ public class FactorChecker : BaseNodeRuleChecker
                                 var val = 
                                     double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) - 
                                     double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
-                                var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString());
+                                var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString())
+                                {
+                                    Children = node.Children
+                                };
 
                                 node.Children = new List<Node> { computed };
                             }
                             else
                             {
                                 var val = int.Parse(leftComputed.Value) - int.Parse(rightComputed.Value);
-                                var computed = new ComputedExpression(NodeType.Summand, null, "integer", val.ToString());
+                                var computed = new ComputedExpression(NodeType.Summand, null, "integer", val.ToString())
+                                {
+                                    Children = node.Children
+                                };
 
                                 node.Children = new List<Node> { computed };
                             }
