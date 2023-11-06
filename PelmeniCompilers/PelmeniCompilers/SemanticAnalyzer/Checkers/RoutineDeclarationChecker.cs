@@ -29,6 +29,7 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
         var body = node.Children[3];
         body.CheckSemantic();
         var computedBody = body.BuildComputedExpression();
+        node.Children[3] = computedBody;
 
         var type = node.Children[2];
         type.CheckSemantic();

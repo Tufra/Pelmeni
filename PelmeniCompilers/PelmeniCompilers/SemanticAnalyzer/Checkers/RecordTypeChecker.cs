@@ -1,4 +1,5 @@
-﻿using PelmeniCompilers.Models;
+﻿using PelmeniCompilers.ExtensionsMethods;
+using PelmeniCompilers.Models;
 using PelmeniCompilers.SemanticAnalyzer.VirtualTable;
 using PelmeniCompilers.Values;
 
@@ -10,10 +11,16 @@ public class RecordTypeChecker : BaseNodeRuleChecker
 
     public override void Check(Node node)
     {
+        Scope.AddFrame();
+        Chain.Push(node);
+
         foreach (var member in node.Children)
         {
-            VariableDeclarationChecker._Check(member);
+            member.CheckSemantic();
         }
+
+        Scope.RemoveLastFrame();
+        Chain.Pop();
     }
 
     public static List<VariableVirtualTableEntry> GetMembers(Node node)

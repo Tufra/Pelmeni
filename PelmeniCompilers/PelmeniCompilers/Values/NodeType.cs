@@ -63,5 +63,5 @@ public enum NodeType
     ModifiablePrimaryTail,
     MemberAccess,
     MemberCall,
-    ArrayAccess
+    ArrayAccess,
 }
