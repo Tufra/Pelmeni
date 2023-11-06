@@ -4,14 +4,18 @@ routine Print(a: char) is
 end
 
 type Booba is record
-	var c: integer;
+	var a: integer;
 	var b: array[256] char;
 end;
 
+type pupa is array[123] array[123] array[123] char;
+
 routine Abc(a: integer, b: integer): real is
-	var sus: real is 10.3 + 20 * (0.5 + 5) * 0.1;
+	var sus: real is 10.3 + 20 * 2;
 	var amogus: array[20] integer;
 	sus := 1.9;
+
+	
 
 	var cum: Booba;
 
@@ -19,11 +23,15 @@ routine Abc(a: integer, b: integer): real is
 		sus := i + 0.0;
 	end
 
-	foreach i from cum.b loop
-		Print(cum.b[1000]);
+	for i in 1..1 loop
+		var bob is 2;
 	end
 
-	if sus = 2.0 then
+	foreach i from cum.b loop
+		Print(cum.b[100]);
+	end
+
+	if true then
 		sus++;
 	else
 		sus--;

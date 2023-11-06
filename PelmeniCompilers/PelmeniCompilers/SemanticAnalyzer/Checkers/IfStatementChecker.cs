@@ -45,4 +45,6 @@ public class IfStatementChecker : BaseNodeRuleChecker
         Scope.RemoveLastFrame();
         Chain.Pop();        
     }
+
+    
 }
