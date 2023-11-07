@@ -82,6 +82,8 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
             node.Children[2] = computedInit;
         }
 
+        NodeOptimizationExtension.VariableUsage[node] = false;
+        
         return variableSignature;
     }
 }

@@ -71,7 +71,7 @@ public abstract class BaseNodeRuleChecker
     {
         if (!RecordVirtualTable.ContainsKey(identifier))
             throw new InvalidOperationException($"Record {identifier} at {location} was not declared");
-
+        
         return RecordVirtualTable[identifier];
     }
 

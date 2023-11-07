@@ -27,7 +27,7 @@ public static class NodeOptimizationExtension
     
     private static void DeleteUnusedRecords(this Node node)
     {
-        if (RecordUsage.Keys.Any(n => n.Type != NodeType.RecordType))
+        if (RecordUsage.Keys.Any(n => n.Type != NodeType.TypeDeclaration || n.Children[1].Type != NodeType.RecordType))
         {
             throw new InvalidOperationException($"There is no record in the {nameof(RecordUsage)} dictionary");
         }
