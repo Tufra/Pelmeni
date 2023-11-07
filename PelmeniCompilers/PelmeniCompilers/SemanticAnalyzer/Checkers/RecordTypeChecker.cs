@@ -21,8 +21,6 @@ public class RecordTypeChecker : BaseNodeRuleChecker
 
         Scope.RemoveLastFrame();
         Chain.Pop();
-
-        NodeOptimizationExtension.RecordUsage[node] = false;
     }
 
     public static List<VariableVirtualTableEntry> GetMembers(Node node)

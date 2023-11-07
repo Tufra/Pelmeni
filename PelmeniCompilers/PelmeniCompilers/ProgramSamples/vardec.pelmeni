@@ -8,17 +8,18 @@ type Booba is record
 	var b: array[256] char;
 end;
 
+var A: real is 7.0;
+
 type pupa is array[123] array[123] array[123] char;
 
 routine Abc(a: integer, b: integer): real is
 	var sus: real is 10.3 + 20 * 2;
-	var amogus: array[20] integer;
-
-	
-	while sus > 0 loop
-		sus := sus - 10;
-	end
-	
 
 	return sus;
+end
+
+routine Bcd(): real is
+
+	
+	return 10.0;
 end

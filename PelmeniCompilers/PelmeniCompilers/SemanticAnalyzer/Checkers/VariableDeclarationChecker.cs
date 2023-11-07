@@ -52,7 +52,8 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
 
         var variableSignature = new VariableVirtualTableEntry
         {
-            Name = identifier
+            Name = identifier,
+            Node = node
         };
 
         if (type.Children.Count == 0) // no type, init
