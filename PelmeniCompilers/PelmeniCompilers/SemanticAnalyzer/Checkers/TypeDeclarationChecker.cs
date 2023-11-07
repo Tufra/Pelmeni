@@ -34,7 +34,9 @@ public class TypeDeclarationChecker : BaseNodeRuleChecker
             var tableEntry = new RecordVirtualTableEntry()
             {
                 Name = identifier,
-                Members = members
+                Members = members,
+                Node = node
+                
             };
             RecordVirtualTable[identifier] = tableEntry;
         }

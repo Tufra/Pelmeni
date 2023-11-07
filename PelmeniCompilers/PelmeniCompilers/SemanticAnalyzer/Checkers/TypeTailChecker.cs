@@ -21,8 +21,9 @@ public class TypeTailChecker : BaseNodeRuleChecker
                 {
                     return;
                 }
-                GetRecordOrThrowIfNotDeclared(typeStr, node.Children[0].Token!.Location);
-
+                var record = GetRecordOrThrowIfNotDeclared(typeStr, node.Children[0].Token!.Location);
+                
+                NodeOptimizationExtension.RecordUsage[record.Node] = true;
             }
             else if (type.Type == NodeType.ArrayType)
             {
