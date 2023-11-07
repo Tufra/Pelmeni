@@ -36,8 +36,8 @@ public class TypeDeclarationChecker : BaseNodeRuleChecker
                 Name = identifier,
                 Members = members,
                 Node = node
-                
             };
+            NodeOptimizationExtension.RecordUsage[node] = false;
             RecordVirtualTable[identifier] = tableEntry;
         }
         else // if array
