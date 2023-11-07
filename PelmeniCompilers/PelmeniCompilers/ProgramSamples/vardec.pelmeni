@@ -1,5 +1,7 @@
 module Vardec;
 
+use "swap.pelmeni";
+
 routine Print(a: real) is
 end
 

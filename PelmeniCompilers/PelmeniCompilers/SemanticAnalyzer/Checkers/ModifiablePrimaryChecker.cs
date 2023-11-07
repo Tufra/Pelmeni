@@ -15,7 +15,8 @@ public class ModifiablePrimaryChecker : BaseNodeRuleChecker
         string type = variable.Type;
         chain[0] = new ComputedExpression(chain[0].Type, chain[0].Token, type, variable.Value);
 
-        NodeOptimizationExtension.VariableUsage[variable.Node] = true;
+        if (variable.Node is not null)
+            NodeOptimizationExtension.VariableUsage[variable.Node] = true;
         
         if (Chain.Peek().Type == NodeType.RoutineCall) // if passing to a function
         {

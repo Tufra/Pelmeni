@@ -32,7 +32,7 @@ public static class NodeAliasingExtension
         var alias = node.Children[0].Token!.Value;
         var type = node.Children[1];
 
-        if (type.Type is not (NodeType.RecordType or NodeType.ArrayType or NodeType.Token)) return false;
+        if (type.Type is not (NodeType.ArrayType or NodeType.Token)) return false;
         
         Aliasing[alias] = type;
         return true;

@@ -2,12 +2,10 @@ module Swap;
 
 type Sus is record
     var a: integer;
-    var c: array[] char;
+    var c: array[5] char;
 end;
 
 routine Swap(a: Sus, b: Sus) is
-    var temp: Integer;
-    temp := a;
-    a := b;
-    b := temp;
+    var temp: integer;
+    temp := a.a;
 end
