@@ -21,11 +21,7 @@ internal static class Program
             var scanner = new Scanner.Scanner();
 
             scanner.Scan(path, fileContent);
-
-            // foreach (var item in scanner.Tokens)
-            // {
-            //     Console.WriteLine(item);
-            // }
+            
 
             var parser = new Parser.Parser(scanner);
 
@@ -53,31 +49,20 @@ internal static class Program
             tree,
             (node, _) =>
             {
-                if (node != null)
+                if (node == null) return;
+
+                Console.Write(node.Type.ToString());
+
+                if (node.Type == Values.NodeType.Token)
                 {
-                    Console.Write(node.Type.ToString());
-                    if (node.Type == Values.NodeType.Token)
-                    {
-                        Console.Write(" ({0})", node.Token!.Value);
-                    }
-                    else if (node is ComputedExpression)
-                    {
-                        var a = (ComputedExpression)node;
-                        Console.Write(" ({0}: {1})", a.Value, a.ValueType);
-                    }
+                    Console.Write(" ({0})", node.Token!.Value);
+                }
+                else if (node is ComputedExpression computedExpression)
+                {
+                    Console.Write(" ({0}: {1})", computedExpression.Value, computedExpression.ValueType);
                 }
             },
-            (node, _) =>
-            {
-                if (node != null && node.Children != null)
-                {
-                    return node.Children;
-                }
-                else
-                {
-                    return new List<Node>() { };
-                }
-            },
+            (node, _) => node is not null ? node.Children : new List<Node>() { },
             new DisplaySettings { IndentSize = 2 });
     }
 }
