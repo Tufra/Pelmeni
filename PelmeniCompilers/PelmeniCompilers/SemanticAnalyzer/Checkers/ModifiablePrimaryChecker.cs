@@ -10,9 +10,16 @@ public class ModifiablePrimaryChecker : BaseNodeRuleChecker
     public override void Check(Node node)
     {
         var chain = node.Children!;
-                
-        string type = GetVariableOrThrowIfNotDeclared(chain[0]).Type;
-        chain[0] = new ComputedExpression(chain[0].Type, chain[0].Token, type, null);
+        var variable = GetVariableOrThrowIfNotDeclared(chain[0]);
+
+        string type = variable.Type;
+        chain[0] = new ComputedExpression(chain[0].Type, chain[0].Token, type, variable.Value);
+        
+        if (Chain.Peek().Type == NodeType.RoutineCall) // if passing to a function
+        {
+            ((ComputedExpression)chain[0]).Value = null;
+        }
+        
         for (var i = 1; i < chain.Count; i++)
         {
             if (chain[i].Type == NodeType.MemberAccess)

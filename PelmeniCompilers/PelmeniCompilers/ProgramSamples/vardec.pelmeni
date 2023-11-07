@@ -1,6 +1,6 @@
 module Vardec;
 
-routine Print(a: char) is
+routine Print(a: real) is
 end
 
 type Booba is record
@@ -13,28 +13,12 @@ type pupa is array[123] array[123] array[123] char;
 routine Abc(a: integer, b: integer): real is
 	var sus: real is 10.3 + 20 * 2;
 	var amogus: array[20] integer;
-	sus := 1.9;
 
 	
-
-	var cum: Booba;
-
-	for i in 1..10 loop
-		sus := i + 0.0;
+	while sus > 0 loop
+		sus := sus - 10;
 	end
+	
 
-	for i in 1..1 loop
-		var bob is 2;
-	end
-
-	foreach i from cum.b loop
-		Print(cum.b[100]);
-	end
-
-	if true then
-		sus++;
-	else
-		sus--;
-	end
 	return sus;
 end

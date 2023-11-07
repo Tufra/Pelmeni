@@ -99,7 +99,8 @@ public class RelationChecker : BaseNodeRuleChecker
                         if (leftComputed.Value is not null && rightComputed.Value is not null) 
                         {   
                             
-                            var val = double.Parse(leftComputed.Value) < double.Parse(rightComputed.Value);
+                            var val = double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) < 
+                                double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                             var computed = new ComputedExpression(NodeType.Summand, null, "boolean", val.ToString());
 
                             node.Children = new List<Node> { computed };
@@ -117,7 +118,8 @@ public class RelationChecker : BaseNodeRuleChecker
                         if (leftComputed.Value is not null && rightComputed.Value is not null) 
                         {   
                 
-                            var val = double.Parse(leftComputed.Value) <= double.Parse(rightComputed.Value);
+                            var val = double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) <= 
+                                double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                             var computed = new ComputedExpression(NodeType.Summand, null, "boolean", val.ToString());
 
                             node.Children = new List<Node> { computed };
@@ -134,7 +136,8 @@ public class RelationChecker : BaseNodeRuleChecker
                             }
                         if (leftComputed.Value is not null && rightComputed.Value is not null) 
                         {   
-                            var val = double.Parse(leftComputed.Value) > double.Parse(rightComputed.Value);
+                            var val = double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) > 
+                                double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                             var computed = new ComputedExpression(NodeType.Summand, null, "boolean", val.ToString());
 
                             node.Children = new List<Node> { computed };
@@ -152,7 +155,8 @@ public class RelationChecker : BaseNodeRuleChecker
                         if (leftComputed.Value is not null && rightComputed.Value is not null) 
                         {   
                             
-                            var val = double.Parse(leftComputed.Value) >= double.Parse(rightComputed.Value);
+                            var val = double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) >= 
+                                double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                             var computed = new ComputedExpression(NodeType.Summand, null, "boolean", val.ToString());
 
                             node.Children = new List<Node> { computed };
@@ -172,7 +176,8 @@ public class RelationChecker : BaseNodeRuleChecker
                             }
                             else
                             {
-                                var val = double.Parse(leftComputed.Value) == double.Parse(rightComputed.Value);
+                                var val = double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) == 
+                                    double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                                 var computed = new ComputedExpression(NodeType.Summand, null, "boolean", val.ToString());
 
                                 node.Children = new List<Node> { computed };
@@ -193,7 +198,8 @@ public class RelationChecker : BaseNodeRuleChecker
                             }
                             else
                             {
-                                var val = double.Parse(leftComputed.Value) != double.Parse(rightComputed.Value);
+                                var val = double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) != 
+                                    double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
                                 var computed = new ComputedExpression(NodeType.Summand, null, "boolean", val.ToString());
 
                                 node.Children = new List<Node> { computed };

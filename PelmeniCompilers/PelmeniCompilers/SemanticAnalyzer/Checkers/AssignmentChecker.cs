@@ -18,6 +18,26 @@ public class AssignmentChecker : BaseNodeRuleChecker
         var computedPrimary = primary.BuildComputedExpression();
         var computedExpr = expr.BuildComputedExpression();
 
+        if (computedPrimary.Value is not null)
+        {
+            if (Scope.Contains(computedPrimary.Token!.Value, 1) && computedExpr.Value is not null)
+            {
+                var variable = Scope.Get(computedPrimary.Token!.Value, 1)!;
+                variable.Value = computedExpr.Value;
+            }
+            else
+            {
+                var variable = Scope.Get(computedPrimary.Token!.Value)!;
+                variable.Value = null;
+            }
+        }
+
+        if (Chain.Peek().Type is NodeType.IfStatement or NodeType.ForLoop or NodeType.WhileLoop or NodeType.ForeachLoop)
+        {
+            var variable = Scope.Get(computedPrimary.Token!.Value)!;
+            variable.Value = null;
+        }
+
         node.Children[0] = computedPrimary;
         node.Children[1] = computedExpr;
 

@@ -15,6 +15,8 @@ public class RoutineCallChecker : BaseNodeRuleChecker
 
         var routine = GetRoutineOrThrowIfNotDeclared(node);
 
+        Chain.Push(node);
+
         parameters.CheckSemantic();
         var computedParams = RoutineCallParametersChecker.GetComputedParams(parameters);
 

@@ -27,23 +27,6 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
         Scope.AddToLastFrame(BuildVirtualTableEntry(node));
     }
 
-    // это оч кривая хуйня но мне надо чтоб он не добавлял в скоп ее
-    public static void _Check(Node node)
-    {
-        var identifier = node.Children[0].Token!.Value;
-        var type = node.Children[1]!;
-        var init = node.Children[2]!;
-
-        type.CheckSemantic();
-        init.CheckSemantic();
-
-        if (type.Children.Count == 0 && init.Children.Count == 0) // no type, no init
-        {
-            throw new InvalidOperationException(
-                $"Variable {identifier} must have type or value specified at {node.Children[0].Token!.Location}");
-        }
-    }
-
     private static string BuildTypeString(Node node)
     {
         if (node.Type == NodeType.Token)
@@ -78,6 +61,7 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
             node.Children[2] = computedInit;
             
             variableSignature.Type = computedInit.ValueType;
+            variableSignature.Value = computedInit.Value!;
         }
         else if (init.Children.Count == 0) // type, no init
         {
@@ -87,6 +71,7 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
         {
             var computedInit = init.BuildComputedExpression();
             variableSignature.Type = computedInit.ValueType;
+            variableSignature.Value = computedInit.Value!;
             
             if (computedInit.ValueType != type.Children[0].Token!.Value)
             {
