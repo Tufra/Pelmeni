@@ -20,7 +20,7 @@ public record Node
 
     public NodeType Type { get; private set; }
     public Token? Token { get; private set; }
-    public List<Node> Children { get; set; }
+    public List<Node> Children { get; set; } = new();
 
     public bool IsTerminal()
     {

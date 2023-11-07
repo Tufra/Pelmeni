@@ -23,8 +23,6 @@ public class SemanticAnalyzer
     {
         _mainNode.RemoveAliasing();
         _mainNode.CheckSemantic();
-        // todo оптимизация 
+        _mainNode.Optimize();
     }
-    
-   
 }

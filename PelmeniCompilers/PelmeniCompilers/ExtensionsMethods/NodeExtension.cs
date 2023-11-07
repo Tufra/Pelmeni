@@ -94,4 +94,13 @@ public static class NodeExtension
         if (Aliasing.TryGetValue(type, out var value))
             node.Children = new List<Node>() { value };
     }
+
+    public static void RemoveInChildren(this Node node, Node deletingNode)
+    {
+        var children = node.Children;
+        if (children.Remove(deletingNode))
+            return;
+        
+        children.ForEach(child => child.RemoveInChildren(deletingNode));
+    }
 }
