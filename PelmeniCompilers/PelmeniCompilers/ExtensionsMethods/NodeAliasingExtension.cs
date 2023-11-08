@@ -6,6 +6,7 @@ namespace PelmeniCompilers.ExtensionsMethods;
 public static class NodeAliasingExtension
 {
     private static readonly Dictionary<string, Node> Aliasing;
+    private static List<Node> _aliasingNodes = new();
 
     static NodeAliasingExtension()
     {
@@ -23,6 +24,9 @@ public static class NodeAliasingExtension
         {
             child.RemoveAliasing();
         }
+        
+        if(node.Type == NodeType.Program)
+            _aliasingNodes.ForEach(alias => node.Children.Remove(alias));
     }
 
     private static bool TryDeclareAlias(this Node node)
@@ -35,6 +39,7 @@ public static class NodeAliasingExtension
         if (type.Type is not (NodeType.ArrayType or NodeType.Token)) return false;
         
         Aliasing[alias] = type;
+        _aliasingNodes.Add(node);
         return true;
 
     }
