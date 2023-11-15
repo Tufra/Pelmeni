@@ -1,4 +1,5 @@
 ﻿using ConsoleTree;
+using PelmeniCompilers.CodeGeneration;
 using PelmeniCompilers.Parser;
 using PelmeniCompilers.Models;
 using PelmeniCompilers.ShiftReduceParser;
@@ -36,6 +37,9 @@ internal static class Program
 
             Console.WriteLine("\n--------------------------------\n");
             PrintTree(tree);
+
+            var codeGenerator = new CodeGenerator(tree);
+            codeGenerator.GenerateCode();
         }
         catch (Exception e)
         {
