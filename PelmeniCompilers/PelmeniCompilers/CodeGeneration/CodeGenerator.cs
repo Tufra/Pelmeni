@@ -2,6 +2,7 @@
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
+using PelmeniCompilers.CodeGeneration.Generators;
 using PelmeniCompilers.ExtensionsMethods;
 using PelmeniCompilers.Models;
 using PelmeniCompilers.Values;
@@ -33,20 +34,15 @@ public class CodeGenerator
         using var peStream = new FileStream(
             outputFile, FileMode.OpenOrCreate, FileAccess.ReadWrite
         );
-        
-       
 
-        var (metadataBuilder,ilBuilder, entryPoint) = _mainNode.GenerateProgram("");
+
+        var (metadataBuilder, ilBuilder, entryPoint) = _mainNode.GenerateProgram("");
         WritePEImage(peStream, metadataBuilder, ilBuilder, entryPoint);
     }
-    
-    
-    private static void WritePEImage(
-        Stream peStream,
-        MetadataBuilder metadataBuilder,
-        BlobBuilder ilBuilder,
-        MethodDefinitionHandle entryPointHandle
-    )
+
+
+    private static void WritePEImage(Stream peStream, MetadataBuilder metadataBuilder, BlobBuilder ilBuilder,
+        MethodDefinitionHandle entryPointHandle)
     {
         // Create executable with the managed metadata from the specified MetadataBuilder.
         var peHeaderBuilder = new PEHeaderBuilder(
@@ -58,7 +54,7 @@ public class CodeGenerator
             new MetadataRootBuilder(metadataBuilder),
             ilBuilder,
             entryPoint: entryPointHandle,
-            flags: CorFlags.ILOnly, 
+            flags: CorFlags.ILOnly,
             deterministicIdProvider: content => SContentId);
 
         // Write executable into the specified stream.
@@ -66,7 +62,7 @@ public class CodeGenerator
         BlobContentId contentId = peBuilder.Serialize(peBlob);
         peBlob.WriteContentTo(peStream);
     }
-    
+
     private static MethodDefinitionHandle EmitHelloWorld(MetadataBuilder metadata, BlobBuilder ilBuilder)
     {
         // Create module and assembly for a console application.
@@ -92,7 +88,7 @@ public class CodeGenerator
             culture: default(StringHandle),
             publicKeyOrToken: metadata.GetOrAddBlob(
                 new byte[] { 0xB7, 0x7A, 0x5C, 0x56, 0x19, 0x34, 0xE0, 0x89 }
-                ),
+            ),
             flags: default(AssemblyFlags),
             hashValue: default(BlobHandle));
 
@@ -111,77 +107,86 @@ public class CodeGenerator
             metadata.GetOrAddString("System"),
             metadata.GetOrAddString("Int32"));
 
+        #region Console.WriteLine
+
         // Get reference to Console.WriteLine(string) method.
         var consoleWriteLineSignature = new BlobBuilder();
 
-        new BlobEncoder(consoleWriteLineSignature).
-            MethodSignature().
-            Parameters(1,
-                returnType => returnType.Void(),
-                parameters => parameters.AddParameter().Type().String());
+        new BlobEncoder(consoleWriteLineSignature).MethodSignature().Parameters(1,
+            returnType => returnType.Void(),
+            parameters => parameters.AddParameter().Type().String());
 
         MemberReferenceHandle consoleWriteLineMemberRef = metadata.AddMemberReference(
             systemConsoleTypeRefHandle,
             metadata.GetOrAddString("WriteLine"),
             metadata.GetOrAddBlob(consoleWriteLineSignature));
 
-        
+        #endregion
+
+        #region Console.Beep
+
         var consoleBeepSignature = new BlobBuilder();
         new BlobEncoder(consoleBeepSignature)
             .MethodSignature()
-            .Parameters(0, 
-                returnType => returnType.Void(), 
-                parameters => {  });
+            .Parameters(0,
+                returnType => returnType.Void(),
+                parameters => { });
         var consoleBeepMemberRef = metadata.AddMemberReference(
-            systemConsoleTypeRefHandle, 
-            metadata.GetOrAddString("Beep"), 
+            systemConsoleTypeRefHandle,
+            metadata.GetOrAddString("Beep"),
             metadata.GetOrAddBlob(consoleBeepSignature));
 
+        #endregion
 
+        #region Console.ReadLine
 
         var consoleReadLineSignature = new BlobBuilder();
 
-        new BlobEncoder(consoleReadLineSignature).
-            MethodSignature().
-            Parameters(0,
-                returnType => returnType.Type().String(),
-                parameters => {  });
+        new BlobEncoder(consoleReadLineSignature).MethodSignature().Parameters(0,
+            returnType => returnType.Type().String(),
+            parameters => { });
 
         MemberReferenceHandle consoleReadLineMemberRef = metadata.AddMemberReference(
             systemConsoleTypeRefHandle,
             metadata.GetOrAddString("ReadLine"),
             metadata.GetOrAddBlob(consoleReadLineSignature));
 
-        // Get reference to Int32.ToString() method.
+        #endregion
+
+        #region Int32.ToString()
+
         var intToStringSignature = new BlobBuilder();
-        new BlobEncoder(intToStringSignature).
-            MethodSignature(isInstanceMethod: true).
-            Parameters(0, returnType => returnType.Type().String(), parameters => { });
+        new BlobEncoder(intToStringSignature).MethodSignature(isInstanceMethod: true)
+            .Parameters(0, returnType => returnType.Type().String(), parameters => { });
 
         var intToStringMemberRef = metadata.AddMemberReference(
             systemInt32TypeRefHandle,
             metadata.GetOrAddString("ToString"),
             metadata.GetOrAddBlob(intToStringSignature));
 
-        
+        #endregion
+
+        #region Int.Parse
+
         var intParseSignature = new BlobBuilder();
-        new BlobEncoder(intParseSignature).
-            MethodSignature().
-            Parameters(1, 
-                returnType => returnType.Type().Int32(), 
-                parameters => parameters.AddParameter().Type().String());
+        new BlobEncoder(intParseSignature).MethodSignature().Parameters(1,
+            returnType => returnType.Type().Int32(),
+            parameters => parameters.AddParameter().Type().String());
 
         var intParseMemberRef = metadata.AddMemberReference(
             systemInt32TypeRefHandle,
             metadata.GetOrAddString("Parse"),
             metadata.GetOrAddBlob(intParseSignature));
 
+        #endregion
+
+        #region Object.ctor
+
         // Get reference to Object's constructor.
         var parameterlessCtorSignature = new BlobBuilder();
 
-        new BlobEncoder(parameterlessCtorSignature).
-            MethodSignature(isInstanceMethod: true).
-            Parameters(0, returnType => returnType.Void(), parameters => { });
+        new BlobEncoder(parameterlessCtorSignature).MethodSignature(isInstanceMethod: true)
+            .Parameters(0, returnType => returnType.Void(), parameters => { });
 
         BlobHandle parameterlessCtorBlobIndex = metadata.GetOrAddBlob(parameterlessCtorSignature);
 
@@ -190,24 +195,9 @@ public class CodeGenerator
             metadata.GetOrAddString(".ctor"),
             parameterlessCtorBlobIndex);
 
-        // Create signature for "void Main()" method.
-        var mainSignature = new BlobBuilder();
+        #endregion
 
-        BlobEncoder blobEncoder = new BlobEncoder(mainSignature);
-        blobEncoder.MethodSignature().
-            Parameters(0, returnType => returnType.Void(), parameters => { });
-
-        var intTypeHandle = metadata.AddTypeReference(mscorlibAssemblyRef, metadata.GetOrAddString("System"), metadata.GetOrAddString("Int32"));
-
-        var varBuilder = new BlobBuilder();
-        var varEncoder = new BlobEncoder(varBuilder).LocalVariableSignature(2);
-        varEncoder.AddVariable().Type().Int32();
-        varEncoder.AddVariable().Type().Int32();
-
-        // var col = new LocalVariableHandleCollection();
-        // col.Append(varA).Append(varB);
-        var ss = metadata.GetOrAddBlob(varBuilder);
-        var sig = metadata.AddStandaloneSignature(ss);
+        #region Program constructor
 
         var methodBodyStream = new MethodBodyStreamEncoder(ilBuilder);
 
@@ -219,15 +209,38 @@ public class CodeGenerator
 
         // call instance void [mscorlib]System.Object::.ctor()
         il.Call(objectCtorMemberRef);
-
+        il.Call(RoutineNodeCodeGenerator.hanldle);
+        
         // ret
         il.OpCode(ILOpCode.Ret);
 
         int ctorBodyOffset = methodBodyStream.AddMethodBody(il);
         codeBuilder.Clear();
 
+        #endregion
         
+        #region Main Signature
 
+        // Create signature for "void Main()" method.
+        var mainSignature = new BlobBuilder();
+
+        BlobEncoder blobEncoder = new BlobEncoder(mainSignature);
+        blobEncoder.MethodSignature().Parameters(0, returnType => returnType.Void(), parameters => { });
+
+        #endregion
+
+        #region Main Body
+
+        var varBuilder = new BlobBuilder();
+        var varEncoder = new BlobEncoder(varBuilder).LocalVariableSignature(2);
+        varEncoder.AddVariable().Type().Int32();
+        varEncoder.AddVariable().Type().Int32();
+
+        // var col = new LocalVariableHandleCollection();
+        // col.Append(varA).Append(varB);
+        var ss = metadata.GetOrAddBlob(varBuilder);
+        var sig = metadata.AddStandaloneSignature(ss);
+        
         // Emit IL for Program::Main
         var flowBuilder = new ControlFlowBuilder();
         il = new InstructionEncoder(codeBuilder, flowBuilder);
@@ -274,13 +287,13 @@ public class CodeGenerator
         // ------------------ WHILE a < b do write(a) a++
 
         var whileEndLabel = il.DefineLabel();
-        var whileContLabel = il.DefineLabel(); 
+        var whileContLabel = il.DefineLabel();
 
         il.LoadConstantI8(0);
         il.StoreLocal(1);
 
         il.MarkLabel(whileContLabel);
-        
+
         il.LoadLocal(0);
         il.LoadLocal(1);
         il.Branch(ILOpCode.Ble, whileEndLabel);
@@ -291,7 +304,7 @@ public class CodeGenerator
         il.LoadLocalAddress(1);
         il.Call(intToStringMemberRef);
         il.Call(consoleWriteLineMemberRef);
-        
+
         // a++
         il.LoadLocal(1);
         il.LoadConstantI8(1);
@@ -301,7 +314,7 @@ public class CodeGenerator
         il.Call(consoleBeepMemberRef);
 
         il.Branch(ILOpCode.Br, whileContLabel);
-        
+
         // stop
         il.MarkLabel(whileEndLabel);
 
@@ -313,6 +326,13 @@ public class CodeGenerator
         int mainBodyOffset = methodBodyStream.AddMethodBody(il, 8, sig, MethodBodyAttributes.InitLocals);
         // codeBuilder.Clear();
 
+
+        #endregion
+
+       
+
+
+        
         // Create method definition for Program::Main
         MethodDefinitionHandle mainMethodDef = metadata.AddMethodDefinition(
             MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,
@@ -331,8 +351,9 @@ public class CodeGenerator
         codeBuilder.Clear();
 
         // Create method definition for Program::.ctor
-        MethodDefinitionHandle ctorDef = metadata.AddMethodDefinition(
-            MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+        metadata.AddMethodDefinition(
+            MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName |
+            MethodAttributes.RTSpecialName,
             MethodImplAttributes.IL,
             metadata.GetOrAddString(".ctor"),
             parameterlessCtorBlobIndex,

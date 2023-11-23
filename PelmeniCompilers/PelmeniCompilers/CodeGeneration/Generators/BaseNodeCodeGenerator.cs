@@ -12,6 +12,6 @@ public abstract class BaseNodeCodeGenerator
     
     public abstract NodeType GeneratingCodeNodeType { get; }
 
-    public abstract void GenerateCode(Node node, MetadataBuilder metadataBuilder, BlobBuilder ilBuilder);
+    public abstract void GenerateCode(Node node, CodeGeneratorContext codeGeneratorContext);
 
 }

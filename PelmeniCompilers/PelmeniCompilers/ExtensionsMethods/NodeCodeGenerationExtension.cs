@@ -11,12 +11,12 @@ namespace PelmeniCompilers.ExtensionsMethods;
 public static class NodeCodeGenerationExtension
 {
     private static readonly IReadOnlyCollection<BaseNodeCodeGenerator> CodeGenerators;
-    
+
     static NodeCodeGenerationExtension()
     {
         CodeGenerators = GetCodeGenerators();
     }
-    
+
     private static IReadOnlyCollection<BaseNodeCodeGenerator> GetCodeGenerators()
     {
         var assembly = Assembly.GetExecutingAssembly();
@@ -28,22 +28,30 @@ public static class NodeCodeGenerationExtension
 
         return derivedTypes;
     }
-    
+
     private static BaseNodeCodeGenerator GetCodeGenerator(Node node)
     {
         return CodeGenerators.First(rule => rule.GeneratingCodeNodeType == node.Type);
     }
-    
+
     public static (MetadataBuilder metadataBuilder, BlobBuilder ilBuilder, MethodDefinitionHandle entryPoint)
         GenerateProgram(this Node node, string entryMethodName)
     {
         if (node.Type != NodeType.Program)
             throw new InvalidOperationException();
-        
+
         var ilBuilder = new BlobBuilder();
         var metadataBuilder = new MetadataBuilder();
+        var methodBodyStream = new MethodBodyStreamEncoder(ilBuilder);
 
-        
+        var codeGenerationContext = new CodeGeneratorContext()
+        {
+            MetadataBuilder = metadataBuilder,
+            IlBuilder = ilBuilder,
+            MethodBodyStreamEncoder = methodBodyStream
+        };
+
+
         metadataBuilder.AddModule(
             0,
             metadataBuilder.GetOrAddString("ConsoleApplication.exe"),
@@ -58,7 +66,7 @@ public static class NodeCodeGenerationExtension
             publicKey: default(BlobHandle),
             flags: 0,
             hashAlgorithm: AssemblyHashAlgorithm.None);
-        
+
         var mscorlibAssemblyRef = metadataBuilder.AddAssemblyReference(
             name: metadataBuilder.GetOrAddString("mscorlib"),
             version: new Version(4, 0, 0, 0),
@@ -73,16 +81,55 @@ public static class NodeCodeGenerationExtension
             mscorlibAssemblyRef,
             metadataBuilder.GetOrAddString("System"),
             metadataBuilder.GetOrAddString("Object"));
+
+        var parameterlessCtorSignature = new BlobBuilder();
+
+        new BlobEncoder(parameterlessCtorSignature).MethodSignature(isInstanceMethod: true)
+            .Parameters(0, returnType => returnType.Void(), parameters => { });
+
+        BlobHandle parameterlessCtorBlobIndex = metadataBuilder.GetOrAddBlob(parameterlessCtorSignature);
+
+        MemberReferenceHandle objectCtorMemberRef = metadataBuilder.AddMemberReference(
+            systemObjectTypeRef,
+            metadataBuilder.GetOrAddString(".ctor"),
+            parameterlessCtorBlobIndex);
         
-        // Подключчить другие референсы
+        
+      
 
+        var codeBuilder = new BlobBuilder();
+        InstructionEncoder il;
+    
+        // Emit IL for Program::.ctor
+        il = new InstructionEncoder(codeBuilder);
 
-        foreach (var child in node.Children)     
+        // ldarg.0
+        il.LoadArgument(0); 
+
+        // call instance void [mscorlib]System.Object::.ctor()
+        il.Call(objectCtorMemberRef);
+
+        // ret
+        il.OpCode(ILOpCode.Ret);
+
+        int ctorBodyOffset = methodBodyStream.AddMethodBody(il);
+        codeBuilder.Clear();
+
+        var mainMethodDef = GenerateEntryPoint(metadataBuilder, ilBuilder, mscorlibAssemblyRef, objectCtorMemberRef, methodBodyStream);
+        
+        foreach (var child in node.Children)
         {
-            child.GenerateCode(metadataBuilder, ilBuilder);
+            child.GenerateCode(codeGenerationContext);
         }
-
-        var mainMethodDef = GenerateEntryPoint();
+        
+        metadataBuilder.AddMethodDefinition(
+            MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName |
+            MethodAttributes.RTSpecialName,
+            MethodImplAttributes.IL,
+            metadataBuilder.GetOrAddString(".ctor"),
+            parameterlessCtorBlobIndex,
+            ctorBodyOffset,
+            parameterList: default(ParameterHandle));
         
         metadataBuilder.AddTypeDefinition(
             default(TypeAttributes),
@@ -100,19 +147,76 @@ public static class NodeCodeGenerationExtension
             baseType: systemObjectTypeRef,
             fieldList: MetadataTokens.FieldDefinitionHandle(1),
             methodList: mainMethodDef);
+        
+        
         return (metadataBuilder, ilBuilder, mainMethodDef);
     }
 
-    private static MethodDefinitionHandle GenerateEntryPoint()
+    private static MethodDefinitionHandle GenerateEntryPoint(MetadataBuilder metadata, BlobBuilder ilBuilder,
+        AssemblyReferenceHandle mscorlibAssemblyRef, MemberReferenceHandle objectCtorMemberRef,
+        MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
-        return new MethodDefinitionHandle();
-    }
+        TypeReferenceHandle systemConsoleTypeRefHandle = metadata.AddTypeReference(
+            mscorlibAssemblyRef,
+            metadata.GetOrAddString("System"),
+            metadata.GetOrAddString("Console"));
+        
+        // Get reference to Console.WriteLine(string) method.
+        var consoleWriteLineSignature = new BlobBuilder();
 
-    public static void GenerateCode(this Node node, MetadataBuilder metadataBuilder, BlobBuilder ilBuilder)
+        new BlobEncoder(consoleWriteLineSignature).MethodSignature().Parameters(1,
+            returnType => returnType.Void(),
+            parameters => parameters.AddParameter().Type().String());
+
+        MemberReferenceHandle consoleWriteLineMemberRef = metadata.AddMemberReference(
+            systemConsoleTypeRefHandle,
+            metadata.GetOrAddString("WriteLine"),
+            metadata.GetOrAddBlob(consoleWriteLineSignature));
+            
+        // Create signature for "void Main()" method.
+        var mainSignature = new BlobBuilder();
+
+        new BlobEncoder(mainSignature).
+            MethodSignature().
+            Parameters(0, returnType => returnType.Void(), parameters => { });
+        
+        var codeBuilder = new BlobBuilder();
+        
+        // Emit IL for Program::Main
+        var flowBuilder = new ControlFlowBuilder();
+        var il = new InstructionEncoder(codeBuilder, flowBuilder);
+
+        // ldstr "hello"
+        il.LoadString(metadata.GetOrAddUserString("Hello, world"));
+
+        // call void [mscorlib]System.Console::WriteLine(string)
+        il.Call(consoleWriteLineMemberRef);
+        il.Call(RoutineNodeCodeGenerator.hanldle);
+        // ret
+        il.OpCode(ILOpCode.Ret);
+
+        int mainBodyOffset = methodBodyStreamEncoder.AddMethodBody(il);
+        codeBuilder.Clear();
+
+        
+        
+        // Create method definition for Program::Main
+        MethodDefinitionHandle mainMethodDef = metadata.AddMethodDefinition(
+            MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,
+            MethodImplAttributes.IL,
+            metadata.GetOrAddString("Main"),
+            metadata.GetOrAddBlob(mainSignature),
+            mainBodyOffset,
+            parameterList: default(ParameterHandle));
+        
+        return mainMethodDef;
+    }
+    
+    private static void GenerateCode(this Node node, CodeGeneratorContext codeGenerationContext)
     {
         if (node.Type == NodeType.Program)
             throw new InvalidOperationException();
-        
-        GetCodeGenerator(node).GenerateCode(node, metadataBuilder, ilBuilder);
+
+        GetCodeGenerator(node).GenerateCode(node, codeGenerationContext);
     }
 }

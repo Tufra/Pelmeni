@@ -1,4 +1,5 @@
-﻿using System.Reflection.Metadata;
+﻿using System.Reflection;
+using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using PelmeniCompilers.Models;
 using PelmeniCompilers.Values;
@@ -8,14 +9,34 @@ namespace PelmeniCompilers.CodeGeneration.Generators;
 public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
 {
     public override NodeType GeneratingCodeNodeType => NodeType.RoutineDeclaration;
+    public static MethodDefinitionHandle hanldle;
 
-    public override void GenerateCode(Node node, MetadataBuilder metadataBuilder, BlobBuilder ilBuilder)
+    public override void GenerateCode(Node node, CodeGeneratorContext codeGeneratorContext)
     {
         var routineSignature = new BlobBuilder();
 
         var blobEncoder = new BlobEncoder(routineSignature);
         blobEncoder.MethodSignature().
             Parameters(node.Children[1].Children.Count, returnType => returnType.Void(), parameters => EncodeParameters(node.Children[1].Children, parameters));
+
+        var codeBuilder = new BlobBuilder();
+        var flowBuilder = new ControlFlowBuilder();
+        var il = new InstructionEncoder(codeBuilder, flowBuilder);
+        MethodDefinitionHandle mainMethodDef = default;
+        
+        
+        il.Call(mainMethodDef);
+        il.OpCode(ILOpCode.Ret);
+        var offset = codeGeneratorContext.MethodBodyStreamEncoder.AddMethodBody(il);
+        
+        mainMethodDef = codeGeneratorContext.MetadataBuilder.AddMethodDefinition(
+            MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,
+            MethodImplAttributes.IL,
+            codeGeneratorContext.MetadataBuilder.GetOrAddString(Guid.NewGuid().ToString()),
+            codeGeneratorContext.MetadataBuilder.GetOrAddBlob(routineSignature),
+            offset,
+            parameterList: default(ParameterHandle));
+        hanldle = mainMethodDef;
     }
 
     private void EncodeParameters(List<Node> parameters, ParametersEncoder parametersEncoder)
