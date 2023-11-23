@@ -13,16 +13,7 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
     {
         var identifier = GetIdentifierOrThrowIfOccupied(node);
         var parameters = GetParameters(node.Children[1]);
-        var returnType = GetReturnType(node.Children[2]);
-
-        var routineSignature = new RoutineVirtualTableEntry()
-        {
-            Name = identifier,
-            Parameters = parameters,
-            ReturnType = returnType
-        };
-
-        RoutineVirtualTable[routineSignature.Name] = routineSignature;
+        
         Scope.AddFrame(parameters.ToArray());
         Chain.Push(node);
 
@@ -34,7 +25,17 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
         var type = node.Children[2];
         type.CheckSemantic();
 
-        if (type.Children.Count > 0 && computedBody.ValueType != type.Children[0].Token!.Value)
+        var returnType = GetReturnType(node.Children[2]);
+
+        var routineSignature = new RoutineVirtualTableEntry()
+        {
+            Name = identifier,
+            Parameters = parameters,
+            ReturnType = returnType
+        };
+        RoutineVirtualTable[routineSignature.Name] = routineSignature;
+
+        if (type.Children.Count > 0 && computedBody.ValueType != returnType)
         {
             throw new InvalidOperationException(
                 $"Routine {identifier} is supposed to return {type.Children[0].Token!.Value}, but {computedBody.ValueType} encountered");
@@ -69,7 +70,16 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
     {
         if (tail.Children.Count > 0)
         {
-            return tail.Children[0].Token!.Value;
+            var type = tail.Children[0]!;
+            if (type.Type == NodeType.Token)
+            {
+                return tail.Children[0].Token!.Value;
+            }
+            if (type.Type == NodeType.ArrayType)
+            {
+                return ArrayTypeChecker.BuildString(type);
+            }
+            
         }
         return "None";
         

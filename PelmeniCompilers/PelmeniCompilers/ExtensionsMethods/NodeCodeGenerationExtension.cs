@@ -187,11 +187,17 @@ public static class NodeCodeGenerationExtension
         var il = new InstructionEncoder(codeBuilder, flowBuilder);
 
         // ldstr "hello"
-        il.LoadString(metadata.GetOrAddUserString("Hello, world"));
+        // il.LoadString(metadata.GetOrAddUserString("Hello, world"));
+        for(var i = 2; i < 6; i++)
+        {
+            il.Call(MetadataTokens.MethodDefinitionHandle(i));
+            il.Call(consoleWriteLineMemberRef);
 
+        }
+        
         // call void [mscorlib]System.Console::WriteLine(string)
-        il.Call(consoleWriteLineMemberRef);
-        il.Call(RoutineNodeCodeGenerator.hanldle);
+            
+        
         // ret
         il.OpCode(ILOpCode.Ret);
 
@@ -212,7 +218,7 @@ public static class NodeCodeGenerationExtension
         return mainMethodDef;
     }
     
-    private static void GenerateCode(this Node node, CodeGeneratorContext codeGenerationContext)
+    public static void GenerateCode(this Node node, CodeGeneratorContext codeGenerationContext)
     {
         if (node.Type == NodeType.Program)
             throw new InvalidOperationException();

@@ -49,7 +49,7 @@ public class TypeDeclarationChecker : BaseNodeRuleChecker
     }
 
     public static bool IsPrimitiveType(string type) => 
-        type == "integer" || type == "real" || type == "boolean" || type == "char";
+        type == "integer" || type == "real" || type == "boolean" || type == "char" || type == "string";
 
     public static bool IsArrayType(string type) =>
         type.StartsWith("array");
