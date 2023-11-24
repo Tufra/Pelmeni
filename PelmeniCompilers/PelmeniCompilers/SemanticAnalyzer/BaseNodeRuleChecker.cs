@@ -14,8 +14,8 @@ public abstract class BaseNodeRuleChecker
     protected static Scope Scope { get; set; }
     protected static Stack<Node> Chain { get; set; }
 
-    protected static Dictionary<string, RoutineVirtualTableEntry> RoutineVirtualTable { get; set; }
-    protected static Dictionary<string, RecordVirtualTableEntry> RecordVirtualTable { get; set; }
+    public static Dictionary<string, RoutineVirtualTableEntry> RoutineVirtualTable { get; set; }
+    public static Dictionary<string, RecordVirtualTableEntry> RecordVirtualTable { get; set; }
 
     static BaseNodeRuleChecker()
     {

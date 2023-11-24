@@ -69,7 +69,7 @@ public static class NodeCodeGenerationExtension
 
         var mscorlibAssemblyRef = metadataBuilder.AddAssemblyReference(
             name: metadataBuilder.GetOrAddString("mscorlib"),
-            version: new Version(4, 0, 0, 0),
+            version: new Version(7, 0, 0, 0),
             culture: default(StringHandle),
             publicKeyOrToken: metadataBuilder.GetOrAddBlob(
                 new byte[] { 0xB7, 0x7A, 0x5C, 0x56, 0x19, 0x34, 0xE0, 0x89 }
@@ -188,13 +188,17 @@ public static class NodeCodeGenerationExtension
 
         // ldstr "hello"
         // il.LoadString(metadata.GetOrAddUserString("Hello, world"));
-        for(var i = 2; i < 6; i++)
+        for(var i = 2; i < 7; i++)
         {
             il.Call(MetadataTokens.MethodDefinitionHandle(i));
             il.Call(consoleWriteLineMemberRef);
 
         }
-        
+
+        il.LoadConstantI8(5);
+        il.Call(MetadataTokens.MethodDefinitionHandle(7));
+
+        il.Call(consoleWriteLineMemberRef);
         // call void [mscorlib]System.Console::WriteLine(string)
             
         

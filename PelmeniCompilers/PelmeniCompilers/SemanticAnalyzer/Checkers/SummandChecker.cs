@@ -50,11 +50,8 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             token.Value = (-val).ToString();
                         }
-                        var computed = new ComputedExpression(NodeType.Token, token, "integer", token.Value)
-                        {
-                            Children = node.Children
-                        };
-                        node.Children = new List<Node> { computed };
+                        var computed = new ComputedExpression(NodeType.Token, token, "integer", token.Value);
+                        node.Children[1] = computed;
                         break;
                     }
                 case Parser.Tokens.REAL_LITERAL:
@@ -65,7 +62,7 @@ public class SummandChecker : BaseNodeRuleChecker
                             token.Value = (-val).ToString();
                         }
                         var computed = new ComputedExpression(NodeType.Token, token, "real", token.Value);
-                        node.Children = new List<Node> { computed };
+                        node.Children[1] = computed;
                         break;
                     }
                 case Parser.Tokens.CHAR_LITERAL:
@@ -75,7 +72,7 @@ public class SummandChecker : BaseNodeRuleChecker
                             throw new InvalidOperationException($"Char cannot be negative at {token.Location}");
                         }
                         var computed = new ComputedExpression(NodeType.Token, token, "char", token.Value);
-                        node.Children = new List<Node> { computed };
+                        node.Children[1] = computed;
                         break;
                     }
                 case Parser.Tokens.STRING_LITERAL:
@@ -84,8 +81,8 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             throw new InvalidOperationException($"String cannot be negative at {token.Location}");
                         }
-                        var computed = new ComputedExpression(NodeType.Token, token, "string", token.Value);
-                        node.Children = new List<Node> { computed };
+                        var computed = new ComputedExpression(NodeType.Token, token, "string", token.Value.Substring(1, token.Value.Length - 2));
+                        node.Children[1] = computed;
                         break;
                     }
                 case Parser.Tokens.TRUE:
@@ -94,8 +91,8 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             throw new InvalidOperationException($"Boolean cannot be negative at {token.Location}");
                         }
-                        var computed = new ComputedExpression(NodeType.Token, token, "boolean", "True");
-                        node.Children = new List<Node> { computed };
+                        var computed = new ComputedExpression(NodeType.Token, token, "boolean", "true");
+                        node.Children[1] = computed;
                         break;
                     }
                 case Parser.Tokens.FALSE:
@@ -104,8 +101,8 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             throw new InvalidOperationException($"Boolean cannot be negative at {token.Location}");
                         }
-                        var computed = new ComputedExpression(NodeType.Token, token, "boolean", "False");
-                        node.Children = new List<Node> { computed };
+                        var computed = new ComputedExpression(NodeType.Token, token, "boolean", "false");
+                        node.Children[1] = computed;
                         break;
                     }
                 default:

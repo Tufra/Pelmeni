@@ -17,11 +17,6 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
         Scope.AddFrame(parameters.ToArray());
         Chain.Push(node);
 
-        var body = node.Children[3];
-        body.CheckSemantic();
-        var computedBody = body.BuildComputedExpression();
-        node.Children[3] = computedBody;
-
         var type = node.Children[2];
         type.CheckSemantic();
 
@@ -31,9 +26,15 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
         {
             Name = identifier,
             Parameters = parameters,
-            ReturnType = returnType
+            ReturnType = returnType,
+            LocalVariablesCounter = 0
         };
         RoutineVirtualTable[routineSignature.Name] = routineSignature;
+
+        var body = node.Children[3];
+        body.CheckSemantic();
+        var computedBody = body.BuildComputedExpression();
+        node.Children[3] = computedBody;
 
         if (type.Children.Count > 0 && computedBody.ValueType != returnType)
         {

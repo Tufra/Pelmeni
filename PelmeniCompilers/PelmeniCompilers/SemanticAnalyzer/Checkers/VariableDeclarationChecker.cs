@@ -24,6 +24,13 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
                 $"Variable {identifier} must have type or value specified at {node.Children[0].Token!.Location}");
         }
 
+        var routine = Chain.ToList().Where(node => node.Type == NodeType.RoutineDeclaration);
+        if (routine.Count() > 0)
+        {
+            var routineIdentifier = routine.First().Children[0].Token!.Value;
+            RoutineVirtualTable[routineIdentifier].LocalVariablesCounter++;
+        }
+
         Scope.AddToLastFrame(BuildVirtualTableEntry(node));
     }
 

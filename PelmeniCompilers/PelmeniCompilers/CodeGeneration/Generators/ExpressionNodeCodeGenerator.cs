@@ -2,13 +2,13 @@ using System.Reflection.Metadata;
 using PelmeniCompilers.Models;
 using PelmeniCompilers.Values;
 using PelmeniCompilers.ExtensionsMethods;
+using System.Reflection.Metadata.Ecma335;
 
 namespace PelmeniCompilers.CodeGeneration.Generators;
 
 public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
 {
     public override NodeType GeneratingCodeNodeType => NodeType.Expression;
-    public static MethodDefinitionHandle hanldle;
 
     public override void GenerateCode(Node node, CodeGeneratorContext codeGeneratorContext)
     {
@@ -62,4 +62,44 @@ public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
         child.GenerateCode(codeGeneratorContext);
     }
 
+
+    public static void LoadValueFromComputed(ComputedExpression expr, InstructionEncoder il, MetadataBuilder metadata)
+    {
+        var type = expr.ValueType;
+        var val = expr.Value;
+
+        if (val is null)
+        {
+            throw new InvalidOperationException($"tried loading unknown value for {type}");
+        }
+
+        switch (type)
+        {
+            case "integer":
+            {
+                il.LoadConstantI8(int.Parse(val));
+                break;
+            }
+            case "real":
+            {
+                il.LoadConstantR8(double.Parse(val));
+                break;
+            }
+            case "boolean":
+            {
+                il.LoadConstantI8(val == "true"? 1 : 0);
+                break;
+            }
+            case "char":
+            {
+                il.LoadConstantI8(int.Parse(val));
+                break;
+            }
+            case "String":
+            {
+                il.LoadString(metadata.GetOrAddUserString(val));
+                break;
+            }
+        }
+    }
 }
