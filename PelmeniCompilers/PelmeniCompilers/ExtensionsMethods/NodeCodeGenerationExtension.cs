@@ -69,7 +69,7 @@ public static class NodeCodeGenerationExtension
 
         var mscorlibAssemblyRef = metadataBuilder.AddAssemblyReference(
             name: metadataBuilder.GetOrAddString("mscorlib"),
-            version: new Version(7, 0, 0, 0),
+            version: new Version(4, 0, 0, 0),
             culture: default(StringHandle),
             publicKeyOrToken: metadataBuilder.GetOrAddBlob(
                 new byte[] { 0xB7, 0x7A, 0x5C, 0x56, 0x19, 0x34, 0xE0, 0x89 }
@@ -93,18 +93,18 @@ public static class NodeCodeGenerationExtension
             systemObjectTypeRef,
             metadataBuilder.GetOrAddString(".ctor"),
             parameterlessCtorBlobIndex);
-        
-        
-      
+
+
+
 
         var codeBuilder = new BlobBuilder();
         InstructionEncoder il;
-    
+
         // Emit IL for Program::.ctor
         il = new InstructionEncoder(codeBuilder);
 
         // ldarg.0
-        il.LoadArgument(0); 
+        il.LoadArgument(0);
 
         // call instance void [mscorlib]System.Object::.ctor()
         il.Call(objectCtorMemberRef);
@@ -115,13 +115,14 @@ public static class NodeCodeGenerationExtension
         int ctorBodyOffset = methodBodyStream.AddMethodBody(il);
         codeBuilder.Clear();
 
-        var mainMethodDef = GenerateEntryPoint(metadataBuilder, ilBuilder, mscorlibAssemblyRef, objectCtorMemberRef, methodBodyStream);
-        
+        var mainMethodDef = GenerateEntryPoint(metadataBuilder, ilBuilder, mscorlibAssemblyRef, objectCtorMemberRef,
+            methodBodyStream);
+
         foreach (var child in node.Children)
         {
             child.GenerateCode(codeGenerationContext);
         }
-        
+
         metadataBuilder.AddMethodDefinition(
             MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName |
             MethodAttributes.RTSpecialName,
@@ -130,7 +131,7 @@ public static class NodeCodeGenerationExtension
             parameterlessCtorBlobIndex,
             ctorBodyOffset,
             parameterList: default(ParameterHandle));
-        
+
         metadataBuilder.AddTypeDefinition(
             default(TypeAttributes),
             default(StringHandle),
@@ -147,8 +148,8 @@ public static class NodeCodeGenerationExtension
             baseType: systemObjectTypeRef,
             fieldList: MetadataTokens.FieldDefinitionHandle(1),
             methodList: mainMethodDef);
-        
-        
+
+
         return (metadataBuilder, ilBuilder, mainMethodDef);
     }
 
@@ -156,10 +157,66 @@ public static class NodeCodeGenerationExtension
         AssemblyReferenceHandle mscorlibAssemblyRef, MemberReferenceHandle objectCtorMemberRef,
         MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
+        //
+        // STDLIB REF
+        //
+        
+        var libAssemblyRef = metadata.AddAssemblyReference(
+            name: metadata.GetOrAddString("PelmeniLib"),
+            version: new Version(1, 0, 0, 0),
+            culture: default(StringHandle),
+            publicKeyOrToken: default,
+            flags: default(AssemblyFlags),
+            hashValue: default(BlobHandle));
+
+        var libTypeRefHandle = metadata.AddTypeReference(
+            libAssemblyRef, 
+            metadata.GetOrAddString("PelmeniLib"), 
+            metadata.GetOrAddString("StdLib"));
+        
+        var intToStringSignature = new BlobBuilder();
+        new BlobEncoder(intToStringSignature).MethodSignature()
+            .Parameters(1, 
+                returnType => returnType.Type().String(), 
+                parameters => parameters.AddParameter().Type().Int64());
+        
+        var intToStringMemberRef = metadata.AddMemberReference(
+            libTypeRefHandle,
+            metadata.GetOrAddString("IntToString"),
+            metadata.GetOrAddBlob(intToStringSignature));
+        
+        var readLineSignature = new BlobBuilder();
+        new BlobEncoder(readLineSignature).MethodSignature()
+            .Parameters(0, 
+                returnType => returnType.Type().String(),
+                parameters => { });
+        
+        var readLineMemberRef = metadata.AddMemberReference(
+            libTypeRefHandle,
+            metadata.GetOrAddString("ReadLine"),
+            metadata.GetOrAddBlob(readLineSignature));
+        
+        var printSignature = new BlobBuilder();
+        new BlobEncoder(printSignature).MethodSignature()
+            .Parameters(1, 
+                returnType => returnType.Void(),
+                parameters => parameters.AddParameter().Type().String());
+        
+        var printMemberRef = metadata.AddMemberReference(
+            libTypeRefHandle,
+            metadata.GetOrAddString("Print"),
+            metadata.GetOrAddBlob(printSignature));
+        
+        //
+        // END STDLIB REF
+        //
+        
         TypeReferenceHandle systemConsoleTypeRefHandle = metadata.AddTypeReference(
             mscorlibAssemblyRef,
             metadata.GetOrAddString("System"),
             metadata.GetOrAddString("Console"));
+        
+        // tostr
         
         // Get reference to Console.WriteLine(string) method.
         var consoleWriteLineSignature = new BlobBuilder();
@@ -172,7 +229,7 @@ public static class NodeCodeGenerationExtension
             systemConsoleTypeRefHandle,
             metadata.GetOrAddString("WriteLine"),
             metadata.GetOrAddBlob(consoleWriteLineSignature));
-            
+
         // Create signature for "void Main()" method.
         var mainSignature = new BlobBuilder();
 
@@ -188,17 +245,22 @@ public static class NodeCodeGenerationExtension
 
         // ldstr "hello"
         // il.LoadString(metadata.GetOrAddUserString("Hello, world"));
-        for(var i = 2; i < 7; i++)
-        {
-            il.Call(MetadataTokens.MethodDefinitionHandle(i));
-            il.Call(consoleWriteLineMemberRef);
+        // for(var i = 2; i < 7; i++)
+        // {
+        //     il.Call(MetadataTokens.MethodDefinitionHandle(i));
+        //     il.Call(consoleWriteLineMemberRef);
 
-        }
+        // }
 
         il.LoadConstantI8(5);
         il.Call(MetadataTokens.MethodDefinitionHandle(7));
+        il.Call(intToStringMemberRef);
+        il.Call(printMemberRef);
+        
+        il.Call(readLineMemberRef);
+        il.Call(printMemberRef);
 
-        il.Call(consoleWriteLineMemberRef);
+        // il.Call(consoleWriteLineMemberRef);
         // call void [mscorlib]System.Console::WriteLine(string)
             
         
@@ -218,6 +280,43 @@ public static class NodeCodeGenerationExtension
             metadata.GetOrAddBlob(mainSignature),
             mainBodyOffset,
             parameterList: default(ParameterHandle));
+
+        
+        // ssssssssss
+
+        // var printSignature = new BlobBuilder();
+        // new BlobEncoder(printSignature)
+        //     .MethodSignature()
+        //     .Parameters(1, returnType => returnType.Void(), parameters => parameters.AddParameter().Type().Int64());
+        //
+        // var printVars = new BlobBuilder();
+        // var printVarsEncoder = new BlobEncoder(printVars).LocalVariableSignature(1);
+        // printVarsEncoder.AddVariable().Type().Int64();
+        //
+        // var a = metadata.GetOrAddBlob(printVars);
+        // var s = metadata.AddStandaloneSignature(a);
+        //
+        // var cb = new BlobBuilder();
+        // var fb = new ControlFlowBuilder();
+        // var ie = new InstructionEncoder(cb, fb);
+        //
+        // ie.LoadArgument(0);
+        // ie.Call(intToStringMemberRef);
+        // ie.Call(consoleWriteLineMemberRef);
+        // ie.OpCode(ILOpCode.Ret);
+        //
+        // var os = methodBodyStreamEncoder.AddMethodBody(ie, 256, s, MethodBodyAttributes.InitLocals);
+        //
+        // metadata.AddMethodDefinition(
+        //     MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,
+        //     MethodImplAttributes.IL,
+        //     metadata.GetOrAddString("Print"),
+        //     metadata.GetOrAddBlob(printSignature),
+        //     os,
+        //     parameterList: default(ParameterHandle)
+        // );
+
+        //dddddddddddddddddd
         
         return mainMethodDef;
     }

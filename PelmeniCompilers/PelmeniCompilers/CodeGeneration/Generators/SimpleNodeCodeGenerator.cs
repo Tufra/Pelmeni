@@ -56,12 +56,12 @@ public class SimpleNodeCodeGenerator : BaseNodeCodeGenerator
             {
                 case "*":
                 {
-                    il.OpCode(ILOpCode.Add);
+                    il.OpCode(ILOpCode.Mul);
                     break;
                 }
                 case "/":
                 {
-                    il.OpCode(ILOpCode.Sub);
+                    il.OpCode(ILOpCode.Div);
                     break;
                 }
                 case "%":

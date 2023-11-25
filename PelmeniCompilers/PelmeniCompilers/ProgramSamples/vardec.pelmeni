@@ -1,27 +1,30 @@
 module Vardec;
 
-use "swap.pelmeni";
-
-routine Print(a: real) is
-end
-
-type Booba is record
-	var a: integer;
-	var b: array[256] char;
-end;
-
-var A: real is 7.0;
-
-type pupa is array[123] array[123] array[123] char;
-
-routine Abc(a: integer, b: integer): real is
-	var sus: real is 10.3 + 20 * 2;
-
-	return sus;
-end
-
-routine Bcd(): real is
-
+routine aaa(): string is
 	
-	return 10.0;
+	return "aaa";
+end
+
+routine bbb(): string is	
+	return "bbb";
+end
+
+routine ccc(): string is	
+	return "ccc";
+end
+
+routine ddd(val: integer): string is	
+	if val > 0 then
+		return "pos";
+	end
+
+	return "mmm";
+end
+
+routine booba(): string is
+	return "amogus";
+end
+
+routine empty(s: integer): integer is
+	return (5 * s + 4 * s + 3 * s + 2 * s + s);
 end
