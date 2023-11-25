@@ -89,8 +89,15 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
             
             node.Children[2] = computedInit;
         }
-
-        NodeOptimizationExtension.VariableUsage[node] = false;
+        if (Chain.Peek().Type != NodeType.RecordType)
+        {
+            NodeOptimizationExtension.VariableUsage[node] = false;
+        }
+        else
+        {
+            NodeOptimizationExtension.VariableUsage[node] = true;
+        }
+        
         
         return variableSignature;
     }

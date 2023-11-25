@@ -50,13 +50,15 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
         var localVariablesSignature = codeGeneratorContext.MetadataBuilder.AddStandaloneSignature(localVariablesBlob);
         var offset = codeGeneratorContext.MethodBodyStreamEncoder.AddMethodBody(il, 256, localVariablesSignature);
         
-        codeGeneratorContext.MetadataBuilder.AddMethodDefinition(
+        var methodHandle = codeGeneratorContext.MetadataBuilder.AddMethodDefinition(
             MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,
             MethodImplAttributes.IL,
             codeGeneratorContext.MetadataBuilder.GetOrAddString(identifier),
             codeGeneratorContext.MetadataBuilder.GetOrAddBlob(routineSignature),
             offset,
             parameterList: default(ParameterHandle));
+
+        GeneratedRoutines.Add(identifier, methodHandle);
     }
 
     private void EncodeParameters(List<Node> parameters, ParametersEncoder parametersEncoder, CodeGeneratorContext context)
@@ -113,15 +115,22 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                         break;
                     }
                     default:
-                        throw new NotImplementedException();
+                    {
+                        TypeDefinitionHandle record;
+                        var success = GeneratedRecords.TryGetValue(elementType.Token!.Value, out record);
+                        if (success)
+                        {
+                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Type(record, false); };
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException($"Unknown type {elementType.Token!.Value}");
+                        }
+                        break;
+                    }
                 }
 
                 parametersEncoder.AddParameter().Type().Array(elementTypeDelegate, arrayShapeDelegate);
-            }
-
-            if (BaseNodeCodeGenerator.GeneratedRecords.ContainsKey(parameter.Children[1].Children[0].Token!.Value))
-            {
-                continue;
             }
 
             switch (parameter.Children[1].Children[0].Token!.Value)
@@ -150,6 +159,20 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                 {
                     parametersEncoder.AddParameter().Type().String();
                     break;
+                }
+                default:
+                {
+                    TypeDefinitionHandle record;
+                    var success = GeneratedRecords.TryGetValue(parameter.Children[1].Children[0].Token!.Value, out record);
+                    if (success)
+                    {
+                        parametersEncoder.AddParameter().Type().Type(record, false);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Unknown type {parameter.Children[1].Children[0].Token!.Value}");
+                    }
+                    continue;
                 }
             }
 
@@ -197,7 +220,19 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                     break;
                 }
                 default:
-                    throw new NotImplementedException();
+                {
+                    TypeDefinitionHandle record;
+                    var success = GeneratedRecords.TryGetValue(type.Token!.Value, out record);
+                    if (success)
+                    {
+                        encoder.Type().Type(record, false);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Unknown type {type.Token!.Value}");
+                    }
+                    break;
+                }
             }
             return;
         }
@@ -250,7 +285,19 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                     break;
                 }
                 default:
-                    throw new NotImplementedException();
+                {
+                    TypeDefinitionHandle record;
+                    var success = GeneratedRecords.TryGetValue(elementType.Token!.Value, out record);
+                    if (success)
+                    {
+                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Type(record, false); };
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Unknown type {elementType.Token!.Value}");
+                    }
+                    break;
+                }
             }
 
             encoder.Type().Array(elementTypeDelegate, arrayShapeDelegate);

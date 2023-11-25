@@ -26,6 +26,19 @@ public class RelationNodeCodeGenerator : BaseNodeCodeGenerator
                 child.GenerateCode(codeGeneratorContext);
             }
         }
+        else if (node.Children.Count == 2)
+        {
+            var child = node.Children[1]!;
+            if (((ComputedExpression)child).Value is not null)
+            {
+                ExpressionNodeCodeGenerator.LoadValueFromComputed((ComputedExpression)child, il, metadata);
+            }
+            else
+            {
+                child.GenerateCode(codeGeneratorContext);
+            }
+            il.OpCode(ILOpCode.Not);
+        }
         else
         {
             var op = node.Children[0].Token!.Value;

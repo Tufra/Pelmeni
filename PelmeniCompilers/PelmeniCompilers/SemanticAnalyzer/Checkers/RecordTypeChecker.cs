@@ -26,12 +26,18 @@ public class RecordTypeChecker : BaseNodeRuleChecker
     public static List<VariableVirtualTableEntry> GetMembers(Node node)
     {
         var members = new List<VariableVirtualTableEntry>();
+        
+        Scope.AddFrame();
+        Chain.Push(node);
 
         foreach (var member in node.Children)
         {
             var entry = VariableDeclarationChecker.BuildVirtualTableEntry(member);
             members.Add(entry);
         }
+
+        Scope.RemoveLastFrame();
+        Chain.Pop();
 
         return members;
     }

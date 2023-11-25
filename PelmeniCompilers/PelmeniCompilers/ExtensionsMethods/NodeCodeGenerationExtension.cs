@@ -82,6 +82,8 @@ public static class NodeCodeGenerationExtension
             metadataBuilder.GetOrAddString("System"),
             metadataBuilder.GetOrAddString("Object"));
 
+        codeGenerationContext.ObjectTypeHandle = systemObjectTypeRef;
+
         var parameterlessCtorSignature = new BlobBuilder();
 
         new BlobEncoder(parameterlessCtorSignature).MethodSignature(isInstanceMethod: true)
@@ -115,10 +117,24 @@ public static class NodeCodeGenerationExtension
         int ctorBodyOffset = methodBodyStream.AddMethodBody(il);
         codeBuilder.Clear();
 
+
+        metadataBuilder.AddTypeDefinition(
+            default,
+            default,
+            metadataBuilder.GetOrAddString("<Module>"),
+            baseType: default,
+            fieldList: MetadataTokens.FieldDefinitionHandle(1),
+            methodList: MetadataTokens.MethodDefinitionHandle(1));
+
+        foreach (var child in node.Children.Where(node => node.Type == NodeType.TypeDeclaration))
+        {
+            child.GenerateCode(codeGenerationContext);
+        }
+
         var mainMethodDef = GenerateEntryPoint(metadataBuilder, ilBuilder, mscorlibAssemblyRef, objectCtorMemberRef,
             methodBodyStream);
 
-        foreach (var child in node.Children)
+        foreach (var child in node.Children.Where(node => node.Type != NodeType.TypeDeclaration))
         {
             child.GenerateCode(codeGenerationContext);
         }
@@ -132,13 +148,6 @@ public static class NodeCodeGenerationExtension
             ctorBodyOffset,
             parameterList: default(ParameterHandle));
 
-        metadataBuilder.AddTypeDefinition(
-            default(TypeAttributes),
-            default(StringHandle),
-            metadataBuilder.GetOrAddString("<Module>"),
-            baseType: default(EntityHandle),
-            fieldList: MetadataTokens.FieldDefinitionHandle(1),
-            methodList: mainMethodDef);
 
         // Create type definition for ConsoleApplication.Program
         metadataBuilder.AddTypeDefinition(
@@ -146,7 +155,7 @@ public static class NodeCodeGenerationExtension
             metadataBuilder.GetOrAddString("ConsoleApplication"),
             metadataBuilder.GetOrAddString("Program"),
             baseType: systemObjectTypeRef,
-            fieldList: MetadataTokens.FieldDefinitionHandle(1),
+            fieldList: MetadataTokens.FieldDefinitionHandle(codeGenerationContext.LastFieldIndex),
             methodList: mainMethodDef);
 
 
@@ -216,7 +225,6 @@ public static class NodeCodeGenerationExtension
             metadata.GetOrAddString("System"),
             metadata.GetOrAddString("Console"));
         
-        // tostr
         
         // Get reference to Console.WriteLine(string) method.
         var consoleWriteLineSignature = new BlobBuilder();
@@ -253,7 +261,7 @@ public static class NodeCodeGenerationExtension
         // }
 
         il.LoadConstantI8(5);
-        il.Call(MetadataTokens.MethodDefinitionHandle(7));
+        il.Call(MetadataTokens.MethodDefinitionHandle(6));
         il.Call(intToStringMemberRef);
         il.Call(printMemberRef);
         

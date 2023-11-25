@@ -13,19 +13,36 @@ public class ModifiablePrimaryNodeCodeGenerator : BaseNodeCodeGenerator
     {
         var il = codeGeneratorContext.InstructionEncoder;
         var metadata = codeGeneratorContext.MetadataBuilder;
+        var isAddress = codeGeneratorContext.IsAddress;
 
         var children = node.Children;
         var baseIdentifier = children[0].Token!.Value;
         var baseVarIndex = -1;
+        var type = ((ComputedExpression)children[0]).ValueType;
         if (codeGeneratorContext.LocalVariablesIndex!.ContainsKey(baseIdentifier))
         {
             codeGeneratorContext.LocalVariablesIndex.TryGetValue(baseIdentifier, out baseVarIndex);
-            il.LoadLocal(baseVarIndex);
+            if (isAddress || children.Count > 1)
+            {
+                il.LoadLocalAddress(baseVarIndex);
+            }
+            else
+            {
+                il.LoadLocal(baseVarIndex);
+            }
         }
         else if (codeGeneratorContext.ArgumentsIndex!.ContainsKey(baseIdentifier))
         {
             codeGeneratorContext.ArgumentsIndex.TryGetValue(baseIdentifier, out baseVarIndex);
-            il.LoadArgument(baseVarIndex);
+            if (isAddress || children.Count > 1)
+            {
+                il.LoadArgumentAddress(baseVarIndex);
+            }
+            else
+            {
+                il.LoadArgument(baseVarIndex);
+            }
+            
         }
 
         foreach (var child in children.Skip(1))

@@ -14,4 +14,7 @@ public class CodeGeneratorContext
     public int LastVariableIndex { get; set; } = -1;
     public Dictionary<string, int>? ArgumentsIndex { get; set; }
     public int LastArgumentIndex { get; set; } = -1;
+    public bool IsAddress { get; set; } = false;
+    public TypeReferenceHandle ObjectTypeHandle { get; set; }
+    public int LastFieldIndex { get; set; } = 1;
 }
