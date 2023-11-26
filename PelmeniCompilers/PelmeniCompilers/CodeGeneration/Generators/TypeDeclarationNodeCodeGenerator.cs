@@ -21,7 +21,7 @@ public class TypeDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
 
         var firstFieldIndex = codeGeneratorContext.LastFieldIndex;
 
-        var ctor = GenerateConstructor(codeGeneratorContext);
+        var ctor = GenerateConstructor(identifier, codeGeneratorContext);
 
         var typeHandle = metadata.AddTypeDefinition(
             TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.AutoLayout,
@@ -39,7 +39,7 @@ public class TypeDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
         GeneratedRecords.Add(identifier, typeHandle);
     }
 
-    private MethodDefinitionHandle GenerateConstructor(CodeGeneratorContext context)
+    private MethodDefinitionHandle GenerateConstructor(string identifier, CodeGeneratorContext context)
     {
         var metadataBuilder = context.MetadataBuilder;
         var systemObjectTypeRef = context.ObjectTypeHandle;
@@ -74,6 +74,11 @@ public class TypeDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
 
         int ctorBodyOffset = methodBodyStream.AddMethodBody(il);
         codeBuilder.Clear();
+        
+        var index = context.LastRoutineIndex + 1;
+        context.LastRoutineIndex++;
+        
+        GeneratedRoutines.Add($"{identifier}.ctor", MetadataTokens.MethodDefinitionHandle(index));
 
         return metadataBuilder.AddMethodDefinition(
             MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName |

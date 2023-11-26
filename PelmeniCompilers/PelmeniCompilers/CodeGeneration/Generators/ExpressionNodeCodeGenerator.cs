@@ -15,6 +15,8 @@ public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
         var il = codeGeneratorContext.InstructionEncoder;
         var metadata = codeGeneratorContext.MetadataBuilder;
 
+        codeGeneratorContext.IsValueObsolete = false;
+        
         if (node is ComputedExpression && ((ComputedExpression)node).Value is not null)
         {
             var val = ((ComputedExpression)node).Value!;
@@ -53,13 +55,16 @@ public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
                     throw new InvalidOperationException($"invalid computed data type {type} with value {val}");
                 }
             }
-
+            
+            codeGeneratorContext.IsValueObsolete = true;
             return;
         }
 
         var child = node.Children[0]!;
 
         child.GenerateCode(codeGeneratorContext);
+        
+        codeGeneratorContext.IsValueObsolete = true;
     }
 
 

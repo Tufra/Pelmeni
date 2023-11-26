@@ -8,7 +8,6 @@ namespace PelmeniCompilers.CodeGeneration.Generators;
 public class BodyNodeCodeGenerator : BaseNodeCodeGenerator
 {
     public override NodeType GeneratingCodeNodeType => NodeType.Body;
-    public static MethodDefinitionHandle hanldle;
 
     public override void GenerateCode(Node node, CodeGeneratorContext codeGeneratorContext)
     {

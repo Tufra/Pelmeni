@@ -209,7 +209,6 @@ public class CodeGenerator
 
         // call instance void [mscorlib]System.Object::.ctor()
         il.Call(objectCtorMemberRef);
-        il.Call(RoutineNodeCodeGenerator.hanldle);
         
         // ret
         il.OpCode(ILOpCode.Ret);

@@ -1,17 +1,14 @@
 module Vardec;
 
-routine aaa(): string is
-	
-	return "aaa";
-end
+type A is record
+    var a: integer;
+    var b: real;
+end;
 
-routine bbb(): string is	
-	return "bbb";
-end
-
-routine ccc(): string is	
-	return "ccc";
-end
+type B is record
+    var c: A;
+    var d: string;
+end;
 
 routine ddd(val: integer): string is	
 	if val > 0 then
@@ -21,10 +18,12 @@ routine ddd(val: integer): string is
 	return "mmm";
 end
 
-routine booba(): string is
-	return "amogus";
+routine gg(c: A, d: B) is
+    Print("amogus");
+    gg(c, d);
 end
 
 routine empty(s: integer): integer is
+    IntToString(6);
 	return (5 * s + 4 * s + 3 * s + 2 * s + s);
 end

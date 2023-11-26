@@ -1,9 +1,14 @@
-﻿using System.Reflection;
+﻿using System.Collections.Immutable;
+using System.Data;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using PelmeniCompilers.CodeGeneration;
 using PelmeniCompilers.CodeGeneration.Generators;
 using PelmeniCompilers.Models;
+using PelmeniCompilers.SemanticAnalyzer;
+using PelmeniCompilers.SemanticAnalyzer.VirtualTable;
 using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.ExtensionsMethods;
@@ -170,51 +175,7 @@ public static class NodeCodeGenerationExtension
         // STDLIB REF
         //
         
-        var libAssemblyRef = metadata.AddAssemblyReference(
-            name: metadata.GetOrAddString("PelmeniLib"),
-            version: new Version(1, 0, 0, 0),
-            culture: default(StringHandle),
-            publicKeyOrToken: default,
-            flags: default(AssemblyFlags),
-            hashValue: default(BlobHandle));
-
-        var libTypeRefHandle = metadata.AddTypeReference(
-            libAssemblyRef, 
-            metadata.GetOrAddString("PelmeniLib"), 
-            metadata.GetOrAddString("StdLib"));
-        
-        var intToStringSignature = new BlobBuilder();
-        new BlobEncoder(intToStringSignature).MethodSignature()
-            .Parameters(1, 
-                returnType => returnType.Type().String(), 
-                parameters => parameters.AddParameter().Type().Int64());
-        
-        var intToStringMemberRef = metadata.AddMemberReference(
-            libTypeRefHandle,
-            metadata.GetOrAddString("IntToString"),
-            metadata.GetOrAddBlob(intToStringSignature));
-        
-        var readLineSignature = new BlobBuilder();
-        new BlobEncoder(readLineSignature).MethodSignature()
-            .Parameters(0, 
-                returnType => returnType.Type().String(),
-                parameters => { });
-        
-        var readLineMemberRef = metadata.AddMemberReference(
-            libTypeRefHandle,
-            metadata.GetOrAddString("ReadLine"),
-            metadata.GetOrAddBlob(readLineSignature));
-        
-        var printSignature = new BlobBuilder();
-        new BlobEncoder(printSignature).MethodSignature()
-            .Parameters(1, 
-                returnType => returnType.Void(),
-                parameters => parameters.AddParameter().Type().String());
-        
-        var printMemberRef = metadata.AddMemberReference(
-            libTypeRefHandle,
-            metadata.GetOrAddString("Print"),
-            metadata.GetOrAddBlob(printSignature));
+        GenerateStdLibReferences("PelmeniLib", "PelmeniLib", metadata);
         
         //
         // END STDLIB REF
@@ -262,11 +223,11 @@ public static class NodeCodeGenerationExtension
 
         il.LoadConstantI8(5);
         il.Call(MetadataTokens.MethodDefinitionHandle(6));
-        il.Call(intToStringMemberRef);
-        il.Call(printMemberRef);
-        
-        il.Call(readLineMemberRef);
-        il.Call(printMemberRef);
+        // il.Call(intToStringMemberRef);
+        // il.Call(printMemberRef);
+        //
+        // il.Call(readLineMemberRef);
+        // il.Call(printMemberRef);
 
         // il.Call(consoleWriteLineMemberRef);
         // call void [mscorlib]System.Console::WriteLine(string)
@@ -288,43 +249,6 @@ public static class NodeCodeGenerationExtension
             metadata.GetOrAddBlob(mainSignature),
             mainBodyOffset,
             parameterList: default(ParameterHandle));
-
-        
-        // ssssssssss
-
-        // var printSignature = new BlobBuilder();
-        // new BlobEncoder(printSignature)
-        //     .MethodSignature()
-        //     .Parameters(1, returnType => returnType.Void(), parameters => parameters.AddParameter().Type().Int64());
-        //
-        // var printVars = new BlobBuilder();
-        // var printVarsEncoder = new BlobEncoder(printVars).LocalVariableSignature(1);
-        // printVarsEncoder.AddVariable().Type().Int64();
-        //
-        // var a = metadata.GetOrAddBlob(printVars);
-        // var s = metadata.AddStandaloneSignature(a);
-        //
-        // var cb = new BlobBuilder();
-        // var fb = new ControlFlowBuilder();
-        // var ie = new InstructionEncoder(cb, fb);
-        //
-        // ie.LoadArgument(0);
-        // ie.Call(intToStringMemberRef);
-        // ie.Call(consoleWriteLineMemberRef);
-        // ie.OpCode(ILOpCode.Ret);
-        //
-        // var os = methodBodyStreamEncoder.AddMethodBody(ie, 256, s, MethodBodyAttributes.InitLocals);
-        //
-        // metadata.AddMethodDefinition(
-        //     MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,
-        //     MethodImplAttributes.IL,
-        //     metadata.GetOrAddString("Print"),
-        //     metadata.GetOrAddBlob(printSignature),
-        //     os,
-        //     parameterList: default(ParameterHandle)
-        // );
-
-        //dddddddddddddddddd
         
         return mainMethodDef;
     }
@@ -335,5 +259,338 @@ public static class NodeCodeGenerationExtension
             throw new InvalidOperationException();
 
         GetCodeGenerator(node).GenerateCode(node, codeGenerationContext);
+    }
+
+    private static void GenerateStdLibReferences(string name, string namespace_, MetadataBuilder metadata)
+    {
+        
+        var libAssemblyRef = metadata.AddAssemblyReference(
+            name: metadata.GetOrAddString("PelmeniLib"),
+            version: new Version(1, 0, 0, 0),
+            culture: default(StringHandle),
+            publicKeyOrToken: default,
+            flags: default(AssemblyFlags),
+            hashValue: default(BlobHandle));
+        
+        var assembly = Assembly.Load(name);
+        var userTypes = assembly.GetTypes()
+            .Where(t => t.Namespace == namespace_)
+            .Where(t => !t.GetTypeInfo().IsDefined(typeof(CompilerGeneratedAttribute), true));
+        foreach (var type in userTypes)
+        {
+
+            var identifier = type.Name;
+
+            TypeReferenceHandle typeRefHandle = metadata.AddTypeReference(
+                libAssemblyRef,
+                metadata.GetOrAddString(namespace_),
+                metadata.GetOrAddString(identifier));
+
+            BaseNodeCodeGenerator.GeneratedRecords.Add(identifier, typeRefHandle);
+
+            var methods = type.GetMethods();
+
+            if (methods.Length > 0)
+            {
+                foreach (var method in methods)
+                {
+                    if (!method.IsStatic)
+                    {
+                        continue;
+                    }
+
+                    var methodName = method.Name;
+
+                    var methodSignature = new BlobBuilder();
+
+                    new BlobEncoder(methodSignature).MethodSignature().Parameters(1,
+                        returnType => EncodeReturnType(returnType, method.ReturnParameter),
+                        parameters => EncodeParameters(parameters, method.GetParameters()));
+
+                    MemberReferenceHandle methodMemberRef = metadata.AddMemberReference(
+                        typeRefHandle,
+                        metadata.GetOrAddString(methodName),
+                        metadata.GetOrAddBlob(methodSignature));
+
+                    BaseNodeCodeGenerator.GeneratedRoutines.Add(methodName, methodMemberRef);
+                }
+            }
+        }
+    
+    }
+
+    private static void EncodeReturnType(ReturnTypeEncoder returnTypeEncoder, ParameterInfo returnType)
+    {
+        var typeConversion = new Dictionary<string, string>
+        {
+            { "System.Int32", "integer" },
+            { "Int32", "integer" },
+            { "System.Int64", "integer" },
+            { "Int64", "integer" },
+            { "System.Boolean", "boolean" },
+            { "Boolean", "boolean" },
+            { "System.Double", "real" },
+            { "Double", "real" },
+            { "System.Float", "real" },
+            { "Float", "real" },
+            { "System.Char", "char" },
+            { "Char", "char" },
+            { "System.String", "string" },
+            { "String", "string" },
+            { "Void", "None" }
+        };
+
+        var typeStr = returnType.ParameterType.Name;
+        var success = typeConversion.TryGetValue(typeStr, out var trueType);
+        if (success)
+        {
+            switch (trueType)
+            {
+                case "integer":
+                {
+                    returnTypeEncoder.Type().Int64();
+                    break;
+                }
+                case "real":
+                {
+                    returnTypeEncoder.Type().Double();
+                    break;
+                }
+                case "boolean":
+                {
+                    returnTypeEncoder.Type().Boolean();
+                    break;
+                }
+                case "char":
+                {
+                    returnTypeEncoder.Type().Char();
+                    break;
+                }
+                case "string":
+                {
+                    returnTypeEncoder.Type().String();
+                    break;
+                }
+                case "None":
+                {
+                    returnTypeEncoder.Void();
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (returnType.ParameterType.IsArray)
+            {
+                var elementType = returnType.ParameterType.GetElementType().Name;
+                
+                Action<SignatureTypeEncoder> elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.VoidPointer(); };
+                Action<ArrayShapeEncoder> arrayShapeDelegate = delegate (ArrayShapeEncoder shapeEncoder) {
+                    var bounds = new List<int> { 0 };
+                    shapeEncoder.Shape(
+                        1, 
+                        new ImmutableArray<int>(), 
+                        new ImmutableArray<int>() { 0 }); };
+
+                
+
+                switch (elementType)
+                {
+                    case "integer":
+                    {
+                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Int64(); };
+                        break;
+                    }
+                    case "real":
+                    {
+                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Double(); };
+                        break;
+                    }
+                    case "boolean":
+                    {
+                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Boolean(); };
+                        break;
+                    }
+                    case "char":
+                    {
+                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Char(); };
+                        break;
+                    }
+                    case "string":
+                    {
+                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.String(); };
+                        break;
+                    }
+                    default:
+                    {
+                        EntityHandle record;
+                        success = BaseNodeCodeGenerator.GeneratedRecords.TryGetValue(elementType, out record);
+                        if (success)
+                        {
+                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Type(record, false); };
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException($"Unknown type {elementType}");
+                        }
+                        break;
+                    }
+                }
+
+                returnTypeEncoder.Type().Array(elementTypeDelegate, arrayShapeDelegate);
+            }
+            else
+            {
+                var actualName = typeStr.Split('.')[1];
+                var recordsSearchSuccess =
+                    BaseNodeCodeGenerator.GeneratedRecords.TryGetValue(actualName, out var acturalRecord);
+                if (recordsSearchSuccess)
+                {
+                    returnTypeEncoder.Type().Type(acturalRecord, false);
+                }
+                else
+                {
+                    throw new InvalidExpressionException($"unknown type {typeStr}");
+                }
+            }
+                
+            
+        }
+    }
+
+    private static void EncodeParameters(ParametersEncoder parametersEncoder, ParameterInfo[] parameters)
+    {
+        var typeConversion = new Dictionary<string, string>
+        {
+            { "System.Int32", "integer" },
+            { "Int32", "integer" },
+            { "System.Int64", "integer" },
+            { "Int64", "integer" },
+            { "System.Boolean", "boolean" },
+            { "Boolean", "boolean" },
+            { "System.Double", "real" },
+            { "Double", "real" },
+            { "System.Float", "real" },
+            { "Float", "real" },
+            { "System.Char", "char" },
+            { "Char", "char" },
+            { "System.String", "string" },
+            { "String", "string" },
+            { "Void", "None" }
+        };
+
+        foreach (var parameter in parameters)
+        {
+            var typeStr = parameter.ParameterType.Name;
+            var success = typeConversion.TryGetValue(typeStr, out var trueType);
+            if (success)
+            {
+                switch (trueType)
+                {
+                    case "integer":
+                    {
+                        parametersEncoder.AddParameter().Type().Int64();
+                        break;
+                    }
+                    case "real":
+                    {
+                        parametersEncoder.AddParameter().Type().Double();
+                        break;
+                    }
+                    case "boolean":
+                    {
+                        parametersEncoder.AddParameter().Type().Boolean();
+                        break;
+                    }
+                    case "char":
+                    {
+                        parametersEncoder.AddParameter().Type().Char();
+                        break;
+                    }
+                    case "string":
+                    {
+                        parametersEncoder.AddParameter().Type().String();
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if (parameter.ParameterType.IsArray)
+                {
+                    var elementType = parameter.ParameterType.GetElementType().Name;
+                    
+                    Action<SignatureTypeEncoder> elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.VoidPointer(); };
+                    Action<ArrayShapeEncoder> arrayShapeDelegate = delegate (ArrayShapeEncoder shapeEncoder) {
+                        var bounds = new List<int> { 0 };
+                        shapeEncoder.Shape(
+                            1, 
+                            new ImmutableArray<int>(), 
+                            new ImmutableArray<int>() { 0 }); };
+
+                    
+
+                    switch (elementType)
+                    {
+                        case "integer":
+                        {
+                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Int64(); };
+                            break;
+                        }
+                        case "real":
+                        {
+                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Double(); };
+                            break;
+                        }
+                        case "boolean":
+                        {
+                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Boolean(); };
+                            break;
+                        }
+                        case "char":
+                        {
+                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Char(); };
+                            break;
+                        }
+                        case "string":
+                        {
+                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.String(); };
+                            break;
+                        }
+                        default:
+                        {
+                            EntityHandle record;
+                            success = BaseNodeCodeGenerator.GeneratedRecords.TryGetValue(elementType, out record);
+                            if (success)
+                            {
+                                elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Type(record, false); };
+                            }
+                            else
+                            {
+                                throw new InvalidOperationException($"Unknown type {elementType}");
+                            }
+                            break;
+                        }
+                    }
+
+                    parametersEncoder.AddParameter().Type().Array(elementTypeDelegate, arrayShapeDelegate);
+                }
+                else
+                {
+                    var actualName = typeStr.Split('.')[1];
+                    var recordsSearchSuccess =
+                        BaseNodeCodeGenerator.GeneratedRecords.TryGetValue(actualName, out var acturalRecord);
+                    if (recordsSearchSuccess)
+                    {
+                        parametersEncoder.AddParameter().Type().Type(acturalRecord, false);
+                    }
+                    else
+                    {
+                        throw new InvalidExpressionException($"unknown type {typeStr}");
+                    }
+                }
+                
+            }
+        }
     }
 }

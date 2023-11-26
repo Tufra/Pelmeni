@@ -7,9 +7,8 @@ namespace PelmeniCompilers.CodeGeneration.Generators;
 
 public abstract class BaseNodeCodeGenerator
 {
-    public static readonly Dictionary<string, MethodDefinitionHandle> GeneratedRoutines = new();
-    public static readonly Dictionary<string, TypeDefinitionHandle> GeneratedRecords = new();
-    protected static Stack<Node> Chain { get; set; } = new();
+    public static readonly Dictionary<string, EntityHandle> GeneratedRoutines = new();
+    public static readonly Dictionary<string, EntityHandle> GeneratedRecords = new();
     
     public abstract NodeType GeneratingCodeNodeType { get; }
 

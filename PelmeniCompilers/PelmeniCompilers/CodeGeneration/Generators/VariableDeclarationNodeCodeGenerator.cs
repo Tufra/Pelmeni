@@ -126,7 +126,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    TypeDefinitionHandle record;
+                    EntityHandle record;
                     var success = GeneratedRecords.TryGetValue(elementType.Token!.Value, out record);
                     if (success)
                     {
@@ -186,7 +186,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    TypeDefinitionHandle record;
+                    EntityHandle record;
                     var success = GeneratedRecords.TryGetValue(type.Token!.Value, out record);
                     if (success)
                     {
@@ -251,7 +251,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    TypeDefinitionHandle record;
+                    EntityHandle record;
                     var success = GeneratedRecords.TryGetValue(elementType.Token!.Value, out record);
                     if (success)
                     {

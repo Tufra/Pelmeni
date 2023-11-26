@@ -12,8 +12,6 @@ namespace PelmeniCompilers.CodeGeneration.Generators;
 public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
 {
     public override NodeType GeneratingCodeNodeType => NodeType.RoutineDeclaration;
-    public static MethodDefinitionHandle hanldle = MetadataTokens.MethodDefinitionHandle(2);
-
     public override void GenerateCode(Node node, CodeGeneratorContext codeGeneratorContext)
     {
         var identifier = node.Children[0].Token!.Value;
@@ -28,6 +26,11 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
         codeGeneratorContext.LocalVariablesIndex = new Dictionary<string, int>();
         codeGeneratorContext.LastVariableIndex = -1;
         codeGeneratorContext.VarEncoder = varEncoder;
+
+        var index = codeGeneratorContext.LastRoutineIndex + 1;
+        codeGeneratorContext.LastRoutineIndex++;
+        
+        GeneratedRoutines.Add(identifier, MetadataTokens.MethodDefinitionHandle(index));
 
 
         var routineSignature = new BlobBuilder();
@@ -57,8 +60,6 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
             codeGeneratorContext.MetadataBuilder.GetOrAddBlob(routineSignature),
             offset,
             parameterList: default(ParameterHandle));
-
-        GeneratedRoutines.Add(identifier, methodHandle);
     }
 
     private void EncodeParameters(List<Node> parameters, ParametersEncoder parametersEncoder, CodeGeneratorContext context)
@@ -116,7 +117,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                     }
                     default:
                     {
-                        TypeDefinitionHandle record;
+                        EntityHandle record;
                         var success = GeneratedRecords.TryGetValue(elementType.Token!.Value, out record);
                         if (success)
                         {
@@ -162,7 +163,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    TypeDefinitionHandle record;
+                    EntityHandle record;
                     var success = GeneratedRecords.TryGetValue(parameter.Children[1].Children[0].Token!.Value, out record);
                     if (success)
                     {
@@ -221,7 +222,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    TypeDefinitionHandle record;
+                    EntityHandle record;
                     var success = GeneratedRecords.TryGetValue(type.Token!.Value, out record);
                     if (success)
                     {
@@ -286,7 +287,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    TypeDefinitionHandle record;
+                    EntityHandle record;
                     var success = GeneratedRecords.TryGetValue(elementType.Token!.Value, out record);
                     if (success)
                     {
