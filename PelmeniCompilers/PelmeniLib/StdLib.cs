@@ -23,5 +23,10 @@ namespace PelmeniLib
         {
             return left + right;
         }
+
+        public static bool StringEquals(string a, string b)
+        {
+            return a.Equals(b);
+        }
     }
 }

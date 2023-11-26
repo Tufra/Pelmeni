@@ -11,9 +11,6 @@ type B is record
 end;
 
 routine ddd(): string is	
-	if 5 > 0 then
-		return "pos";
-	end
 	Print("ddd");
 	return "mmm";
 end

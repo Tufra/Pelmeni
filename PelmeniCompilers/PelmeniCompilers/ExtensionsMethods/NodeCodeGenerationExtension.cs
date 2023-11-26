@@ -248,14 +248,15 @@ public static class NodeCodeGenerationExtension
         for (var i = mainOffset; i < mainOffset + routineCount; i++)
         {
             var label = il.DefineLabel();
-            il.LoadArgumentAddress(0);
+            il.LoadArgument(0);
             il.LoadConstantI8(0);
             il.OpCode(ILOpCode.Ldelem_ref);
             il.LoadString(metadata.GetOrAddUserString(routinesNames[i - mainOffset]));
-            il.Call(stringEqualsMemberRef);
+            il.Call(BaseNodeCodeGenerator.GeneratedRoutines["StringEquals"]);
             il.Branch(ILOpCode.Brfalse, label);
             il.Call(MetadataTokens.MethodDefinitionHandle(i));
             il.OpCode(ILOpCode.Pop);
+            il.OpCode(ILOpCode.Ret);
             il.MarkLabel(label);
         }
 
@@ -352,7 +353,9 @@ public static class NodeCodeGenerationExtension
 
                     var methodSignature = new BlobBuilder();
 
-                    new BlobEncoder(methodSignature).MethodSignature().Parameters(1,
+                    var paramsNumber = method.GetParameters().Length;
+
+                    new BlobEncoder(methodSignature).MethodSignature().Parameters(paramsNumber,
                         returnType => EncodeReturnType(returnType, method.ReturnParameter),
                         parameters => EncodeParameters(parameters, method.GetParameters()));
 
@@ -564,6 +567,21 @@ public static class NodeCodeGenerationExtension
                     case "string":
                     {
                         parametersEncoder.AddParameter().Type().String();
+                        break;
+                    }
+                    default:
+                    {
+                        var actualName = typeStr.Split('.')[1];
+                        success = BaseNodeCodeGenerator.GeneratedRecords.TryGetValue(actualName, out var record);
+                        if (success)
+                        {
+                            parametersEncoder.AddParameter().Type().Type(record, false);
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException($"Unknown type {trueType}");
+                        }
+
                         break;
                     }
                 }
