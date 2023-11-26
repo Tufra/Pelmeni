@@ -23,9 +23,11 @@ public class RoutineCallNodeCodeGenerator : BaseNodeCodeGenerator
             param.GenerateCode(codeGeneratorContext);
         }
 
+        var routine = BaseNodeRuleChecker.GetRoutineOrThrowIfNotDeclared(node);
+
         var handle = GeneratedRoutines[identifier];
         il.Call(handle);
-        if (codeGeneratorContext.IsValueObsolete && BaseNodeRuleChecker.RoutineVirtualTable[identifier].ReturnType != "None")
+        if (codeGeneratorContext.IsValueObsolete && routine.ReturnType != "None")
         {
             il.OpCode(ILOpCode.Pop);
         }

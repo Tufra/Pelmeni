@@ -15,6 +15,7 @@ public abstract class BaseNodeRuleChecker
     protected static Stack<Node> Chain { get; set; }
 
     public static Dictionary<string, RoutineVirtualTableEntry> RoutineVirtualTable { get; set; }
+    public static Dictionary<string, RoutineVirtualTableEntry> LibRoutineVirtualTable { get; set; }
     public static Dictionary<string, RecordVirtualTableEntry> RecordVirtualTable { get; set; }
 
     static BaseNodeRuleChecker()
@@ -23,6 +24,7 @@ public abstract class BaseNodeRuleChecker
         Chain = new Stack<Node>();
         RoutineVirtualTable = new Dictionary<string, RoutineVirtualTableEntry>();
         RecordVirtualTable = new Dictionary<string, RecordVirtualTableEntry>();
+        LibRoutineVirtualTable = new Dictionary<string, RoutineVirtualTableEntry>();
     }
 
     public abstract void Check(Node node);
@@ -56,15 +58,22 @@ public abstract class BaseNodeRuleChecker
         return identifier;
     }
 
-    protected static RoutineVirtualTableEntry GetRoutineOrThrowIfNotDeclared(Node node)
+    public static RoutineVirtualTableEntry GetRoutineOrThrowIfNotDeclared(Node node)
     {
         var identifier = node.Children[0].Token!.Value;
         var location = node.Children[0].Token!.Location;
 
-        if (!RoutineVirtualTable.ContainsKey(identifier))
-            throw new InvalidOperationException($"Routine {identifier} at {location} was not declared");
+        if (RoutineVirtualTable.TryGetValue(identifier, out var declared))
+        {
+            return declared;
+        }
 
-        return RoutineVirtualTable[identifier];
+        if (LibRoutineVirtualTable.TryGetValue(identifier, out var declaredInLib))
+        {
+            return declaredInLib;
+        }
+        
+        throw new InvalidOperationException($"Routine {identifier} at {location} was not declared");
     }
 
     protected static RecordVirtualTableEntry GetRecordOrThrowIfNotDeclared(string identifier, LexLocation location)

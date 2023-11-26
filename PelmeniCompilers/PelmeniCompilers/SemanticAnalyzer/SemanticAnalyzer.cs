@@ -153,7 +153,7 @@ public class SemanticAnalyzer
                     }
 
                     routineVirtualTableEntry.Parameters = parametersList;
-                    BaseNodeRuleChecker.RoutineVirtualTable.Add(methodName, routineVirtualTableEntry);
+                    BaseNodeRuleChecker.LibRoutineVirtualTable.Add(methodName, routineVirtualTableEntry);
                 }
             }
             
