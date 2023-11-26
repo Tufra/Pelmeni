@@ -20,4 +20,8 @@
         <Folder Include="ShiftReduceParser\"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\PelmeniLib\PelmeniLib.csproj" />
+    </ItemGroup>
+
 </Project>
