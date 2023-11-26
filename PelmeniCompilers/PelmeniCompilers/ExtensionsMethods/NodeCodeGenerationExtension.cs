@@ -102,8 +102,6 @@ public static class NodeCodeGenerationExtension
             parameterlessCtorBlobIndex);
 
 
-
-
         var codeBuilder = new BlobBuilder();
         InstructionEncoder il;
 
@@ -174,19 +172,23 @@ public static class NodeCodeGenerationExtension
         //
         // STDLIB REF
         //
-        
+
         GenerateStdLibReferences("PelmeniLib", "PelmeniLib", metadata);
-        
+
         //
         // END STDLIB REF
         //
-        
+
         TypeReferenceHandle systemConsoleTypeRefHandle = metadata.AddTypeReference(
             mscorlibAssemblyRef,
             metadata.GetOrAddString("System"),
             metadata.GetOrAddString("Console"));
-        
-        
+
+        TypeReferenceHandle systemStringTypeRefHandle = metadata.AddTypeReference(
+            mscorlibAssemblyRef,
+            metadata.GetOrAddString("System"),
+            metadata.GetOrAddString("String"));
+
         // Get reference to Console.WriteLine(string) method.
         var consoleWriteLineSignature = new BlobBuilder();
 
@@ -199,18 +201,64 @@ public static class NodeCodeGenerationExtension
             metadata.GetOrAddString("WriteLine"),
             metadata.GetOrAddBlob(consoleWriteLineSignature));
 
+        var stringEqualsSignature = new BlobBuilder();
+
+        new BlobEncoder(consoleWriteLineSignature).MethodSignature().Parameters(1,
+            returnType => returnType.Type().Boolean(),
+            parameters =>
+            {
+                parameters.AddParameter().Type().String();
+                parameters.AddParameter().Type().String();
+            });
+
+        MemberReferenceHandle stringEqualsMemberRef = metadata.AddMemberReference(
+            systemStringTypeRefHandle,
+            metadata.GetOrAddString("Equals"),
+            metadata.GetOrAddBlob(stringEqualsSignature));
+
         // Create signature for "void Main()" method.
         var mainSignature = new BlobBuilder();
 
-        new BlobEncoder(mainSignature).
-            MethodSignature().
-            Parameters(0, returnType => returnType.Void(), parameters => { });
-        
+        new BlobEncoder(mainSignature).MethodSignature()
+            .Parameters(1, returnType => returnType.Void(),
+                parameters =>
+                {
+                    parameters.AddParameter().Type().SZArray().String();
+                    /*var sizes = ImmutableArray.Create<int>(10);
+                    var lowerBounds = ImmutableArray.Create<int>();
+                    parameters.AddParameter().Type().Array(typeEncoder => typeEncoder.String(),
+                        shapeEncoder => shapeEncoder.Shape(1, sizes, lowerBounds));*/
+                });
+
+
         var codeBuilder = new BlobBuilder();
-        
+
         // Emit IL for Program::Main
         var flowBuilder = new ControlFlowBuilder();
         var il = new InstructionEncoder(codeBuilder, flowBuilder);
+
+
+        var recordCount = BaseNodeRuleChecker.RecordVirtualTable.Count;
+        var routineCount = BaseNodeRuleChecker.RoutineVirtualTable.Count;
+        var routineEntries = BaseNodeRuleChecker.RoutineVirtualTable.Values.ToList();
+        routineEntries.Sort();
+        var routinesNames = routineEntries.Select(entry => entry.Name).ToList();
+        var mainOffset = recordCount + 2;
+
+        for (var i = mainOffset; i < mainOffset + routineCount; i++)
+        {
+            var label = il.DefineLabel();
+            il.LoadArgumentAddress(0);
+            il.LoadConstantI8(0);
+            il.OpCode(ILOpCode.Ldelem_ref);
+            il.LoadString(metadata.GetOrAddUserString(routinesNames[i - mainOffset]));
+            il.Call(stringEqualsMemberRef);
+            il.Branch(ILOpCode.Brfalse, label);
+            il.Call(MetadataTokens.MethodDefinitionHandle(i));
+            il.OpCode(ILOpCode.Pop);
+            il.MarkLabel(label);
+        }
+
 
         // ldstr "hello"
         // il.LoadString(metadata.GetOrAddUserString("Hello, world"));
@@ -221,12 +269,12 @@ public static class NodeCodeGenerationExtension
 
         // }
 
-        il.LoadConstantI8(-5);
+        /*il.LoadConstantI8(-5);
         il.Call(MetadataTokens.MethodDefinitionHandle(4));
         // il.Call(BaseNodeCodeGenerator.GeneratedRoutines["IntToString"]);
-        
-        il.Call(BaseNodeCodeGenerator.GeneratedRoutines["Print"]);
-        
+
+        il.Call(BaseNodeCodeGenerator.GeneratedRoutines["Print"]);*/
+
         // il.Call(intToStringMemberRef);
         // il.Call(printMemberRef);
         //
@@ -235,16 +283,15 @@ public static class NodeCodeGenerationExtension
 
         // il.Call(consoleWriteLineMemberRef);
         // call void [mscorlib]System.Console::WriteLine(string)
-            
-        
+
+
         // ret
         il.OpCode(ILOpCode.Ret);
 
         int mainBodyOffset = methodBodyStreamEncoder.AddMethodBody(il);
         codeBuilder.Clear();
 
-        
-        
+
         // Create method definition for Program::Main
         MethodDefinitionHandle mainMethodDef = metadata.AddMethodDefinition(
             MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,
@@ -253,10 +300,10 @@ public static class NodeCodeGenerationExtension
             metadata.GetOrAddBlob(mainSignature),
             mainBodyOffset,
             parameterList: default(ParameterHandle));
-        
+
         return mainMethodDef;
     }
-    
+
     public static void GenerateCode(this Node node, CodeGeneratorContext codeGenerationContext)
     {
         if (node.Type == NodeType.Program)
@@ -267,7 +314,6 @@ public static class NodeCodeGenerationExtension
 
     private static void GenerateStdLibReferences(string name, string namespace_, MetadataBuilder metadata)
     {
-        
         var libAssemblyRef = metadata.AddAssemblyReference(
             name: metadata.GetOrAddString("PelmeniLib"),
             version: new Version(1, 0, 0, 0),
@@ -275,14 +321,13 @@ public static class NodeCodeGenerationExtension
             publicKeyOrToken: default,
             flags: default(AssemblyFlags),
             hashValue: default(BlobHandle));
-        
+
         var assembly = Assembly.Load(name);
         var userTypes = assembly.GetTypes()
             .Where(t => t.Namespace == namespace_)
             .Where(t => !t.GetTypeInfo().IsDefined(typeof(CompilerGeneratedAttribute), true));
         foreach (var type in userTypes)
         {
-
             var identifier = type.Name;
 
             TypeReferenceHandle typeRefHandle = metadata.AddTypeReference(
@@ -320,7 +365,6 @@ public static class NodeCodeGenerationExtension
                 }
             }
         }
-    
     }
 
     private static void EncodeReturnType(ReturnTypeEncoder returnTypeEncoder, ParameterInfo returnType)
@@ -387,42 +431,46 @@ public static class NodeCodeGenerationExtension
             if (returnType.ParameterType.IsArray)
             {
                 var elementType = returnType.ParameterType.GetElementType().Name;
-                
-                Action<SignatureTypeEncoder> elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.VoidPointer(); };
-                Action<ArrayShapeEncoder> arrayShapeDelegate = delegate (ArrayShapeEncoder shapeEncoder) {
+
+                Action<SignatureTypeEncoder> elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder)
+                {
+                    typeEncoder.VoidPointer();
+                };
+                Action<ArrayShapeEncoder> arrayShapeDelegate = delegate(ArrayShapeEncoder shapeEncoder)
+                {
                     var bounds = new List<int> { 0 };
                     shapeEncoder.Shape(
-                        1, 
-                        new ImmutableArray<int>(), 
-                        new ImmutableArray<int>() { 0 }); };
+                        1,
+                        new ImmutableArray<int>(),
+                        new ImmutableArray<int>() { 0 });
+                };
 
-                
 
                 switch (elementType)
                 {
                     case "integer":
                     {
-                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Int64(); };
+                        elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.Int64(); };
                         break;
                     }
                     case "real":
                     {
-                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Double(); };
+                        elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.Double(); };
                         break;
                     }
                     case "boolean":
                     {
-                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Boolean(); };
+                        elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.Boolean(); };
                         break;
                     }
                     case "char":
                     {
-                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Char(); };
+                        elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.Char(); };
                         break;
                     }
                     case "string":
                     {
-                        elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.String(); };
+                        elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.String(); };
                         break;
                     }
                     default:
@@ -431,12 +479,16 @@ public static class NodeCodeGenerationExtension
                         success = BaseNodeCodeGenerator.GeneratedRecords.TryGetValue(elementType, out record);
                         if (success)
                         {
-                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Type(record, false); };
+                            elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder)
+                            {
+                                typeEncoder.Type(record, false);
+                            };
                         }
                         else
                         {
                             throw new InvalidOperationException($"Unknown type {elementType}");
                         }
+
                         break;
                     }
                 }
@@ -457,8 +509,6 @@ public static class NodeCodeGenerationExtension
                     throw new InvalidExpressionException($"unknown type {typeStr}");
                 }
             }
-                
-            
         }
     }
 
@@ -523,42 +573,46 @@ public static class NodeCodeGenerationExtension
                 if (parameter.ParameterType.IsArray)
                 {
                     var elementType = parameter.ParameterType.GetElementType().Name;
-                    
-                    Action<SignatureTypeEncoder> elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.VoidPointer(); };
-                    Action<ArrayShapeEncoder> arrayShapeDelegate = delegate (ArrayShapeEncoder shapeEncoder) {
+
+                    Action<SignatureTypeEncoder> elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder)
+                    {
+                        typeEncoder.VoidPointer();
+                    };
+                    Action<ArrayShapeEncoder> arrayShapeDelegate = delegate(ArrayShapeEncoder shapeEncoder)
+                    {
                         var bounds = new List<int> { 0 };
                         shapeEncoder.Shape(
-                            1, 
-                            new ImmutableArray<int>(), 
-                            new ImmutableArray<int>() { 0 }); };
+                            1,
+                            new ImmutableArray<int>(),
+                            new ImmutableArray<int>() { 0 });
+                    };
 
-                    
 
                     switch (elementType)
                     {
                         case "integer":
                         {
-                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Int64(); };
+                            elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.Int64(); };
                             break;
                         }
                         case "real":
                         {
-                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Double(); };
+                            elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.Double(); };
                             break;
                         }
                         case "boolean":
                         {
-                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Boolean(); };
+                            elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.Boolean(); };
                             break;
                         }
                         case "char":
                         {
-                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Char(); };
+                            elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.Char(); };
                             break;
                         }
                         case "string":
                         {
-                            elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.String(); };
+                            elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.String(); };
                             break;
                         }
                         default:
@@ -567,12 +621,16 @@ public static class NodeCodeGenerationExtension
                             success = BaseNodeCodeGenerator.GeneratedRecords.TryGetValue(elementType, out record);
                             if (success)
                             {
-                                elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Type(record, false); };
+                                elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder)
+                                {
+                                    typeEncoder.Type(record, false);
+                                };
                             }
                             else
                             {
                                 throw new InvalidOperationException($"Unknown type {elementType}");
                             }
+
                             break;
                         }
                     }
@@ -593,7 +651,6 @@ public static class NodeCodeGenerationExtension
                         throw new InvalidExpressionException($"unknown type {typeStr}");
                     }
                 }
-                
             }
         }
     }

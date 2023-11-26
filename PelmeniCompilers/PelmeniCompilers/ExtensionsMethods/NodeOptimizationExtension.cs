@@ -1,4 +1,5 @@
 ﻿using PelmeniCompilers.Models;
+using PelmeniCompilers.SemanticAnalyzer;
 using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.ExtensionsMethods;
@@ -33,6 +34,7 @@ public static class NodeOptimizationExtension
         }
 
         var unusedVariables = RecordUsage.Where(entry => !entry.Value).Select(entry => entry.Key).ToList();
+        unusedVariables.ForEach(unusedVariable => BaseNodeRuleChecker.RecordVirtualTable.Remove(unusedVariable.Children[0].Token!.Value));
         unusedVariables.ForEach(unusedVariable => node.Children.Remove(unusedVariable));
     }
 }

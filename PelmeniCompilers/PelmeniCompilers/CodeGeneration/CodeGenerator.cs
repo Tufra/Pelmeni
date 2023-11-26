@@ -29,14 +29,18 @@ public class CodeGenerator
         SContentId = new BlobContentId(SGuid, (uint)new Random().Next());
     }
 
-    public void GenerateCode(string outputFile = "output.exe")
+    public void GenerateCode(string entryMethod, string outputFile = "output.exe")
     {
+        // TODO
+        /*if (string.IsNullOrWhiteSpace(entryMethod))
+            throw new InvalidOperationException();*/
+        
         using var peStream = new FileStream(
             outputFile, FileMode.OpenOrCreate, FileAccess.ReadWrite
         );
 
-
-        var (metadataBuilder, ilBuilder, entryPoint) = _mainNode.GenerateProgram("");
+        entryMethod = "";
+        var (metadataBuilder, ilBuilder, entryPoint) = _mainNode.GenerateProgram(entryMethod);
         WritePEImage(peStream, metadataBuilder, ilBuilder, entryPoint);
     }
 

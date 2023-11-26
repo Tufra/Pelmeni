@@ -39,7 +39,7 @@ internal static class Program
             PrintTree(tree);
 
             var codeGenerator = new CodeGenerator(tree);
-            codeGenerator.GenerateCode();
+            codeGenerator.GenerateCode("");
         }
         catch (Exception e)
         {

@@ -95,12 +95,13 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
             var typeEncoder = new SignatureTypeEncoder(bb);
             var shapeEncoder = new ArrayShapeEncoder(bb);
 
-            Action<SignatureTypeEncoder> elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.VoidPointer(); };
-            Action<ArrayShapeEncoder> arrayShapeDelegate = delegate (ArrayShapeEncoder shapeEncoder) {
+            var elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.VoidPointer(); };
+            var arrayShapeDelegate = delegate (ArrayShapeEncoder shapeEncoder) {
                 var sizes = new List<int> { int.Parse(size!) };
                 var bounds = new List<int> { 0 };
                 shapeEncoder.Shape(1, sizes.ToImmutableArray(), bounds.ToImmutableArray()); };
 
+            // TODO Многомерные массивы
             if (elementType.Type == NodeType.ArrayType)
             {
                 throw new NotImplementedException();
@@ -135,8 +136,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    EntityHandle record;
-                    var success = GeneratedRecords.TryGetValue(elementType.Token!.Value, out record);
+                    var success = GeneratedRecords.TryGetValue(elementType.Token!.Value, out var record);
                     if (success)
                     {
                         elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Type(record, false); };

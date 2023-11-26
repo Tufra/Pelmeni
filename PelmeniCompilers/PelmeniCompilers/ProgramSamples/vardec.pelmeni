@@ -10,20 +10,17 @@ type B is record
     var d: string;
 end;
 
-routine ddd(val: integer): string is	
-	if val > 0 then
+routine ddd(): string is	
+	if 5 > 0 then
 		return "pos";
 	end
-
+	Print("ddd");
 	return "mmm";
 end
 
-routine gg(c: A, d: B) is
-    Print("amogus");
-    gg(c, d);
-end
 
-routine empty(s: integer): integer is
+routine empty(): integer is
     IntToString(6);
-	return (5 * s + 4 * s + 3 * s + 2 * s + s);
+    	Print("empty");
+	return (5 * 1 + 4 * 1 + 3 * 1 + 2 * 1 + 1);
 end
