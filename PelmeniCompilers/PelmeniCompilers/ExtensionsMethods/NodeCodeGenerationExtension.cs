@@ -221,8 +221,12 @@ public static class NodeCodeGenerationExtension
 
         // }
 
-        il.LoadConstantI8(5);
-        il.Call(MetadataTokens.MethodDefinitionHandle(6));
+        il.LoadConstantI8(-5);
+        il.Call(MetadataTokens.MethodDefinitionHandle(4));
+        // il.Call(BaseNodeCodeGenerator.GeneratedRoutines["IntToString"]);
+        
+        il.Call(BaseNodeCodeGenerator.GeneratedRoutines["Print"]);
+        
         // il.Call(intToStringMemberRef);
         // il.Call(printMemberRef);
         //

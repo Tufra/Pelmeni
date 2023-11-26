@@ -72,7 +72,16 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    throw new NotImplementedException();
+                    var success = GeneratedRecords.TryGetValue(type.Token!.Value, out var record);
+                    if (success)
+                    {
+                        varEncoder.AddVariable().Type().Type(record, false);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Unknown type {type.Token!.Value}");
+                    }
+                    break;
                 }
             }
 
