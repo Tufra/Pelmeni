@@ -15,9 +15,13 @@ type C is record
     var amogus: string;
 end;
 
-routine ddd(): string is	
-	Print("ddd");
-	return "mmm";
+routine ddd() : integer is
+	var a : integer is 1;	
+	while a < 5 loop
+		a := a + 1;
+		Print(IntToString(a));
+	end
+	return a;
 end
 
 routine putin(): integer is
