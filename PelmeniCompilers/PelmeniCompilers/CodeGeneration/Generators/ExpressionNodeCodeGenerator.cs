@@ -14,8 +14,6 @@ public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
     {
         var il = codeGeneratorContext.InstructionEncoder;
         var metadata = codeGeneratorContext.MetadataBuilder;
-
-        codeGeneratorContext.IsValueObsolete = false;
         
         if (node is ComputedExpression && ((ComputedExpression)node).Value is not null)
         {
@@ -56,7 +54,6 @@ public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
                 }
             }
             
-            codeGeneratorContext.IsValueObsolete = true;
             return;
         }
 
@@ -64,7 +61,6 @@ public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
 
         child.GenerateCode(codeGeneratorContext);
         
-        codeGeneratorContext.IsValueObsolete = true;
     }
 
 

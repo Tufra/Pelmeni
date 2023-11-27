@@ -33,7 +33,17 @@ public class SummandNodeCodeGenerator : BaseNodeCodeGenerator
         }
         else
         {
-            child.GenerateCode(codeGeneratorContext);
+            if (child.Type == NodeType.RoutineCall)
+            {
+                codeGeneratorContext.IsValueObsolete = false;
+                child.GenerateCode(codeGeneratorContext);
+                codeGeneratorContext.IsValueObsolete = true;
+            }
+            else
+            {
+                child.GenerateCode(codeGeneratorContext);
+            }
+            
         }
 
         if (node.Children.Count > 1 && sign.Children.Count > 0)
