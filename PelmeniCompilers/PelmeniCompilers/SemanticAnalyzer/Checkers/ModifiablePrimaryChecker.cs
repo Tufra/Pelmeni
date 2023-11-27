@@ -13,7 +13,7 @@ public class ModifiablePrimaryChecker : BaseNodeRuleChecker
         var variable = GetVariableOrThrowIfNotDeclared(chain[0]);
 
         string type = variable.Type;
-        chain[0] = new ComputedExpression(chain[0].Type, chain[0].Token, type, variable.Value);
+        chain[0] = new ComputedExpression(chain[0].Type, chain[0].Token, type, null);
 
         if (variable.Node is not null)
             NodeOptimizationExtension.VariableUsage[variable.Node] = true;
