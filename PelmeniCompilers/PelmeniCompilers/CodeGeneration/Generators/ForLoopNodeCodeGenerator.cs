@@ -39,8 +39,10 @@ public class ForLoopNodeCodeGenerator : BaseNodeCodeGenerator
         il.StoreLocal(counterIndex);
 
         #region cond
-
+        
         il.MarkLabel(condLabel);
+        
+        il.LoadLocal(counterIndex);
         endRangeNode.GenerateCode(codeGeneratorContext);
        
         il.Branch(!isReverse ? ILOpCode.Bge : ILOpCode.Ble, endLabel);
@@ -54,6 +56,7 @@ public class ForLoopNodeCodeGenerator : BaseNodeCodeGenerator
         il.LoadLocal(counterIndex);
         il.LoadConstantI8(1);
         il.OpCode(!isReverse ? ILOpCode.Add : ILOpCode.Sub);
+        il.StoreLocal(counterIndex);
         
         il.Branch(ILOpCode.Br, condLabel);
 
