@@ -16,8 +16,10 @@ type C is record
 end;
 
 routine ddd() : integer is
-	var a : integer is 1;	
-	while a < 5 loop
+	var a : integer is 1;
+	var arr : array [10] integer;	
+	
+	for i in 1..10 loop
 		a := a + 1;
 		Print(IntToString(a));
 	end

@@ -1,4 +1,5 @@
-﻿using PelmeniCompilers.Models;
+﻿using PelmeniCompilers.CodeGeneration.Generators;
+using PelmeniCompilers.Models;
 using PelmeniCompilers.SemanticAnalyzer;
 using PelmeniCompilers.Values;
 
@@ -24,6 +25,7 @@ public static class NodeOptimizationExtension
 
         var unusedVariables = VariableUsage.Where(entry => !entry.Value).Select(entry => entry.Key).ToList();
         unusedVariables.ForEach(node.RemoveInChildren);
+        
     }
     
     private static void DeleteUnusedRecords(this Node node)

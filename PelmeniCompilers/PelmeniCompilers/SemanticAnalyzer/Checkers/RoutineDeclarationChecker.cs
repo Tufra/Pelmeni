@@ -22,12 +22,11 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
 
         var returnType = GetReturnType(node.Children[2]);
 
-        var routineSignature = new RoutineVirtualTableEntry()
+        var routineSignature = new RoutineVirtualTableEntry(node.Children[3])
         {
             Name = identifier,
             Parameters = parameters,
-            ReturnType = returnType,
-            LocalVariablesCounter = CountLocalVariables(node.Children[3])
+            ReturnType = returnType
         };
         RoutineVirtualTable[routineSignature.Name] = routineSignature;
 
@@ -84,10 +83,5 @@ public class RoutineDeclarationChecker : BaseNodeRuleChecker
         }
         return "None";
         
-    }
-
-    private static int CountLocalVariables(Node node)
-    {
-        return node.Type == NodeType.VariableDeclaration ? 1 : node.Children.Sum(CountLocalVariables);
     }
 }

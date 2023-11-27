@@ -1,5 +1,6 @@
 ﻿using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using PelmeniCompilers.SemanticAnalyzer.VirtualTable;
 using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.CodeGeneration;
@@ -23,4 +24,8 @@ public class CodeGeneratorContext
     public VariableType VariableType { get; set; }
     public int TokenOffset { get; set; } = 0;
     public AssemblyReferenceHandle MscorlibReference { get; set; }
+
+    public int ForLoopCounter { get; set; } = 0;
+    public int ForEachLoopCounter { get; set; } = 0;
+    public RoutineVirtualTableEntry RoutineVirtualTableEntry { get; set; }
 }

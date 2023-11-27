@@ -15,6 +15,11 @@ public static class NodeExtension
         if (node.Type != type)
             throw new InvalidOperationException($"{node} is expected to be {type}");
     }
+    
+    public static int CountChildrenOfType(this Node node, NodeType type)
+    {
+        return node.Type == type ? 1 : node.Children.Sum(child => child.CountChildrenOfType(type));
+    }
 
     public static void RemoveInChildren(this Node node, Node deletingNode)
     {

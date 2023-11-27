@@ -15,6 +15,8 @@ public class BodyNodeCodeGenerator : BaseNodeCodeGenerator
 
         foreach (var child in children)
         {
+            if(child.Type == NodeType.VariableDeclaration)
+                continue;
             child.GenerateCode(codeGeneratorContext);
         }
     }
