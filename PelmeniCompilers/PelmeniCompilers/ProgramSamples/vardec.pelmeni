@@ -10,14 +10,30 @@ type B is record
     var d: string;
 end;
 
+type C is record
+    var sus: string;
+    var amogus: string;
+end;
+
 routine ddd(): string is	
 	Print("ddd");
 	return "mmm";
 end
 
+routine putin(): integer is
+    var m: C;
+    
+    m.sus := "sus1";
+    m.amogus := "amogus1";
+    
+    Print(m.sus);
+    Print(m.amogus);
+    
+    return 1;
+end
 
 routine empty(): integer is
     IntToString(6);
-    	Print("empty");
+    Print("empty");
 	return (5 * 1 + 4 * 1 + 3 * 1 + 2 * 1 + 1);
 end

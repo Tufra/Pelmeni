@@ -16,7 +16,8 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
     {
         var identifier = node.Children[0].Token!.Value;
 
-        var numLocalVariables = BaseNodeRuleChecker.RoutineVirtualTable[identifier].LocalVariablesCounter;
+        var virtualTableEntry = BaseNodeRuleChecker.RoutineVirtualTable[identifier];
+        var numLocalVariables = virtualTableEntry.LocalVariablesCounter;
 
         var localVariablesBuilder = new BlobBuilder();
         var varEncoder = new BlobEncoder(localVariablesBuilder).LocalVariableSignature(numLocalVariables);
@@ -24,7 +25,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
         codeGeneratorContext.ArgumentsIndex = new Dictionary<string, int>();
         codeGeneratorContext.LastArgumentIndex = -1;
         codeGeneratorContext.LocalVariablesIndex = new Dictionary<string, int>();
-        codeGeneratorContext.LastVariableIndex = -1;
+        codeGeneratorContext.LastVariableIndex = 0;
         codeGeneratorContext.VarEncoder = varEncoder;
 
         var index = codeGeneratorContext.LastRoutineIndex + 1;
@@ -37,7 +38,9 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
 
         var blobEncoder = new BlobEncoder(routineSignature);
         blobEncoder.MethodSignature().
-            Parameters(node.Children[1].Children.Count, returnType => EncodeReturnType(node.Children[2], returnType), parameters => EncodeParameters(node.Children[1].Children, parameters, codeGeneratorContext));
+            Parameters(node.Children[1].Children.Count, 
+                returnType => EncodeReturnType(node.Children[2], returnType), 
+                parameters => EncodeParameters(node.Children[1].Children, parameters, codeGeneratorContext));
 
         var codeBuilder = new BlobBuilder();
         var flowBuilder = new ControlFlowBuilder();
@@ -163,9 +166,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    EntityHandle record;
-                    var success = GeneratedRecords.TryGetValue(parameter.Children[1].Children[0].Token!.Value, out record);
-                    if (success)
+                    if(GeneratedRecords.TryGetValue(parameter.Children[1].Children[0].Token!.Value, out var record))
                     {
                         parametersEncoder.AddParameter().Type().Type(record, false);
                     }
@@ -173,7 +174,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                     {
                         throw new InvalidOperationException($"Unknown type {parameter.Children[1].Children[0].Token!.Value}");
                     }
-                    continue;
+                    break;
                 }
             }
 
@@ -287,9 +288,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    EntityHandle record;
-                    var success = GeneratedRecords.TryGetValue(elementType.Token!.Value, out record);
-                    if (success)
+                    if(GeneratedRecords.TryGetValue(elementType.Token!.Value, out var record))
                     {
                         elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Type(record, false); };
                     }

@@ -1,5 +1,6 @@
 ﻿using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using PelmeniCompilers.Values;
 
 namespace PelmeniCompilers.CodeGeneration;
 
@@ -14,9 +15,12 @@ public class CodeGeneratorContext
     public int LastVariableIndex { get; set; } = -1;
     public Dictionary<string, int>? ArgumentsIndex { get; set; }
     public int LastArgumentIndex { get; set; } = -1;
-    public bool IsAddress { get; set; } = false;
+    public bool IsLeftValue { get; set; } = false;
     public bool IsValueObsolete { get; set; } = true;
     public TypeReferenceHandle ObjectTypeHandle { get; set; }
     public int LastFieldIndex { get; set; } = 1;
     public int LastRoutineIndex { get; set; } = 1;
+    public VariableType VariableType { get; set; }
+    public int TokenOffset { get; set; } = 0;
+    public AssemblyReferenceHandle MscorlibReference { get; set; }
 }

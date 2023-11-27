@@ -9,6 +9,7 @@ public abstract class BaseNodeCodeGenerator
 {
     public static readonly Dictionary<string, EntityHandle> GeneratedRoutines = new();
     public static readonly Dictionary<string, EntityHandle> GeneratedRecords = new();
+    public static readonly Dictionary<string, EntityHandle> TypeConversionHandles = new();
     
     public abstract NodeType GeneratingCodeNodeType { get; }
 

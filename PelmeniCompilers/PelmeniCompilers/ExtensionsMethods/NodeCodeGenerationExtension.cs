@@ -88,6 +88,7 @@ public static class NodeCodeGenerationExtension
             metadataBuilder.GetOrAddString("Object"));
 
         codeGenerationContext.ObjectTypeHandle = systemObjectTypeRef;
+        codeGenerationContext.MscorlibReference = mscorlibAssemblyRef;
 
         var parameterlessCtorSignature = new BlobBuilder();
 
@@ -174,6 +175,7 @@ public static class NodeCodeGenerationExtension
         //
 
         GenerateStdLibReferences("PelmeniLib", "PelmeniLib", metadata);
+        MakePrimitiveTypesHandles(mscorlibAssemblyRef, metadata);
 
         //
         // END STDLIB REF
@@ -183,11 +185,6 @@ public static class NodeCodeGenerationExtension
             mscorlibAssemblyRef,
             metadata.GetOrAddString("System"),
             metadata.GetOrAddString("Console"));
-
-        TypeReferenceHandle systemStringTypeRefHandle = metadata.AddTypeReference(
-            mscorlibAssemblyRef,
-            metadata.GetOrAddString("System"),
-            metadata.GetOrAddString("String"));
 
         // Get reference to Console.WriteLine(string) method.
         var consoleWriteLineSignature = new BlobBuilder();
@@ -200,21 +197,6 @@ public static class NodeCodeGenerationExtension
             systemConsoleTypeRefHandle,
             metadata.GetOrAddString("WriteLine"),
             metadata.GetOrAddBlob(consoleWriteLineSignature));
-
-        var stringEqualsSignature = new BlobBuilder();
-
-        new BlobEncoder(consoleWriteLineSignature).MethodSignature().Parameters(1,
-            returnType => returnType.Type().Boolean(),
-            parameters =>
-            {
-                parameters.AddParameter().Type().String();
-                parameters.AddParameter().Type().String();
-            });
-
-        MemberReferenceHandle stringEqualsMemberRef = metadata.AddMemberReference(
-            systemStringTypeRefHandle,
-            metadata.GetOrAddString("Equals"),
-            metadata.GetOrAddBlob(stringEqualsSignature));
 
         // Create signature for "void Main()" method.
         var mainSignature = new BlobBuilder();
@@ -247,16 +229,21 @@ public static class NodeCodeGenerationExtension
 
         for (var i = mainOffset; i < mainOffset + routineCount; i++)
         {
+            var routineName = routinesNames[i - mainOffset];
             var label = il.DefineLabel();
+            
             il.LoadArgument(0);
             il.LoadConstantI8(0);
             il.OpCode(ILOpCode.Ldelem_ref);
-            il.LoadString(metadata.GetOrAddUserString(routinesNames[i - mainOffset]));
+            il.LoadString(metadata.GetOrAddUserString(routineName));
             il.Call(BaseNodeCodeGenerator.GeneratedRoutines["StringEquals"]);
             il.Branch(ILOpCode.Brfalse, label);
+            
             il.Call(MetadataTokens.MethodDefinitionHandle(i));
-            il.OpCode(ILOpCode.Pop);
-            il.OpCode(ILOpCode.Ret);
+            if (BaseNodeRuleChecker.RoutineVirtualTable[routineName].ReturnType != "None")
+            {
+                il.OpCode(ILOpCode.Pop);
+            }
             il.MarkLabel(label);
         }
 
@@ -367,6 +354,31 @@ public static class NodeCodeGenerationExtension
                     BaseNodeCodeGenerator.GeneratedRoutines.Add(methodName, methodMemberRef);
                 }
             }
+        }
+    }
+
+    private static void MakePrimitiveTypesHandles(AssemblyReferenceHandle mscorlibReferenceHandle, MetadataBuilder metadata)
+    {
+        var types = new Dictionary<string, string>()
+        {
+            { "System.Int64", "integer" },
+            { "System.Boolean", "boolean" },
+            { "System.Double", "real" },
+            { "System.Char", "char" },
+            { "System.String", "string" }
+        };
+
+        foreach (var typesValue in types)
+        {
+            var systemType = typesValue.Key;
+            var type = typesValue.Value;
+
+            var typeRef = metadata.AddTypeReference(
+                mscorlibReferenceHandle,
+                metadata.GetOrAddString("System"),
+                metadata.GetOrAddString(systemType));
+            
+            BaseNodeCodeGenerator.TypeConversionHandles.Add(type, typeRef);
         }
     }
 

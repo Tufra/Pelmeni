@@ -4,6 +4,7 @@ using PelmeniCompilers.Values;
 using PelmeniCompilers.ExtensionsMethods;
 using System.Reflection.Metadata.Ecma335;
 using System.Collections.Immutable;
+using PelmeniCompilers.SemanticAnalyzer.VirtualTable;
 
 namespace PelmeniCompilers.CodeGeneration.Generators;
 
@@ -22,7 +23,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
             var type = node.Children[1]!;
             var initTail = node.Children[2]!;
 
-            EncodeVariable(varEncoder,identifier, type, initTail, codeGeneratorContext);
+            EncodeVariable(varEncoder, identifier, type, initTail, codeGeneratorContext);
 
             if (initTail.Children.Count > 0)
             {
@@ -72,10 +73,15 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 default:
                 {
-                    var success = GeneratedRecords.TryGetValue(type.Token!.Value, out var record);
-                    if (success)
+                    if (GeneratedRecords.TryGetValue(type.Token!.Value, out var record))
                     {
                         varEncoder.AddVariable().Type().Type(record, false);
+                        if (GeneratedRoutines.TryGetValue($"{type.Token!.Value}.ctor", out var ctor))
+                        {
+                            context.InstructionEncoder.OpCode(ILOpCode.Newobj);
+                            context.InstructionEncoder.Token(ctor);
+                            context.InstructionEncoder.StoreLocal(context.LastVariableIndex);
+                        }
                     }
                     else
                     {
@@ -107,31 +113,37 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                 throw new NotImplementedException();
             }
 
+            EntityHandle elemTypeHandle;
             switch (elementType.Token!.Value)
             {
                 case "integer":
                 {
                     elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Int64(); };
+                    TypeConversionHandles.TryGetValue("integer", out elemTypeHandle);
                     break;
                 }
                 case "real":
                 {
                     elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Double(); };
+                    TypeConversionHandles.TryGetValue("real", out elemTypeHandle);
                     break;
                 }
                 case "boolean":
                 {
                     elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Boolean(); };
+                    TypeConversionHandles.TryGetValue("boolean", out elemTypeHandle);
                     break;
                 }
                 case "char":
                 {
                     elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Char(); };
+                    TypeConversionHandles.TryGetValue("char", out elemTypeHandle);
                     break;
                 }
                 case "string":
                 {
                     elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.String(); };
+                    TypeConversionHandles.TryGetValue("string", out elemTypeHandle);
                     break;
                 }
                 default:
@@ -140,6 +152,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                     if (success)
                     {
                         elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Type(record, false); };
+                        elemTypeHandle = record;
                     }
                     else
                     {
@@ -150,9 +163,13 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
             }
 
             varEncoder.AddVariable().Type().Array(elementTypeDelegate, arrayShapeDelegate);
+            context.InstructionEncoder.OpCode(ILOpCode.Newarr);
+            context.InstructionEncoder.Token(elemTypeHandle);
+            context.InstructionEncoder.StoreLocal(context.LastVariableIndex);
+            
         }
 
-        context.LocalVariablesIndex!.Add(identifier, context.LastVariableIndex + 1);
+        context.LocalVariablesIndex!.Add(identifier, context.LastVariableIndex);
         context.LastVariableIndex++;
     }
 
@@ -283,7 +300,8 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
             System.Reflection.FieldAttributes.Public,
             context.MetadataBuilder.GetOrAddString(identifier),
             handle);
-
+        
+        
         context.LastFieldIndex++;
     }
 

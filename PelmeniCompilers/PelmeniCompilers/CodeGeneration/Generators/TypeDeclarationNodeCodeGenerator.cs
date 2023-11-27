@@ -4,6 +4,7 @@ using PelmeniCompilers.Values;
 using PelmeniCompilers.ExtensionsMethods;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
+using PelmeniCompilers.SemanticAnalyzer;
 
 namespace PelmeniCompilers.CodeGeneration.Generators;
 
@@ -31,12 +32,21 @@ public class TypeDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
             fieldList: MetadataTokens.FieldDefinitionHandle(firstFieldIndex),
             methodList: ctor);
 
-        foreach (var field in type.Children)
+        if(BaseNodeRuleChecker.RecordVirtualTable.TryGetValue(identifier, out var record))
         {
-            VariableDeclarationNodeCodeGenerator.EncodeField(field, codeGeneratorContext);
-        }
+            record.FieldOffset = codeGeneratorContext.LastFieldIndex;
+            foreach (var field in type.Children)
+            {
+                VariableDeclarationNodeCodeGenerator.EncodeField(field, codeGeneratorContext);
+            }
 
-        GeneratedRecords.Add(identifier, typeHandle);
+            GeneratedRecords.Add(identifier, typeHandle);
+        }
+        else
+        {
+            throw new InvalidOperationException($"unknown record {identifier}");
+        }
+        
     }
 
     private MethodDefinitionHandle GenerateConstructor(string identifier, CodeGeneratorContext context)
@@ -75,7 +85,7 @@ public class TypeDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
         int ctorBodyOffset = methodBodyStream.AddMethodBody(il);
         codeBuilder.Clear();
         
-        var index = context.LastRoutineIndex + 1;
+        var index = context.LastRoutineIndex;
         context.LastRoutineIndex++;
         
         GeneratedRoutines.Add($"{identifier}.ctor", MetadataTokens.MethodDefinitionHandle(index));
