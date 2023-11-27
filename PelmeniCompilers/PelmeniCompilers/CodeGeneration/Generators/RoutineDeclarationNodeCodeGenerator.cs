@@ -9,7 +9,7 @@ using PelmeniCompilers.SemanticAnalyzer;
 
 namespace PelmeniCompilers.CodeGeneration.Generators;
 
-public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
+public class RoutineDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
 {
     public override NodeType GeneratingCodeNodeType => NodeType.RoutineDeclaration;
     public override void GenerateCode(Node node, CodeGeneratorContext codeGeneratorContext)
@@ -17,7 +17,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
         var identifier = node.Children[0].Token!.Value;
 
         var virtualTableEntry = BaseNodeRuleChecker.RoutineVirtualTable[identifier];
-        var numLocalVariables = virtualTableEntry.LocalVariablesCounter;
+        var numLocalVariables = virtualTableEntry.LocalVariablesCounter + virtualTableEntry.ForLoopsCounter + virtualTableEntry.ForeachLoopsCounter * 2;
 
         var localVariablesBuilder = new BlobBuilder();
         var varEncoder = new BlobEncoder(localVariablesBuilder).LocalVariableSignature(numLocalVariables);
@@ -27,6 +27,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
         codeGeneratorContext.LocalVariablesIndex = new Dictionary<string, int>();
         codeGeneratorContext.LastVariableIndex = 0;
         codeGeneratorContext.VarEncoder = varEncoder;
+        codeGeneratorContext.RoutineVirtualTableEntry = virtualTableEntry;
 
         var index = codeGeneratorContext.LastRoutineIndex + 1;
         codeGeneratorContext.LastRoutineIndex++;
@@ -49,6 +50,7 @@ public class RoutineNodeCodeGenerator : BaseNodeCodeGenerator
         // BODY
 
         var body = node.Children[3]!;
+        body.EncodeVariables(codeGeneratorContext);
         body.GenerateCode(codeGeneratorContext);
 
         // END BODY

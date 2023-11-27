@@ -684,4 +684,18 @@ public static class NodeCodeGenerationExtension
             }
         }
     }
+
+    public static void EncodeVariables(this Node node, CodeGeneratorContext context)
+    {
+        if (node.Type == NodeType.VariableDeclaration)
+        {
+            node.GenerateCode(context);
+            return;
+        }
+        
+        foreach (var child in node.Children)
+        {
+            child.EncodeVariables(context);
+        }
+    }
 }
