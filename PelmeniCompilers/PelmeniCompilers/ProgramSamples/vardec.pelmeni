@@ -15,21 +15,13 @@ type C is record
     var amogus: string;
 end;
 
-routine ddd() : integer is
-	var a : integer is 0;
-	var b : integer is 1;
-	var c : integer;
+routine ddd() is
+	var arr : array [1] integer;
+	arr[0] := 0;
 	
-	var n : integer is 10;
-	
-	for i in 3..n loop
-		c := a + b;
-		a := b;
-		b := c;
-		PrintLine(IntToString(c));
+	foreach i from arr loop
+		PrintLine(i);
 	end
-	
-	return a;
 end
 
 routine putin() is

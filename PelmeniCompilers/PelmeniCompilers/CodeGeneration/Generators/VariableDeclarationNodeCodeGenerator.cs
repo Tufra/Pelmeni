@@ -41,7 +41,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
         
     }
 
-    private void EncodeVariable(LocalVariablesEncoder varEncoder, string identifier, Node typeTail, Node expr, CodeGeneratorContext context)
+    public static void EncodeVariable(LocalVariablesEncoder varEncoder, string identifier, Node typeTail, Node expr, CodeGeneratorContext context)
     {
         if (typeTail.Children.Count == 0)
         {

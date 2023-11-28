@@ -12,7 +12,7 @@ public class ForLoopNodeCodeGenerator : BaseNodeCodeGenerator
     public override void GenerateCode(Node node, CodeGeneratorContext codeGeneratorContext)
     {
         var counterIndex = codeGeneratorContext.RoutineVirtualTableEntry.LocalVariablesCounter +
-                           codeGeneratorContext.ForLoopCounter;
+                           codeGeneratorContext.ForLoopCounter + codeGeneratorContext.ForEachLoopCounter * 2;
 
         var varEncoder = codeGeneratorContext.VarEncoder!.Value;
         var il = codeGeneratorContext.InstructionEncoder;
