@@ -361,11 +361,12 @@ public static class NodeCodeGenerationExtension
     {
         var types = new Dictionary<string, string>()
         {
-            { "System.Int64", "integer" },
-            { "System.Boolean", "boolean" },
-            { "System.Double", "real" },
-            { "System.Char", "char" },
-            { "System.String", "string" }
+            { "Int64", "integer" },
+            { "Boolean", "boolean" },
+            { "Double", "real" },
+            { "Char", "char" },
+            { "String", "string" },
+            { "Object", "Any"}
         };
 
         foreach (var typesValue in types)
@@ -400,6 +401,8 @@ public static class NodeCodeGenerationExtension
             { "Char", "char" },
             { "System.String", "string" },
             { "String", "string" },
+            { "System.Object", "Any"},
+            { "Object", "Any" },
             { "Void", "None" }
         };
 
@@ -432,6 +435,11 @@ public static class NodeCodeGenerationExtension
                 case "string":
                 {
                     returnTypeEncoder.Type().String();
+                    break;
+                }
+                case "Any":
+                {
+                    returnTypeEncoder.Type().Object();
                     break;
                 }
                 case "None":
@@ -486,6 +494,11 @@ public static class NodeCodeGenerationExtension
                     case "string":
                     {
                         elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.String(); };
+                        break;
+                    }
+                    case "Any":
+                    {
+                        elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.Object(); };
                         break;
                     }
                     default:
@@ -545,6 +558,8 @@ public static class NodeCodeGenerationExtension
             { "Char", "char" },
             { "System.String", "string" },
             { "String", "string" },
+            { "System.Object", "Any"},
+            { "Object", "Any" },
             { "Void", "None" }
         };
 
@@ -579,6 +594,11 @@ public static class NodeCodeGenerationExtension
                     case "string":
                     {
                         parametersEncoder.AddParameter().Type().String();
+                        break;
+                    }
+                    case "Any":
+                    {
+                        parametersEncoder.AddParameter().Type().Object();
                         break;
                     }
                     default:
@@ -643,6 +663,11 @@ public static class NodeCodeGenerationExtension
                         case "string":
                         {
                             elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.String(); };
+                            break;
+                        }
+                        case "Any":
+                        {
+                            elementTypeDelegate = delegate(SignatureTypeEncoder typeEncoder) { typeEncoder.Object(); };
                             break;
                         }
                         default:

@@ -32,16 +32,22 @@ routine ddd() : integer is
 	return a;
 end
 
-routine putin(): integer is
-    var m: C;
+routine putin() is
+    var a: integer is 4.6;
+    var b: integer is false;
+    var c: real is 5;
+    var d: real is true;
+    var e: boolean is 0;
+    var f: boolean is 0.0;
+    var g: string is 'G';
     
-    m.sus := "sus1";
-    m.amogus := "amogus1";
-    
-    Print(m.sus);
-    Print(m.amogus);
-    
-    return 1;
+    PrintLine(a);
+    PrintLine(b);
+    PrintLine(c);
+    PrintLine(d);
+    PrintLine(e);
+    PrintLine(f);
+    PrintLine(g);
 end
 
 routine empty(): integer is

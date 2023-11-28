@@ -48,6 +48,8 @@ public class SemanticAnalyzer
             { "Char", "char" },
             { "System.String", "string" },
             { "String", "string" },
+            { "System.Object" , "Any" },
+            { "Object", "Any"},
             { "Void", "None" }
         };
         

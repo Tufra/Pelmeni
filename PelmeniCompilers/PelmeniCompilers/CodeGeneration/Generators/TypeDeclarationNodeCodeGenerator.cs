@@ -99,4 +99,36 @@ public class TypeDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
             ctorBodyOffset,
             parameterList: default(ParameterHandle));
     }
+
+    public static void ConvertType(InstructionEncoder il, string from, string to)
+    {
+        switch (to)
+        {
+            case "string":
+            {
+                if (from == "integer")
+                    il.Call(GeneratedRoutines["IntToString"]);
+                else if (from == "real")
+                    il.Call(GeneratedRoutines["RealToString"]);
+                else if (from == "boolean")
+                    il.Call(GeneratedRoutines["BooleanToString"]);
+                else if (from == "char") 
+                    il.Call(GeneratedRoutines["CharToString"]);
+
+                break;
+            }
+            case "real":
+            {
+                il.OpCode(ILOpCode.Conv_r8);
+                break;
+            }
+            case "integer" or "boolean":
+            {
+                if (from == "real") 
+                    il.Call(GeneratedRoutines["RoundReal"]);
+
+                break;
+            }
+        }
+    }
 }

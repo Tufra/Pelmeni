@@ -71,10 +71,12 @@ public class VariableDeclarationChecker : BaseNodeRuleChecker
         else // type, init
         {
             var computedInit = init.BuildComputedExpression();
-            variableSignature.Type = computedInit.ValueType;
+            variableSignature.Type = BuildTypeString(type.Children[0]!);
             variableSignature.Value = computedInit.Value!;
             
-            if (computedInit.ValueType != type.Children[0].Token!.Value)
+            if (computedInit.ValueType != type.Children[0].Token!.Value && 
+                !TypeDeclarationChecker.IsConvertibleTypes(
+                    computedInit.ValueType, computedInit.Value, type.Children[0].Token!.Value))
             {
                 throw new InvalidOperationException(
                     $"Variable and value should have the same type, {type.Children[0].Token!.Value} and {computedInit.ValueType} encountered at {node.Children[0].Token!.Location}");

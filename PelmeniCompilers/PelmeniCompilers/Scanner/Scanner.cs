@@ -55,7 +55,7 @@ public class Scanner : AbstractScanner<Node, LexLocation>
                 return Parser.Tokens.INTEGER_LITERAL;
             case var realLiteral when Regex.IsMatch(realLiteral, @"^\d+.\d+$"):
                 return Parser.Tokens.REAL_LITERAL;
-            case var charLiteral when Regex.IsMatch(charLiteral, "@^'.'"):
+            case var charLiteral when Regex.IsMatch(charLiteral, "^'.'"):
                 return Parser.Tokens.CHAR_LITERAL;
             case var stringLiteral when Regex.IsMatch(stringLiteral, "\".*\""):
                 return Parser.Tokens.STRING_LITERAL;

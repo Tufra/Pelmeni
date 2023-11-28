@@ -24,6 +24,13 @@ public class AssignmentNodeCodeGenerator : BaseNodeCodeGenerator
         
         codeGeneratorContext.IsLeftValue = false;
         rightValue.GenerateCode(codeGeneratorContext);
+        
+        if (((ComputedExpression)rightValue.Children[0]).ValueType != ((ComputedExpression)leftValue).ValueType)
+        {
+            TypeDeclarationNodeCodeGenerator.ConvertType(il,
+                ((ComputedExpression)rightValue.Children[0]).ValueType,
+                ((ComputedExpression)leftValue).ValueType);
+        }
 
         var varType = codeGeneratorContext.VariableType;
         switch (varType)

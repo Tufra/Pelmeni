@@ -53,6 +53,11 @@ public class RoutineDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
         body.EncodeVariables(codeGeneratorContext);
         body.GenerateCode(codeGeneratorContext);
 
+        if (virtualTableEntry.ReturnType == "None")
+        {
+            il.OpCode(ILOpCode.Ret);
+        }
+
         // END BODY
         var localVariablesBlob = codeGeneratorContext.MetadataBuilder.GetOrAddBlob(localVariablesBuilder);
         var localVariablesSignature = codeGeneratorContext.MetadataBuilder.AddStandaloneSignature(localVariablesBlob);

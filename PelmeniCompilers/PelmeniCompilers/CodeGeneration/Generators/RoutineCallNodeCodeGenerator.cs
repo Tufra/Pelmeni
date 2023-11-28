@@ -17,10 +17,19 @@ public class RoutineCallNodeCodeGenerator : BaseNodeCodeGenerator
 
         var identifier = node.Children[0].Token!.Value;
         var args = node.Children[1]!;
-        
-        foreach (var param in args.Children)
+
+        var virtualTableEntry = BaseNodeRuleChecker.GetRoutineOrThrowIfNotDeclared(node);
+
+        for (var index = 0; index < args.Children.Count; index++)
         {
+            var param = args.Children[index];
             param.GenerateCode(codeGeneratorContext);
+            if (((ComputedExpression)param).ValueType != virtualTableEntry.Parameters[index].Type)
+            {
+                TypeDeclarationNodeCodeGenerator.ConvertType(il,
+                    ((ComputedExpression)param).ValueType,
+                    virtualTableEntry.Parameters[index].Type);
+            }
         }
 
         var routine = BaseNodeRuleChecker.GetRoutineOrThrowIfNotDeclared(node);

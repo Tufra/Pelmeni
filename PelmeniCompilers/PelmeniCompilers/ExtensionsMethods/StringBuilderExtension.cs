@@ -70,7 +70,7 @@ public static class StringBuilderExtension
     {
         return Regex.IsMatch(tokenString, @"^\d+$") // int
                || Regex.IsMatch(tokenString, @"^\d+.\d+$") // real
-               || Regex.IsMatch(tokenString, "@^'.'") // char
+               || Regex.IsMatch(tokenString, "^'.'") // char
                || Regex.IsMatch(tokenString, "\".*\"");
         //string
     }

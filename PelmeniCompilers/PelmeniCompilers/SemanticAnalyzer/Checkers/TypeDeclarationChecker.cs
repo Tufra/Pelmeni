@@ -49,8 +49,16 @@ public class TypeDeclarationChecker : BaseNodeRuleChecker
     }
 
     public static bool IsPrimitiveType(string type) => 
-        type == "integer" || type == "real" || type == "boolean" || type == "char" || type == "string";
+        type is "integer" or "real" or "boolean" or "char" or "string";
 
     public static bool IsArrayType(string type) =>
         type.StartsWith("array");
+
+    public static bool IsConvertibleTypes(string from, string? value, string to) => 
+        (to is "Any") ||
+        (to is "string" && IsPrimitiveType(from)) ||
+        (to is "real" && from is "integer" or "boolean") ||
+        (to is "integer" && from is "boolean" or "real") ||
+        (to is "boolean" && (from is "integer" && value is "1" or "0" || from is "real" && value is "1.0" or "0.0"));
+                    
 }

@@ -71,7 +71,7 @@ public class SummandChecker : BaseNodeRuleChecker
                         {
                             throw new InvalidOperationException($"Char cannot be negative at {token.Location}");
                         }
-                        var computed = new ComputedExpression(NodeType.Token, token, "char", token.Value);
+                        var computed = new ComputedExpression(NodeType.Token, token, "char", token.Value.Substring(1, token.Value.Length - 2));
                         node.Children[1] = computed;
                         break;
                     }

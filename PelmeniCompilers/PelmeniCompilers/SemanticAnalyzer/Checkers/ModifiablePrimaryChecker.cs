@@ -29,6 +29,8 @@ public class ModifiablePrimaryChecker : BaseNodeRuleChecker
             {
                 var memberIdentifier = chain[i].Children[0].Token!.Value;
                 var location = chain[i].Children[0].Token!.Location;
+                
+                bool memberFound = false;
 
                 // if primitive type
                 if (TypeDeclarationChecker.IsPrimitiveType(type))
@@ -36,18 +38,31 @@ public class ModifiablePrimaryChecker : BaseNodeRuleChecker
                     throw new InvalidOperationException($"Type {type} does not have member {memberIdentifier} at {chain[i].Children[0].Token!.Location}");
                 }
 
-                // if record type
-                var record = GetRecordOrThrowIfNotDeclared(type, location);
-                bool memberFound = false;
-                foreach (var member in record.Members)
+                // if array
+                if (TypeDeclarationChecker.IsArrayType(type))
                 {
-                    if (member.Name == memberIdentifier)
+                    if (memberIdentifier == "length")
                     {
-                        type = member.Type;
+                        type = "integer";
                         memberFound = true;
-                        break;
                     }
                 }
+                else
+                {
+                    // if record type
+                    var record = GetRecordOrThrowIfNotDeclared(type, location);
+                    foreach (var member in record.Members)
+                    {
+                        if (member.Name == memberIdentifier)
+                        {
+                            type = member.Type;
+                            memberFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                
 
                 if (!memberFound)
                 {

@@ -41,7 +41,9 @@ public class AssignmentChecker : BaseNodeRuleChecker
         node.Children[0] = computedPrimary;
         node.Children[1] = computedExpr;
 
-        if (computedPrimary.ValueType != computedExpr.ValueType)
+        if (computedPrimary.ValueType != computedExpr.ValueType && 
+            !TypeDeclarationChecker.IsConvertibleTypes(
+                computedExpr.ValueType, computedExpr.Value, computedPrimary.ValueType))
         {
             throw new InvalidOperationException(
                 $"Expected {computedPrimary.ValueType}, but {computedExpr.ValueType} encountered");

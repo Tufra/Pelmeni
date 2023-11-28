@@ -28,6 +28,13 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
             if (initTail.Children.Count > 0)
             {
                 initTail.Children[0].GenerateCode(codeGeneratorContext);
+                if (((ComputedExpression)initTail.Children[0]).ValueType != type.Children[0].Token!.Value)
+                {
+                    TypeDeclarationNodeCodeGenerator.ConvertType(il,
+                        ((ComputedExpression)initTail.Children[0]).ValueType,
+                        type.Children[0].Token!.Value);
+                }
+                
                 il.StoreLocal(codeGeneratorContext.LocalVariablesIndex![identifier]);
             }
         }

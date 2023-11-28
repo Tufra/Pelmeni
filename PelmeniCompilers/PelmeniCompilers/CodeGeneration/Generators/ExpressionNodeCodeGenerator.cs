@@ -43,7 +43,12 @@ public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
                     }
                     break;
                 }
-                case "string" or "char":
+                case "char":
+                {
+                    il.LoadConstantI8(char.Parse(val));
+                    break;
+                }
+                case "string":
                 {
                     il.LoadString(metadata.GetOrAddUserString(val));
                     break;
@@ -93,10 +98,10 @@ public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
             }
             case "char":
             {
-                il.LoadConstantI8(int.Parse(val));
+                il.LoadConstantI8(char.Parse(val));
                 break;
             }
-            case "String":
+            case "string":
             {
                 il.LoadString(metadata.GetOrAddUserString(val));
                 break;

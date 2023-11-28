@@ -28,7 +28,9 @@ public class RoutineCallChecker : BaseNodeRuleChecker
 
         for (var i = 0; i < computedParams.Count; i++)
         {
-            if (computedParams[i].ValueType != routine.Parameters[i].Type)
+            if (computedParams[i].ValueType != routine.Parameters[i].Type && 
+                !TypeDeclarationChecker.IsConvertibleTypes(
+                    computedParams[i].ValueType, computedParams[i].Value, routine.Parameters[i].Type))
             {
                 throw new InvalidOperationException(
                     $"Routine {routine.Name} accepts {routine.Parameters[i].Type} at {i + 1} position, but {computedParams[i].ValueType} provided");

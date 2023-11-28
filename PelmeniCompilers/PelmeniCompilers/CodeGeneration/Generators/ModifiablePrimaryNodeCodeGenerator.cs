@@ -55,6 +55,11 @@ public class ModifiablePrimaryNodeCodeGenerator : BaseNodeCodeGenerator
             if (child.Type == NodeType.MemberAccess)
             {
                 var fieldName = child.Children[0].Token!.Value;
+                if (TypeDeclarationChecker.IsArrayType(type) && fieldName == "length")
+                {
+                    il.OpCode(ILOpCode.Ldlen);
+                    continue;
+                }
                 if (BaseNodeRuleChecker.RecordVirtualTable.TryGetValue(type, out var record))
                 {
                     var fieldOffset = record.FieldOffset;
