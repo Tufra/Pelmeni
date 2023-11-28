@@ -82,7 +82,11 @@ public class RoutineDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                 var type = parameter.Children[1].Children[0];
                 var elementType = type.Children[0]!;
 
-                var size = ((ComputedExpression)type.Children[1]!).Value;
+                var size = "-1";
+                if (type.Children.Count > 1)
+                {
+                    size = ((ComputedExpression)type.Children[1]!).Value;
+                }
                 var bb = new BlobBuilder();
                 var typeEncoder = new SignatureTypeEncoder(bb);
                 var shapeEncoder = new ArrayShapeEncoder(bb);
@@ -103,26 +107,46 @@ public class RoutineDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                     case "integer":
                     {
                         elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Int64(); };
+                        if (size == "-1")
+                        {
+                            parametersEncoder.AddParameter().Type().SZArray().Int64();
+                        }
                         break;
                     }
                     case "real":
                     {
                         elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Double(); };
+                        if (size == "-1")
+                        {
+                            parametersEncoder.AddParameter().Type().SZArray().Double();
+                        }
                         break;
                     }
                     case "boolean":
                     {
                         elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Boolean(); };
+                        if (size == "-1")
+                        {
+                            parametersEncoder.AddParameter().Type().SZArray().Boolean();
+                        }
                         break;
                     }
                     case "char":
                     {
                         elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Char(); };
+                        if (size == "-1")
+                        {
+                            parametersEncoder.AddParameter().Type().SZArray().Char();
+                        }
                         break;
                     }
                     case "string":
                     {
                         elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.String(); };
+                        if (size == "-1")
+                        {
+                            parametersEncoder.AddParameter().Type().SZArray().String();
+                        }
                         break;
                     }
                     default:
@@ -132,6 +156,10 @@ public class RoutineDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                         if (success)
                         {
                             elementTypeDelegate = delegate (SignatureTypeEncoder typeEncoder) { typeEncoder.Type(record, false); };
+                            if (size != "-1")
+                            {
+                                parametersEncoder.AddParameter().Type().SZArray().Type(record, false);
+                            }
                         }
                         else
                         {
@@ -141,7 +169,12 @@ public class RoutineDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                     }
                 }
 
-                parametersEncoder.AddParameter().Type().Array(elementTypeDelegate, arrayShapeDelegate);
+                if (size != "-1")
+                {
+                    parametersEncoder.AddParameter().Type().Array(elementTypeDelegate, arrayShapeDelegate);
+                }
+                
+                continue;
             }
 
             switch (parameter.Children[1].Children[0].Token!.Value)

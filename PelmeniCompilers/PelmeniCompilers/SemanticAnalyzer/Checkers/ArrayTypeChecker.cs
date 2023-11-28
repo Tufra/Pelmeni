@@ -13,8 +13,12 @@ public class ArrayTypeChecker : BaseNodeRuleChecker
 
     public override void Check(Node node)
     {
-
-        var sizeExpr = node.Children[1]!;
+        Node sizeExpr = null;
+        if (node.Children.Count > 1)
+        {
+            sizeExpr = node.Children[1]!;
+        }
+        
         var type = node.Children[0];
 
         if (type.Type == NodeType.Token)
@@ -37,26 +41,34 @@ public class ArrayTypeChecker : BaseNodeRuleChecker
                 $"Illegal array element type {type.Type}");
         }
 
-        sizeExpr.CheckSemantic();
-        var computedSize = sizeExpr.BuildComputedExpression();
-
-        if (computedSize.ValueType != "integer")
+        if (sizeExpr is not null)
         {
-            throw new InvalidOperationException(
-                $"Array size must be integer, {computedSize.ValueType} encountered");
-        }
-        if (computedSize.Value == null)
-        {
-            throw new InvalidOperationException(
-                $"Array size must be known in compile-time");
-        }
+            sizeExpr.CheckSemantic();
+            var computedSize = sizeExpr.BuildComputedExpression();
+            
+            if (computedSize.ValueType != "integer")
+            {
+                throw new InvalidOperationException(
+                    $"Array size must be integer, {computedSize.ValueType} encountered");
+            }
+            if (computedSize.Value == null)
+            {
+                throw new InvalidOperationException(
+                    $"Array size must be known in compile-time");
+            }
 
-        node.Children[1] = computedSize;
+            node.Children[1] = computedSize;
+        }
+        
     }
 
     public static string BuildString(Node node)
     {
-        var size = ((ComputedExpression)node.Children[1]).Value;
+        string size = "";
+        if (node.Children.Count > 1)
+        {
+            size = ((ComputedExpression)node.Children[1]).Value!;
+        }
         var type = node.Children[0];
 
         string? typeStr;
@@ -85,7 +97,7 @@ public class ArrayTypeChecker : BaseNodeRuleChecker
             var sizeResult = match.Result("${size}");
             if (sizeResult.Length == 0)
             {
-                return 0;
+                return -1;
             }
             else
             {
