@@ -174,47 +174,48 @@ public class RoutineDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                     parametersEncoder.AddParameter().Type().Array(elementTypeDelegate, arrayShapeDelegate);
                 }
                 
-                continue;
             }
-
-            switch (parameter.Children[1].Children[0].Token!.Value)
+            else
             {
-                case "real":
+                switch (parameter.Children[1].Children[0].Token!.Value)
                 {
-                    parametersEncoder.AddParameter().Type().Double();
-                    break;
-                }
-                case "integer":
-                {
-                    parametersEncoder.AddParameter().Type().Int64();
-                    break;
-                }
-                case "boolean":
-                {
-                    parametersEncoder.AddParameter().Type().Boolean();
-                    break;
-                }
-                case "char":
-                {
-                    parametersEncoder.AddParameter().Type().Char();
-                    break;
-                }
-                case "string":
-                {
-                    parametersEncoder.AddParameter().Type().String();
-                    break;
-                }
-                default:
-                {
-                    if(GeneratedRecords.TryGetValue(parameter.Children[1].Children[0].Token!.Value, out var record))
+                    case "real":
                     {
-                        parametersEncoder.AddParameter().Type().Type(record, false);
+                        parametersEncoder.AddParameter().Type().Double();
+                        break;
                     }
-                    else
+                    case "integer":
                     {
-                        throw new InvalidOperationException($"Unknown type {parameter.Children[1].Children[0].Token!.Value}");
+                        parametersEncoder.AddParameter().Type().Int64();
+                        break;
                     }
-                    break;
+                    case "boolean":
+                    {
+                        parametersEncoder.AddParameter().Type().Boolean();
+                        break;
+                    }
+                    case "char":
+                    {
+                        parametersEncoder.AddParameter().Type().Char();
+                        break;
+                    }
+                    case "string":
+                    {
+                        parametersEncoder.AddParameter().Type().String();
+                        break;
+                    }
+                    default:
+                    {
+                        if(GeneratedRecords.TryGetValue(parameter.Children[1].Children[0].Token!.Value, out var record))
+                        {
+                            parametersEncoder.AddParameter().Type().Type(record, false);
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException($"Unknown type {parameter.Children[1].Children[0].Token!.Value}");
+                        }
+                        break;
+                    }
                 }
             }
 
