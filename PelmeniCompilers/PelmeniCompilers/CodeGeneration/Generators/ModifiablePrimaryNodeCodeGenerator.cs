@@ -98,7 +98,7 @@ public class ModifiablePrimaryNodeCodeGenerator : BaseNodeCodeGenerator
                 codeGeneratorContext.VariableType = VariableType.ArrayElement;
                 
                 
-                type = ArrayTypeChecker.GetElementTypeFromString(((ComputedExpression)child).ValueType);
+                type = ArrayTypeChecker.GetElementTypeFromString(type);
 
                 if (child == children[^1] && isLeftValue)
                 {

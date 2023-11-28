@@ -170,6 +170,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
             }
 
             varEncoder.AddVariable().Type().Array(elementTypeDelegate, arrayShapeDelegate);
+            context.InstructionEncoder.LoadConstantI8(int.Parse(size!));
             context.InstructionEncoder.OpCode(ILOpCode.Newarr);
             context.InstructionEncoder.Token(elemTypeHandle);
             context.InstructionEncoder.StoreLocal(context.LastVariableIndex);
