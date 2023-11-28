@@ -231,46 +231,30 @@ public static class NodeCodeGenerationExtension
         {
             var routineName = routinesNames[i - mainOffset];
             var label = il.DefineLabel();
-            
+
             il.LoadArgument(0);
             il.LoadConstantI8(0);
             il.OpCode(ILOpCode.Ldelem_ref);
             il.LoadString(metadata.GetOrAddUserString(routineName));
             il.Call(BaseNodeCodeGenerator.GeneratedRoutines["StringEquals"]);
             il.Branch(ILOpCode.Brfalse, label);
-            
+
+            for (var j = 1; j <= BaseNodeRuleChecker.RoutineVirtualTable[routineName].Parameters.Count; j++)
+            {
+                il.LoadArgument(0);
+                il.LoadConstantI8(j);
+                il.OpCode(ILOpCode.Ldelem_ref);
+            }
+
             il.Call(MetadataTokens.MethodDefinitionHandle(i));
             if (BaseNodeRuleChecker.RoutineVirtualTable[routineName].ReturnType != "None")
             {
                 il.OpCode(ILOpCode.Pop);
             }
+
+
             il.MarkLabel(label);
         }
-
-
-        // ldstr "hello"
-        // il.LoadString(metadata.GetOrAddUserString("Hello, world"));
-        // for(var i = 2; i < 7; i++)
-        // {
-        //     il.Call(MetadataTokens.MethodDefinitionHandle(i));
-        //     il.Call(consoleWriteLineMemberRef);
-
-        // }
-
-        /*il.LoadConstantI8(-5);
-        il.Call(MetadataTokens.MethodDefinitionHandle(4));
-        // il.Call(BaseNodeCodeGenerator.GeneratedRoutines["IntToString"]);
-
-        il.Call(BaseNodeCodeGenerator.GeneratedRoutines["Print"]);*/
-
-        // il.Call(intToStringMemberRef);
-        // il.Call(printMemberRef);
-        //
-        // il.Call(readLineMemberRef);
-        // il.Call(printMemberRef);
-
-        // il.Call(consoleWriteLineMemberRef);
-        // call void [mscorlib]System.Console::WriteLine(string)
 
 
         // ret
@@ -357,7 +341,8 @@ public static class NodeCodeGenerationExtension
         }
     }
 
-    private static void MakePrimitiveTypesHandles(AssemblyReferenceHandle mscorlibReferenceHandle, MetadataBuilder metadata)
+    private static void MakePrimitiveTypesHandles(AssemblyReferenceHandle mscorlibReferenceHandle,
+        MetadataBuilder metadata)
     {
         var types = new Dictionary<string, string>()
         {
@@ -366,7 +351,7 @@ public static class NodeCodeGenerationExtension
             { "Double", "real" },
             { "Char", "char" },
             { "String", "string" },
-            { "Object", "Any"}
+            { "Object", "Any" }
         };
 
         foreach (var typesValue in types)
@@ -378,7 +363,7 @@ public static class NodeCodeGenerationExtension
                 mscorlibReferenceHandle,
                 metadata.GetOrAddString("System"),
                 metadata.GetOrAddString(systemType));
-            
+
             BaseNodeCodeGenerator.TypeConversionHandles.Add(type, typeRef);
         }
     }
@@ -401,7 +386,7 @@ public static class NodeCodeGenerationExtension
             { "Char", "char" },
             { "System.String", "string" },
             { "String", "string" },
-            { "System.Object", "Any"},
+            { "System.Object", "Any" },
             { "Object", "Any" },
             { "Void", "None" }
         };
@@ -558,7 +543,7 @@ public static class NodeCodeGenerationExtension
             { "Char", "char" },
             { "System.String", "string" },
             { "String", "string" },
-            { "System.Object", "Any"},
+            { "System.Object", "Any" },
             { "Object", "Any" },
             { "Void", "None" }
         };
@@ -717,7 +702,7 @@ public static class NodeCodeGenerationExtension
             node.GenerateCode(context);
             return;
         }
-        
+
         foreach (var child in node.Children)
         {
             child.EncodeVariables(context);

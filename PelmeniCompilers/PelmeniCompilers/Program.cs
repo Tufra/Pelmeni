@@ -1,15 +1,17 @@
 ﻿using ConsoleTree;
 using PelmeniCompilers.CodeGeneration;
-using PelmeniCompilers.Parser;
 using PelmeniCompilers.Models;
-using PelmeniCompilers.ShiftReduceParser;
+using CommandLine; 
 
 namespace PelmeniCompilers;
 
 internal static class Program
 {
+    internal static CommandLineOptions CommandLineOptions;
+    
     private static async Task Main(string[] args)
     {
+        //CommandLineOptions = CommandLine.Parser.Default.ParseArguments<CommandLineOptions>(args).Value;
         await Run(args[0]);
     }
 

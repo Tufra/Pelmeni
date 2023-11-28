@@ -40,9 +40,9 @@ routine putin() is
     PrintLine(g);
 end
 
-routine empty() is
+routine empty(str : string) is
     var a: array[5] integer;
-    
+    PrintLine(str);
     a[0] := 1;
     a[1] := 2;
     a[2] := 3;
