@@ -13,6 +13,7 @@ public class ForLoopNodeCodeGenerator : BaseNodeCodeGenerator
     {
         var counterIndex = codeGeneratorContext.RoutineVirtualTableEntry.LocalVariablesCounter +
                            codeGeneratorContext.ForLoopCounter + codeGeneratorContext.ForEachLoopCounter * 2;
+        codeGeneratorContext.ForLoopCounter++;
 
         var varEncoder = codeGeneratorContext.VarEncoder!.Value;
         var il = codeGeneratorContext.InstructionEncoder;
@@ -63,7 +64,5 @@ public class ForLoopNodeCodeGenerator : BaseNodeCodeGenerator
         #endregion
        
        il.MarkLabel(endLabel);
-
-       codeGeneratorContext.ForLoopCounter++;
     }
 }

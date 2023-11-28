@@ -18,6 +18,7 @@ public class ForeachLoopNodeCodeGenerator : BaseNodeCodeGenerator
         var counterIndex = codeGeneratorContext.RoutineVirtualTableEntry.LocalVariablesCounter +
                            codeGeneratorContext.ForLoopCounter + codeGeneratorContext.ForEachLoopCounter * 2;
         var elemIndex = counterIndex + 1;
+        codeGeneratorContext.ForEachLoopCounter++;
 
         var elemType = ((ComputedExpression)node.Children[1]).ValueType;
 
@@ -56,6 +57,7 @@ public class ForeachLoopNodeCodeGenerator : BaseNodeCodeGenerator
         arrayNode.GenerateCode(codeGeneratorContext);
         il.LoadLocal(counterIndex);
         il.OpCode(ILOpCode.Ldelem_ref);
+        il.StoreLocal(elemIndex);
         
         bodyNode.GenerateCode(codeGeneratorContext);
 
@@ -69,6 +71,7 @@ public class ForeachLoopNodeCodeGenerator : BaseNodeCodeGenerator
         il.LoadLocal(counterIndex);
         il.LoadConstantI8(1);
         il.OpCode(ILOpCode.Add);
+        il.StoreLocal(counterIndex);
 
         #endregion
         
@@ -84,6 +87,6 @@ public class ForeachLoopNodeCodeGenerator : BaseNodeCodeGenerator
 
         #endregion
 
-        codeGeneratorContext.ForEachLoopCounter++;
+      
     }
 }

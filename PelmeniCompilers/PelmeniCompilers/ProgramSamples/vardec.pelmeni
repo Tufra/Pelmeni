@@ -16,11 +16,17 @@ type C is record
 end;
 
 routine ddd() is
-	var arr : array [1] integer;
+	var arr : array [3] integer;
 	arr[0] := 0;
+	arr[1] := 1;
+	arr[2] := 3;
 	
+	PrintLine("foreach");
 	foreach i from arr loop
-		PrintLine(i);
+		PrintLine("for");
+		for j in 1..3 loop
+			PrintLine(arr.length);
+		end
 	end
 end
 
