@@ -90,7 +90,7 @@ public class ModifiablePrimaryChecker : BaseNodeRuleChecker
                 }
 
                 var size = ArrayTypeChecker.GetArraySizeFromString(type);
-                if (size != 0 && computedExpr.Value is not null && int.Parse(computedExpr.Value) > size)
+                if (computedExpr.Value is not null && int.Parse(computedExpr.Value) >= size)
                 {
                     throw new InvalidOperationException(
                         $"Array elements index out of range, size is {size}, but {computedExpr.Value} accessed");
