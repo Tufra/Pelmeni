@@ -1,43 +1,9 @@
 module Vardec;
 
-type A is record
-    var a: integer;
-    var b: real;
-end;
-
-type B is record
-    var c: A;
-    var d: string;
-end;
-
-type C is record
-    var sus: string;
-    var amogus: string;
-end;
-
 routine ddd(a : array[] integer) is
-	
 	foreach i from a loop
 		PrintLine(i);
 	end
-end
-
-routine putin() is
-    var a: integer is 4.6;
-    var b: integer is false;
-    var c: real is 5;
-    var d: real is true;
-    var e: boolean is 0;
-    var f: boolean is 0.0;
-    var g: string is 'G';
-    
-    PrintLine(a);
-    PrintLine(b);
-    PrintLine(c);
-    PrintLine(d);
-    PrintLine(e);
-    PrintLine(f);
-    PrintLine(g);
 end
 
 routine empty(str : string) is

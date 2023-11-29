@@ -1,33 +1,35 @@
+module IsPalindromeNumber;
+
 routine IsPalindromeNumber(x: integer): boolean is
 	var temp: integer;
-  var revers: integer;
-  var digit: integer;
-
-  temp := x;
-  revers := 0;
-
-  while x <> 0
-  loop
-    digit := x % 10;
-    revers := revers * 10 + digit;
-    x := x / 10;
-  end
-
-  if temp = revers then
-    return true;
-  else
-    return false;
+	var revers: integer;
+	var digit: integer;
+	
+	temp := x;
+	revers := 0;
+	
+	while x <> 0
+	loop
+	digit := x % 10;
+	revers := revers * 10 + digit;
+	x := x / 10;
+	end
+	
+	if temp = revers then
+		return true;
+	else
+		return false;
 	end
 end
 
 routine Main() is
 	var num: integer;
-  writeln('Enter a number: ');
-  readln(num);
-
-  if IsPalindromeNumber(num) then
-    writeln(num, ' is a palindrome');
-  else
-    writeln(num, ' is not a palindrome');
-  end
+	PrintLine("Enter a number: ");
+	num := ReadLine();
+	
+	if IsPalindromeNumber(num) then
+		PrintLine(num, " is a palindrome");
+	else
+		PrintLine(num, " is not a palindrome");
+	end
 end
