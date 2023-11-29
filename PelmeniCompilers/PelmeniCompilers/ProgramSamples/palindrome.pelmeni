@@ -8,14 +8,17 @@ routine IsPalindromeNumber(x: integer): boolean is
 	temp := x;
 	revers := 0;
 	
-	while x <> 0
+	
+	while temp <> 0
 	loop
-		digit := x % 10;
+	    
+		digit := temp % 10;
 		revers := revers * 10 + digit;
-		x := x / 10;
+		temp := temp / 10;
+		
 	end
 	
-	if temp = revers then
+	if x = revers then
 		return true;
 	end
 	

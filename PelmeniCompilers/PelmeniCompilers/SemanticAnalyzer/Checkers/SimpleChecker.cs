@@ -55,21 +55,39 @@ public class SimpleChecker : BaseNodeRuleChecker
                 case Parser.Tokens.DIVIDE:
                     {
                         if (leftComputed.Value is not null && rightComputed.Value is not null) 
-                        {   
+                        {
+                            
                             if (double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) == 0.0)
                             {
                                 throw new InvalidOperationException($"Division by zero at {oper.Location}");
                             }
 
-                            var val = 
-                                double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) / 
-                                double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
-                            var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString())
+                            if (leftComputed.ValueType == "integer" && rightComputed.ValueType == "integer")
                             {
+                                var val = 
+                                    int.Parse(leftComputed.Value) / 
+                                    int.Parse(rightComputed.Value);
+                                var computed = new ComputedExpression(NodeType.Summand, null, "integer", val.ToString())
+                                {
                                     Children = node.Children
                                 };
 
-                            node.Children = new List<Node> { computed };
+                                node.Children = new List<Node> { computed };
+                            }
+                            else
+                            {
+                                var val = 
+                                    double.Parse(leftComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture) / 
+                                    double.Parse(rightComputed.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture);
+                                var computed = new ComputedExpression(NodeType.Summand, null, "real", val.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                                {
+                                    Children = node.Children
+                                };
+
+                                node.Children = new List<Node> { computed };
+                            }
+
+                            
                         }
                         break;
                     }
@@ -154,52 +172,26 @@ public class SimpleChecker : BaseNodeRuleChecker
             };
             return computed;
         }
-        else // Summand OPERATOR Simple
-        {
-            var left = (ComputedExpression)node.Children[1];
-            var right = (ComputedExpression)node.Children[2];
-            var operToken = Scanner.Scanner.TokenValueToGppgToken(node.Children[0].Token!);
 
-            switch (operToken)
+        // Summand OPERATOR Simple
+        var left = (ComputedExpression)node.Children[1];
+        var right = (ComputedExpression)node.Children[2];
+
+        if (left.ValueType == "real" || right.ValueType == "real")
+        {
+            var computed = new ComputedExpression(node.Type, null, "real", null)
             {
-                case Parser.Tokens.DIVIDE: // division always returns real
-                    {
-                        var computed = new ComputedExpression(node.Type, null, "real", null)
-                        {
-                            Children = node.Children
-                        };
-                        return computed;
-                    }
-                case Parser.Tokens.MOD: // mod is like division
-                    {
-                        var computed = new ComputedExpression(node.Type, null, "real", null)
-                        {
-                            Children = node.Children
-                        };
-                        return computed;
-                    }
-                case Parser.Tokens.MULTIPLY: // returns real if any of operands is real
-                    {
-                        if (left.ValueType == "real" || right.ValueType == "real")
-                        {
-                            var computed = new ComputedExpression(node.Type, null, "real", null)
-                            {
-                                Children = node.Children
-                            };
-                            return computed;        
-                        }
-                        else
-                        {
-                            var computed = new ComputedExpression(node.Type, null, "integer", null)
-                            {
-                                Children = node.Children
-                            };
-                            return computed;
-                        }
-                    } 
-                default:
-                    throw new InvalidOperationException($"Undefined operation {operToken}");
-            }
+                Children = node.Children
+            };
+            return computed;        
+        }
+        else
+        {
+            var computed = new ComputedExpression(node.Type, null, "integer", null)
+            {
+                Children = node.Children
+            };
+            return computed;
         }
     }
 }

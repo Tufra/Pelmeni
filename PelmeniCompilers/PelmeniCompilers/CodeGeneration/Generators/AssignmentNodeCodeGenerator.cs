@@ -22,6 +22,8 @@ public class AssignmentNodeCodeGenerator : BaseNodeCodeGenerator
         codeGeneratorContext.IsLeftValue = true;
         leftValue.GenerateCode(codeGeneratorContext);
         
+        var varType = codeGeneratorContext.VariableType;
+        
         codeGeneratorContext.IsLeftValue = false;
         codeGeneratorContext.IsValueObsolete = false;
         rightValue.GenerateCode(codeGeneratorContext);
@@ -34,7 +36,7 @@ public class AssignmentNodeCodeGenerator : BaseNodeCodeGenerator
                 ((ComputedExpression)leftValue).ValueType);
         }
 
-        var varType = codeGeneratorContext.VariableType;
+        
         switch (varType)
         {
             case VariableType.Local:

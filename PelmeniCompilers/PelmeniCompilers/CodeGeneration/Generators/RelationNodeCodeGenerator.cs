@@ -73,7 +73,8 @@ public class RelationNodeCodeGenerator : BaseNodeCodeGenerator
                 case ">=":
                 {
                     il.OpCode(ILOpCode.Clt);
-                    il.OpCode(ILOpCode.Not);
+                    il.LoadConstantI8(0);
+                    il.OpCode(ILOpCode.Ceq);
                     break;
                 }
                 case "<":
@@ -84,7 +85,8 @@ public class RelationNodeCodeGenerator : BaseNodeCodeGenerator
                 case "<=":
                 {
                     il.OpCode(ILOpCode.Cgt);
-                    il.OpCode(ILOpCode.Not);
+                    il.LoadConstantI8(0);
+                    il.OpCode(ILOpCode.Ceq);
                     break;
                 }
                 case "=":
@@ -95,7 +97,8 @@ public class RelationNodeCodeGenerator : BaseNodeCodeGenerator
                 case "<>":
                 {
                     il.OpCode(ILOpCode.Ceq);
-                    il.OpCode(ILOpCode.Not);
+                    il.LoadConstantI8(0);
+                    il.OpCode(ILOpCode.Ceq);
                     break;
                 }
             }

@@ -19,11 +19,13 @@ public class RoutineCallNodeCodeGenerator : BaseNodeCodeGenerator
         var args = node.Children[1]!;
 
         var virtualTableEntry = BaseNodeRuleChecker.GetRoutineOrThrowIfNotDeclared(node);
-
+        
         for (var index = 0; index < args.Children.Count; index++)
         {
             var param = args.Children[index];
+            
             param.GenerateCode(codeGeneratorContext);
+           
             if (((ComputedExpression)param).ValueType != virtualTableEntry.Parameters[index].Type)
             {
                 TypeDeclarationNodeCodeGenerator.ConvertType(il,
@@ -36,7 +38,7 @@ public class RoutineCallNodeCodeGenerator : BaseNodeCodeGenerator
 
         var handle = GeneratedRoutines[identifier];
         il.Call(handle);
-        if (codeGeneratorContext.IsValueObsolete && routine.ReturnType != "None")
+        if (Chain.Peek().Type == NodeType.Body && routine.ReturnType != "None")
         {
             il.OpCode(ILOpCode.Pop);
         }

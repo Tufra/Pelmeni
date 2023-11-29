@@ -15,6 +15,8 @@ public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
         var il = codeGeneratorContext.InstructionEncoder;
         var metadata = codeGeneratorContext.MetadataBuilder;
         
+        Chain.Push(node);
+        
         if (node is ComputedExpression && ((ComputedExpression)node).Value is not null)
         {
             var val = ((ComputedExpression)node).Value!;
@@ -65,6 +67,8 @@ public class ExpressionNodeCodeGenerator : BaseNodeCodeGenerator
         var child = node.Children[0]!;
 
         child.GenerateCode(codeGeneratorContext);
+        
+        Chain.Pop();
         
     }
 

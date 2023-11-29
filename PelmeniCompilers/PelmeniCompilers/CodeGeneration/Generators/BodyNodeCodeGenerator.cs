@@ -13,12 +13,16 @@ public class BodyNodeCodeGenerator : BaseNodeCodeGenerator
     {
         var children = node.Children;
 
+        Chain.Push(node);
+        
         foreach (var child in children)
         {
             if(child.Type == NodeType.VariableDeclaration)
                 continue;
             child.GenerateCode(codeGeneratorContext);
         }
+
+        Chain.Pop();
     }
 
 }
