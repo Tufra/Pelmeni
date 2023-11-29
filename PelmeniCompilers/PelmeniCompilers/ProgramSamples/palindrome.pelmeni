@@ -10,26 +10,26 @@ routine IsPalindromeNumber(x: integer): boolean is
 	
 	while x <> 0
 	loop
-	digit := x % 10;
-	revers := revers * 10 + digit;
-	x := x / 10;
+		digit := x % 10;
+		revers := revers * 10 + digit;
+		x := x / 10;
 	end
 	
 	if temp = revers then
 		return true;
-	else
-		return false;
 	end
+	
+	return false;
 end
 
 routine Main() is
 	var num: integer;
 	PrintLine("Enter a number: ");
-	num := ReadLine();
+	num := ParseInteger(ReadLine());
 	
 	if IsPalindromeNumber(num) then
-		PrintLine(num, " is a palindrome");
+		PrintLine(StringConcat(num, " is a palindrome"));
 	else
-		PrintLine(num, " is not a palindrome");
+		PrintLine(StringConcat(num, " is not a palindrome"));
 	end
 end
