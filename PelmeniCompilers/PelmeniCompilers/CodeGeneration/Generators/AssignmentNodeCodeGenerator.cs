@@ -23,7 +23,9 @@ public class AssignmentNodeCodeGenerator : BaseNodeCodeGenerator
         leftValue.GenerateCode(codeGeneratorContext);
         
         codeGeneratorContext.IsLeftValue = false;
+        codeGeneratorContext.IsValueObsolete = false;
         rightValue.GenerateCode(codeGeneratorContext);
+        codeGeneratorContext.IsValueObsolete = true;
         
         if (((ComputedExpression)rightValue.Children[0]).ValueType != ((ComputedExpression)leftValue).ValueType)
         {

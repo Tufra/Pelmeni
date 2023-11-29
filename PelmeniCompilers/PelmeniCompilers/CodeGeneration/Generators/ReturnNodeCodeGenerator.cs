@@ -16,7 +16,9 @@ public class ReturnNodeCodeGenerator : BaseNodeCodeGenerator
 
         var expr = node.Children[0]!;
 
+        codeGeneratorContext.IsValueObsolete = false;
         expr.GenerateCode(codeGeneratorContext);
+        codeGeneratorContext.IsValueObsolete = true;
 
         il.OpCode(ILOpCode.Ret);
     }

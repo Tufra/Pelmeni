@@ -20,8 +20,10 @@ public class IfStatementNodeCodeGenerator : BaseNodeCodeGenerator
         var cond = node.Children[0]!;
         var thenBody = node.Children[1]!;
         var elseBody = node.Children[2]!;
-        
+
+        codeGeneratorContext.IsValueObsolete = false;
         cond.GenerateCode(codeGeneratorContext);
+        codeGeneratorContext.IsValueObsolete = true;
         il.Branch(ILOpCode.Brfalse, elseLabel);
         
         // then

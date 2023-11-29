@@ -260,7 +260,7 @@ public static class NodeCodeGenerationExtension
         // ret
         il.OpCode(ILOpCode.Ret);
 
-        int mainBodyOffset = methodBodyStreamEncoder.AddMethodBody(il);
+        int mainBodyOffset = methodBodyStreamEncoder.AddMethodBody(il, maxStack: 1024);
         codeBuilder.Clear();
 
 

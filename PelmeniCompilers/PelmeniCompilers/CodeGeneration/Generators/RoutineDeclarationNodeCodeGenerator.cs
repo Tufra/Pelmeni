@@ -61,7 +61,7 @@ public class RoutineDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
         // END BODY
         var localVariablesBlob = codeGeneratorContext.MetadataBuilder.GetOrAddBlob(localVariablesBuilder);
         var localVariablesSignature = codeGeneratorContext.MetadataBuilder.AddStandaloneSignature(localVariablesBlob);
-        var offset = codeGeneratorContext.MethodBodyStreamEncoder.AddMethodBody(il, 256, localVariablesSignature);
+        var offset = codeGeneratorContext.MethodBodyStreamEncoder.AddMethodBody(il, 1024, localVariablesSignature);
         
         var methodHandle = codeGeneratorContext.MetadataBuilder.AddMethodDefinition(
             MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,

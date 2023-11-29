@@ -21,7 +21,10 @@ public class WhileLoopNodeCodeGenerator : BaseNodeCodeGenerator
         #region condition
         
         il.MarkLabel(condLabel);
+        codeGeneratorContext.IsValueObsolete = false;
         expressionNode.GenerateCode(codeGeneratorContext);
+        codeGeneratorContext.IsValueObsolete = true;
+        
         il.Branch(ILOpCode.Brfalse, endLabel);
 
         #endregion
