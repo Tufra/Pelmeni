@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 
 namespace PelmeniLib
 {
@@ -27,9 +26,9 @@ namespace PelmeniLib
 
         #region String
 
-            public static string StringConcat(params string[] strings)
+            public static string StringConcat(string left, string right)
             {
-                return string.Join("", strings);
+                return left + right;
             }
 
             public static bool StringEquals(string a, string b)
