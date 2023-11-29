@@ -1,19 +1,9 @@
+module ReadAndPrint;
+
 routine ReadAndPrintName() is
-  var
-    name: array[255] char;
-    len: integer;
-
-  write('Enter name: ');
-  readln(name);
-
-  len := name.length;
-
-  writeln('Hi,: ');
-  for i in 1..len 
-		loop
-	    write(name[i]);
-	  end
-  writeln;
+	var str: string;
+	str := ReadLine();
+	PrintLine(str);
 end
 
 routine Main() is
