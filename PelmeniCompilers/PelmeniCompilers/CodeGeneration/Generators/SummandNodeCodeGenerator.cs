@@ -35,9 +35,7 @@ public class SummandNodeCodeGenerator : BaseNodeCodeGenerator
         {
             if (child.Type == NodeType.RoutineCall)
             {
-                codeGeneratorContext.IsValueObsolete = false;
                 child.GenerateCode(codeGeneratorContext);
-                codeGeneratorContext.IsValueObsolete = true;
             }
             else
             {

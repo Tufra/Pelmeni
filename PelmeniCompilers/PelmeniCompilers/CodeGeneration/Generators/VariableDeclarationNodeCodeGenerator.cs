@@ -27,6 +27,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
 
             if (initTail.Children.Count > 0)
             {
+                codeGeneratorContext.IsValueObsolete = false;
                 initTail.Children[0].GenerateCode(codeGeneratorContext);
                 if (((ComputedExpression)initTail.Children[0]).ValueType != type.Children[0].Token!.Value)
                 {
@@ -36,6 +37,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                 }
                 
                 il.StoreLocal(codeGeneratorContext.LocalVariablesIndex![identifier]);
+                codeGeneratorContext.IsValueObsolete = true;
             }
         }
         

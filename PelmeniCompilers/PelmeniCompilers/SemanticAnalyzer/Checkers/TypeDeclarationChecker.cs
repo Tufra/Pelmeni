@@ -60,6 +60,6 @@ public class TypeDeclarationChecker : BaseNodeRuleChecker
         (to is "real" && from is "integer" or "boolean") ||
         (to is "integer" && from is "boolean" or "real") ||
         (to is "boolean" && (from is "integer" && value is "1" or "0" || from is "real" && value is "1.0" or "0.0")) ||
-        (ArrayTypeChecker.GetElementTypeFromString(from) == ArrayTypeChecker.GetElementTypeFromString(to) && ArrayTypeChecker.GetArraySizeFromString(to) == -1 );
+        (IsArrayType(from) && IsArrayType(to) &&  ArrayTypeChecker.GetElementTypeFromString(from) == ArrayTypeChecker.GetElementTypeFromString(to) && ArrayTypeChecker.GetArraySizeFromString(to) == -1 );
                     
 }
