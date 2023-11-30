@@ -121,18 +121,12 @@ internal static class Program
 
         CheckSemantic(tree, options);
         Compile(tree, options);
-
-        if (!options.DryRun)
-        {
-            await using var fileWriter = new StreamWriter(options.OutputFile);
-            await fileWriter.WriteAsync(JsonSerializer.Serialize(tree));
-        }
     }
 
     private static void Compile(Node tree, CompileCommandLineOptions options)
     {
         var codeGenerator = new CodeGenerator(tree);
-        codeGenerator.GenerateCode(options.OutputFile);
+        codeGenerator.GenerateCode(options.OutputFile, options.DryRun);
     }
 
     private static void PrintTree(Node tree)
