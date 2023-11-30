@@ -26,7 +26,7 @@ public partial class Parser
     {
     }
 
-    public void UnfoldDependencies(string path)
+    public async Task UnfoldDependencies(string path)
     {
         Queue<DependencyTreeNode> importsQueue = new();
         importsQueue.Enqueue(new DependencyTreeNode(path, MainNode));
@@ -38,20 +38,20 @@ public partial class Parser
             if (node.Program!.Children![0].Type == NodeType.Module)
             {
                 var imports = node.Program!.Children![1].Children!;
-                Console.WriteLine(imports.ToString());
+                //Console.WriteLine(imports.ToString());
                 for (var i = 0; i < imports.Count; i++)
                 {
                     var fileName = imports[i].Token!.Value;
                     var filePath = Path.Join(Path.GetDirectoryName(node.Path),
                         fileName.Substring(1, fileName.Length - 2));
                     using var file = new StreamReader(filePath);
-                    var fileContent = file.ReadToEnd();
+                    var fileContent = await file.ReadToEndAsync();
 
 
                     var scanner = new Scanner.Scanner();
                     var parser = new Parser(scanner);
 
-                    scanner.Scan(filePath, fileContent);
+                    await scanner.Scan(filePath);
                     parser.Parse();
 
                     var tree = parser.MainNode;

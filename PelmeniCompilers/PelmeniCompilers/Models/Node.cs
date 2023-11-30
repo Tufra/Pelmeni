@@ -1,4 +1,5 @@
-﻿using ConsoleTree;
+﻿using System.Text.Json.Serialization;
+using ConsoleTree;
 using PelmeniCompilers.SemanticAnalyzer.Checkers;
 using PelmeniCompilers.Values;
 
@@ -6,6 +7,10 @@ namespace PelmeniCompilers.Models;
 
 public record Node
 {
+    public Node()
+    {
+    }
+
     public Node(NodeType type, Token? token)
     {
         Type = type;
@@ -18,8 +23,9 @@ public record Node
         Children = children;
     }
 
-    public NodeType Type { get; private set; }
-    public Token? Token { get; private set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public NodeType Type { get;  set; }
+    public Token? Token { get;  set; }
     public List<Node> Children { get; set; } = new();
 
     public bool IsTerminal()

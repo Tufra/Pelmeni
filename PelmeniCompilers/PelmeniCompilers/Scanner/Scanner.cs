@@ -12,14 +12,23 @@ public class Scanner : AbstractScanner<Node, LexLocation>
 {
     public override LexLocation yylloc { get; set; }
 
-    public List<Token> Tokens { get; } = new();
+    public List<Token> Tokens { get; private set; } = new();
     
     private readonly StringBuilder _buffer = new();
     private int _lineNumber = 1;
     private int _positionEnd = 1;
     private State _state = State.Free;
 
-    private string FilePath { get; set; } = "";
+    public string FilePath { get; set; } = "";
+
+    public Scanner()
+    {
+    }
+    
+    public Scanner(List<Token> tokens)
+    {
+        this.Tokens = tokens;
+    }
 
     private IEnumerator<Token>? _tokensEnumerator;
 
@@ -174,10 +183,14 @@ public class Scanner : AbstractScanner<Node, LexLocation>
         }
     }
 
-    public void Scan(string path, string text)
+    public async Task Scan(string path)
     {
         FilePath = path;
-        foreach (var symbol in text)
+        
+        using var file = new StreamReader(path);
+        var fileContent = await file.ReadToEndAsync();
+        
+        foreach (var symbol in fileContent)
             Process(symbol);
 
         UploadToken();

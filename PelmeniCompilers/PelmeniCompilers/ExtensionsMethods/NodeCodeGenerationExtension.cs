@@ -40,7 +40,7 @@ public static class NodeCodeGenerationExtension
     }
 
     public static (MetadataBuilder metadataBuilder, BlobBuilder ilBuilder, MethodDefinitionHandle entryPoint)
-        GenerateProgram(this Node node, string entryMethodName)
+        GenerateProgram(this Node node)
     {
         if (node.Type != NodeType.Program)
             throw new InvalidOperationException();

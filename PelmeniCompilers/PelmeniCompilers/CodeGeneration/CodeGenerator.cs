@@ -29,19 +29,17 @@ public class CodeGenerator
         SContentId = new BlobContentId(SGuid, (uint)new Random().Next());
     }
 
-    public void GenerateCode(string entryMethod, string outputFile = "output.exe")
+    public void GenerateCode(string outputFile = "output.exe")
     {
         // TODO
         /*if (string.IsNullOrWhiteSpace(entryMethod))
             throw new InvalidOperationException();*/
-        
-        using var peStream = new FileStream(
-            outputFile, FileMode.OpenOrCreate, FileAccess.ReadWrite
-        );
 
-        entryMethod = "";
-        var (metadataBuilder, ilBuilder, entryPoint) = _mainNode.GenerateProgram(entryMethod);
-        WritePEImage(peStream, metadataBuilder, ilBuilder, entryPoint);
+        using (var peStream = new FileStream(outputFile, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+        {
+            var (metadataBuilder, ilBuilder, entryPoint) = _mainNode.GenerateProgram();
+            WritePEImage(peStream, metadataBuilder, ilBuilder, entryPoint);
+        }
     }
 
 
@@ -213,7 +211,7 @@ public class CodeGenerator
 
         // call instance void [mscorlib]System.Object::.ctor()
         il.Call(objectCtorMemberRef);
-        
+
         // ret
         il.OpCode(ILOpCode.Ret);
 
@@ -221,7 +219,7 @@ public class CodeGenerator
         codeBuilder.Clear();
 
         #endregion
-        
+
         #region Main Signature
 
         // Create signature for "void Main()" method.
@@ -243,7 +241,7 @@ public class CodeGenerator
         // col.Append(varA).Append(varB);
         var ss = metadata.GetOrAddBlob(varBuilder);
         var sig = metadata.AddStandaloneSignature(ss);
-        
+
         // Emit IL for Program::Main
         var flowBuilder = new ControlFlowBuilder();
         il = new InstructionEncoder(codeBuilder, flowBuilder);
@@ -329,13 +327,9 @@ public class CodeGenerator
         int mainBodyOffset = methodBodyStream.AddMethodBody(il, 8, sig, MethodBodyAttributes.InitLocals);
         // codeBuilder.Clear();
 
-
         #endregion
 
-       
 
-
-        
         // Create method definition for Program::Main
         MethodDefinitionHandle mainMethodDef = metadata.AddMethodDefinition(
             MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,

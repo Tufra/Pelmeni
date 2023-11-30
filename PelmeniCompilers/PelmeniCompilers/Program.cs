@@ -1,52 +1,138 @@
-﻿using ConsoleTree;
+﻿using System.Text.Json;
+using ConsoleTree;
 using PelmeniCompilers.CodeGeneration;
 using PelmeniCompilers.Models;
-using CommandLine; 
+using CommandLine;
 
 namespace PelmeniCompilers;
 
 internal static class Program
 {
-    internal static CommandLineOptions CommandLineOptions;
-    
     private static async Task Main(string[] args)
     {
-        //CommandLineOptions = CommandLine.Parser.Default.ParseArguments<CommandLineOptions>(args).Value;
-        await Run(args[0]);
+        var parser = new CommandLine.Parser(config =>
+        {
+            config.AutoHelp = true;
+            config.HelpWriter = Console.Out;
+        });
+        await parser
+            .ParseArguments<RunCommandLineOptions,
+                ScannerCommandLineOptions,
+                ParserCommandLineOptions,
+                CompileCommandLineOptions,
+                Task>(args)
+            .MapResult(
+                (RunCommandLineOptions opts) => Run(opts),
+                (ScannerCommandLineOptions opts) => Scan(opts, true),
+                (ParserCommandLineOptions opts) => Parse(opts),
+                (CompileCommandLineOptions opts) => Compile(opts),
+                errs =>
+                {
+                    Console.WriteLine(string.Join("\n", errs));
+                    return Task.CompletedTask;
+                });
     }
 
-    private static async Task Run(string path)
+    private static async Task Run(RunCommandLineOptions options)
     {
-        try
+        var scanner = await Scan(options.ScannerCommandLineOptions);
+        var tree = await Parse(scanner, options.ParserCommandLineOptions);
+        CheckSemantic(tree, options.CompileCommandLineOptions);
+        Compile(tree, options.CompileCommandLineOptions);
+    }
+
+    private static async Task<Scanner.Scanner> Scan(ScannerCommandLineOptions options, bool independentRun = false)
+    {
+        var scanner = new Scanner.Scanner();
+        await scanner.Scan(options.InputFile);
+
+        if (options.Verbose)
         {
-            using var file = new StreamReader(path);
-            var fileContent = await file.ReadToEndAsync();
-            var scanner = new Scanner.Scanner();
-
-            scanner.Scan(path, fileContent);
-            
-
-            var parser = new Parser.Parser(scanner);
-
-            parser.Parse();
-            parser.UnfoldDependencies(path);
-
-            var tree = parser.MainNode!;
-
-            PrintTree(tree);
-            var semanticAnalyzer = new SemanticAnalyzer.SemanticAnalyzer(tree);
-            semanticAnalyzer.Analyze();
-
-            Console.WriteLine("\n--------------------------------\n");
-            PrintTree(tree);
-
-            var codeGenerator = new CodeGenerator(tree);
-            codeGenerator.GenerateCode("");
+            Console.WriteLine(string.Join("\n", scanner.Tokens));
         }
-        catch (Exception e)
+
+        if (!options.DryRun && independentRun)
         {
-            Console.WriteLine(e);
+            await using var fileWriter = new StreamWriter(options.OutputFile);
+            var json = JsonSerializer.Serialize(scanner.Tokens);
+            await fileWriter.WriteAsync(json);
         }
+
+        return scanner;
+    }
+
+    private static async Task Parse(ParserCommandLineOptions options)
+    {
+        using var fileReader = new StreamReader(options.InputFile);
+        var tokens = await JsonSerializer.DeserializeAsync<List<Token>>(fileReader.BaseStream);
+
+        if (tokens is null)
+        {
+            throw new InvalidOperationException($"Something wrong with {options.InputFile} file");
+        }
+
+        var scanner = new Scanner.Scanner(tokens);
+        var tree = await Parse(scanner, options);
+
+        if (!options.DryRun)
+        {
+            await using var fileWriter = new StreamWriter(options.OutputFile);
+            await fileWriter.WriteAsync(JsonSerializer.Serialize(tree));
+        }
+    }
+
+    private static async Task<Node> Parse(Scanner.Scanner scanner, ParserCommandLineOptions options)
+    {
+        var parser = new Parser.Parser(scanner);
+
+        parser.Parse();
+        await parser.UnfoldDependencies(scanner.FilePath);
+
+        var tree = parser.MainNode!;
+
+        if (options.Verbose)
+        {
+            PrintTree(tree);
+        }
+
+        return tree;
+    }
+    
+    private static void CheckSemantic(Node tree, CompileCommandLineOptions options)
+    {
+        var semanticAnalyzer = new SemanticAnalyzer.SemanticAnalyzer(tree);
+        semanticAnalyzer.Analyze();
+
+        if (options.Verbose)
+        {
+            PrintTree(tree);
+        }
+    }
+    
+    private static async Task Compile(CompileCommandLineOptions options)
+    {
+        using var fileReader = new StreamReader(options.InputFile);
+        var tree = await JsonSerializer.DeserializeAsync<Node>(fileReader.BaseStream);
+
+        if (tree is null)
+        {
+            throw new InvalidOperationException($"Something wrong with {options.InputFile} file");
+        }
+
+        CheckSemantic(tree, options);
+        Compile(tree, options);
+
+        if (!options.DryRun)
+        {
+            await using var fileWriter = new StreamWriter(options.OutputFile);
+            await fileWriter.WriteAsync(JsonSerializer.Serialize(tree));
+        }
+    }
+
+    private static void Compile(Node tree, CompileCommandLineOptions options)
+    {
+        var codeGenerator = new CodeGenerator(tree);
+        codeGenerator.GenerateCode(options.OutputFile);
     }
 
     private static void PrintTree(Node tree)
