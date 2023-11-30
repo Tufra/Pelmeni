@@ -1,5 +1,7 @@
 module ReadAndPrint;
 
+
+
 routine ReadAndPrintName() is
 	var str: string;
 	str := ReadLine();

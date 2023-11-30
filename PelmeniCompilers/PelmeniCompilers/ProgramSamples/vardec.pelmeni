@@ -1,6 +1,17 @@
 module Vardec;
 
-routine ddd(a : array[] integer) is
+type A is record
+    var a: integer;
+    var b: real;
+end;
+
+type B is record
+    var a: integer;
+    var c: A;
+end;
+
+routine ddd(a : array[] integer, rec : B) is
+	PrintLine(rec.c.a);
 	foreach i from a loop
 		PrintLine(i);
 	end
@@ -8,6 +19,12 @@ end
 
 routine empty(str : string) is
     var a: array[5] integer;
+    
+    var rec: A;
+    rec.a := -1;
+    var recB: B;
+    recB.c := rec;
+    
     PrintLine(str);
     a[0] := 1;
     a[1] := 2;
@@ -15,5 +32,5 @@ routine empty(str : string) is
     a[3] := 4;
     a[4] := 5;
     
-    ddd(a);
+    ddd(a, recB);
 end

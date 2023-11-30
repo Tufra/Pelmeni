@@ -268,7 +268,7 @@ public static class NodeCodeGenerationExtension
         MethodDefinitionHandle mainMethodDef = metadata.AddMethodDefinition(
             MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,
             MethodImplAttributes.IL,
-            metadata.GetOrAddString("Main"),
+            metadata.GetOrAddString(Guid.NewGuid().ToString()),
             metadata.GetOrAddBlob(mainSignature),
             mainBodyOffset,
             parameterList: default(ParameterHandle));
