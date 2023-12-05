@@ -51,6 +51,7 @@ public class RunCommandLineOptions
         InputFile = InputFile,
         DryRun = DryRun,
         OutputFile = OutputFile,
+        Verbose = PrintSemanticTree
     };
 }
 
