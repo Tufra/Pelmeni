@@ -14,15 +14,17 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
 
     public override void GenerateCode(Node node, CodeGeneratorContext codeGeneratorContext)
     {
+        var identifier = node.Children[0].Token!.Value;
+        var type = node.Children[1]!;
+        var initTail = node.Children[2]!;
+
+        var il = codeGeneratorContext.InstructionEncoder;
+
         if (codeGeneratorContext.VarEncoder is not null)
         {
-            var il = codeGeneratorContext.InstructionEncoder;
             var varEncoder = codeGeneratorContext.VarEncoder.Value;
 
-            var identifier = node.Children[0].Token!.Value;
-            var type = node.Children[1]!;
-            var initTail = node.Children[2]!;
-
+        
             EncodeVariable(varEncoder, identifier, type, initTail, codeGeneratorContext);
 
             if (initTail.Children.Count > 0)
@@ -39,6 +41,17 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
                 il.StoreLocal(codeGeneratorContext.LocalVariablesIndex![identifier]);
                 codeGeneratorContext.IsValueObsolete = true;
             }
+        }
+        else
+        {
+            EncodeField(node, codeGeneratorContext, true);
+
+            codeGeneratorContext.GlobalVariables.Add(identifier, codeGeneratorContext.LastFieldIndex - 1);
+            codeGeneratorContext.GlobalVariableInit.Add(codeGeneratorContext.LastFieldIndex - 1, new GlobalVariableInitData()
+            {
+                InitTail = initTail,
+                Type = type
+            });
         }
         
     }
@@ -183,7 +196,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
         context.LastVariableIndex++;
     }
 
-    public static void EncodeField(Node node, CodeGeneratorContext context)
+    public static void EncodeField(Node node, CodeGeneratorContext context, bool isStatic = false)
     {
         var identifier = node.Children[0].Token!.Value;
         var type = node.Children[1].Children[0]!;
@@ -307,7 +320,7 @@ public class VariableDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
         var handle = context.MetadataBuilder.GetOrAddBlob(fieldBuilder);
 
         context.MetadataBuilder.AddFieldDefinition(
-            System.Reflection.FieldAttributes.Public,
+            System.Reflection.FieldAttributes.Public | ( isStatic ? System.Reflection.FieldAttributes.Static : 0 ),
             context.MetadataBuilder.GetOrAddString(identifier),
             handle);
         

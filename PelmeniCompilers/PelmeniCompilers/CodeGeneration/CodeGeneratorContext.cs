@@ -1,5 +1,6 @@
 ﻿using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using PelmeniCompilers.Models;
 using PelmeniCompilers.SemanticAnalyzer.VirtualTable;
 using PelmeniCompilers.Values;
 
@@ -28,4 +29,8 @@ public class CodeGeneratorContext
     public int ForLoopCounter { get; set; } = 0;
     public int ForEachLoopCounter { get; set; } = 0;
     public RoutineVirtualTableEntry RoutineVirtualTableEntry { get; set; }
+    public Dictionary<string, int> GlobalVariables { get; set; } = new();
+    public int GlobalVariablesOffset { get; set; } = 1;
+
+    public Dictionary<int, GlobalVariableInitData> GlobalVariableInit { get; set; } = new();
 }

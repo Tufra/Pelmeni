@@ -135,10 +135,19 @@ public static class NodeCodeGenerationExtension
             child.GenerateCode(codeGenerationContext);
         }
 
-        var mainMethodDef = GenerateEntryPoint(metadataBuilder, ilBuilder, mscorlibAssemblyRef, objectCtorMemberRef,
+        foreach (var child in node.Children.Where(node => node.Type == NodeType.VariableDeclaration))
+        {
+            child.GenerateCode(codeGenerationContext);
+        }
+        
+        codeGenerationContext.GlobalVariablesOffset = codeGenerationContext.LastFieldIndex;
+
+        var mainMethodDef = GenerateEntryPoint(metadataBuilder, mscorlibAssemblyRef, codeGenerationContext,
             methodBodyStream);
 
-        foreach (var child in node.Children.Where(node => node.Type != NodeType.TypeDeclaration))
+        
+
+        foreach (var child in node.Children.Where(node => node.Type == NodeType.RoutineDeclaration))
         {
             child.GenerateCode(codeGenerationContext);
         }
@@ -159,15 +168,15 @@ public static class NodeCodeGenerationExtension
             metadataBuilder.GetOrAddString("ConsoleApplication"),
             metadataBuilder.GetOrAddString("Program"),
             baseType: systemObjectTypeRef,
-            fieldList: MetadataTokens.FieldDefinitionHandle(codeGenerationContext.LastFieldIndex),
+            fieldList: MetadataTokens.FieldDefinitionHandle(codeGenerationContext.LastFieldIndex - codeGenerationContext.GlobalVariables.Count),
             methodList: mainMethodDef);
 
 
         return (metadataBuilder, ilBuilder, mainMethodDef);
     }
 
-    private static MethodDefinitionHandle GenerateEntryPoint(MetadataBuilder metadata, BlobBuilder ilBuilder,
-        AssemblyReferenceHandle mscorlibAssemblyRef, MemberReferenceHandle objectCtorMemberRef,
+    private static MethodDefinitionHandle GenerateEntryPoint(MetadataBuilder metadata,
+        AssemblyReferenceHandle mscorlibAssemblyRef, CodeGeneratorContext context,
         MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
         //
@@ -226,6 +235,9 @@ public static class NodeCodeGenerationExtension
         routineEntries.Sort();
         var routinesNames = routineEntries.Select(entry => entry.Name).ToList();
         var mainOffset = recordCount + 2;
+
+        context.InstructionEncoder = il;
+        InitGlobals(context);
 
         for (var i = mainOffset; i < mainOffset + routineCount; i++)
         {
@@ -707,5 +719,33 @@ public static class NodeCodeGenerationExtension
         {
             child.EncodeVariables(context);
         }
+    }
+
+    public static void InitGlobals(CodeGeneratorContext codeGeneratorContext)
+    {
+        var il = codeGeneratorContext.InstructionEncoder;
+        foreach (var globalVariableInitData in codeGeneratorContext.GlobalVariableInit)
+        {
+            var initTail = globalVariableInitData.Value.InitTail;
+            var type = globalVariableInitData.Value.Type;
+            
+            if (initTail.Children.Count > 0)
+            {
+                codeGeneratorContext.IsValueObsolete = false;
+                initTail.Children[0].GenerateCode(codeGeneratorContext);
+                if (((ComputedExpression)initTail.Children[0]).ValueType != type.Children[0].Token!.Value)
+                {
+                    TypeDeclarationNodeCodeGenerator.ConvertType(il,
+                        ((ComputedExpression)initTail.Children[0]).ValueType,
+                        type.Children[0].Token!.Value);
+                }
+                
+                il.OpCode(ILOpCode.Stsfld);
+                il.Token(MetadataTokens.FieldDefinitionHandle(globalVariableInitData.Key));
+                codeGeneratorContext.IsValueObsolete = true;
+            }
+        }
+
+        
     }
 }

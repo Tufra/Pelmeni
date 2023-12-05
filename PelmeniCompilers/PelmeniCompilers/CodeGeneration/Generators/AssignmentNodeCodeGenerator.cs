@@ -60,6 +60,12 @@ public class AssignmentNodeCodeGenerator : BaseNodeCodeGenerator
                 il.Token(MetadataTokens.FieldDefinitionHandle(codeGeneratorContext.TokenOffset));
                 break;
             }
+            case VariableType.Global:
+            {
+                il.OpCode(ILOpCode.Stsfld);
+                il.Token(MetadataTokens.FieldDefinitionHandle(codeGeneratorContext.TokenOffset));
+                break;
+            }
             default:
             {
                 throw new InvalidOperationException($"invalid variable type {varType.ToString()}");

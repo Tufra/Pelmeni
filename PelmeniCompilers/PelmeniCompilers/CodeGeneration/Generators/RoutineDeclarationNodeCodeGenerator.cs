@@ -58,6 +58,8 @@ public class RoutineDeclarationNodeCodeGenerator : BaseNodeCodeGenerator
             il.OpCode(ILOpCode.Ret);
         }
 
+        codeGeneratorContext.VarEncoder = null;
+        
         // END BODY
         var localVariablesBlob = codeGeneratorContext.MetadataBuilder.GetOrAddBlob(localVariablesBuilder);
         var localVariablesSignature = codeGeneratorContext.MetadataBuilder.AddStandaloneSignature(localVariablesBlob);

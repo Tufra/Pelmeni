@@ -29,7 +29,7 @@ public class ModifiablePrimaryNodeCodeGenerator : BaseNodeCodeGenerator
             var baseVarIndex = varIndex;
             if (isLeftValue && children.Count == 1)
             {
-                codeGeneratorContext.TokenOffset = varIndex;
+                codeGeneratorContext.TokenOffset = baseVarIndex;
                 return;
             }
             
@@ -43,11 +43,25 @@ public class ModifiablePrimaryNodeCodeGenerator : BaseNodeCodeGenerator
             var baseVarIndex = argIndex;
             if (isLeftValue && children.Count == 1)
             {
-                codeGeneratorContext.TokenOffset = argIndex;
+                codeGeneratorContext.TokenOffset = baseVarIndex;
                 return;
             }
 
             il.LoadArgument(baseVarIndex);
+        }
+        else if (codeGeneratorContext.GlobalVariables!.TryGetValue(baseIdentifier, out var globalIndex))
+        {
+            codeGeneratorContext.VariableType = VariableType.Global;
+            
+            var baseVarIndex = globalIndex;
+            if (isLeftValue && children.Count == 1)
+            {
+                codeGeneratorContext.TokenOffset = baseVarIndex;
+                return;
+            }
+
+            il.OpCode(ILOpCode.Ldsfld);
+            il.Token(MetadataTokens.FieldDefinitionHandle(baseVarIndex));
         }
         
         foreach (var child in children.Skip(1))
